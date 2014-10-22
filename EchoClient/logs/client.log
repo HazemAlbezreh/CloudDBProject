@@ -1,49 +1,3 @@
-2013-11-01 20:27:59,008 INFO  [main] ui.Application: Start Echo client Application
-2013-11-01 20:28:16,930 INFO  [main] ui.Application: Process command started
-2013-11-01 20:28:17,007 DEBUG [main] command.imp.ConnectCommand: try to connect to131.159.52.1 and port 5000
-2013-11-01 20:28:34,651 INFO  [main] ui.Application: Start Echo client Application
-2013-11-01 20:28:50,148 INFO  [main] ui.Application: Process command started
-2013-11-01 20:28:50,151 DEBUG [main] command.imp.ConnectCommand: try to connect to131.159.52.1 and port 50000
-2013-11-01 20:28:50,167 INFO  [main] command.imp.ConnectCommand: connect to131.159.52.1 and port 50000 is successful
-2013-11-01 20:28:50,169 DEBUG [main] command.imp.ConnectCommand: data recieved from server
-2013-11-01 20:28:54,979 INFO  [main] ui.Application: Process command started
-2013-11-01 20:28:55,026 DEBUG [main] command.imp.SendCommand: Trying to send sdf
-2013-11-01 20:28:55,027 INFO  [main] command.imp.SendCommand: message sent
-2013-11-01 20:28:55,028 INFO  [main] command.imp.SendCommand: response from server recieved
-2013-11-01 20:29:00,083 INFO  [main] ui.Application: Process command started
-2013-11-01 20:29:00,131 DEBUG [main] command.imp.DisConnectCommand: Trying to disconnect
-2013-11-01 20:29:00,132 INFO  [main] command.imp.DisConnectCommand: Disconnection is successful
-2013-11-01 20:29:03,472 INFO  [main] ui.Application: Process command started
-2013-11-01 20:29:03,477 DEBUG [main] command.imp.SendCommand: Trying to send sdfsdf
-2013-11-01 20:29:03,477 FATAL [main] command.imp.SendCommand: Can not send if there is no connection
-2013-11-01 20:29:12,112 INFO  [main] ui.Application: Process command started
-2013-11-01 20:29:12,113 DEBUG [main] command.imp.SendCommand: Trying to send 
-2013-11-01 20:29:12,114 FATAL [main] command.imp.SendCommand: Can not send if there is no connection
-2013-11-01 20:30:00,469 INFO  [main] ui.Application: Process command started
-2013-11-01 20:30:00,471 DEBUG [main] command.imp.SendCommand: Trying to send 
-2013-11-01 20:30:00,471 FATAL [main] command.imp.SendCommand: Can not send if there is no connection
-2013-11-01 20:30:12,945 INFO  [main] ui.Application: Start Echo client Application
-2013-11-01 20:30:21,686 INFO  [main] ui.Application: Process command started
-2013-11-01 20:30:21,747 DEBUG [main] command.imp.SendCommand: Trying to send 
-2013-11-01 20:30:21,747 FATAL [main] command.imp.SendCommand: Can not send if there is no connection
-2013-11-01 20:30:35,630 INFO  [main] ui.Application: Process command started
-2013-11-01 20:30:35,691 FATAL [main] command.imp.ConnectCommand: Command arguments are not applicable
-2013-11-01 20:30:45,344 INFO  [main] ui.Application: Process command started
-2013-11-01 20:30:45,345 DEBUG [main] command.imp.ConnectCommand: try to connect to131.159.52.1 and port 50000
-2013-11-01 20:30:45,396 INFO  [main] command.imp.ConnectCommand: connect to131.159.52.1 and port 50000 is successful
-2013-11-01 20:30:45,399 DEBUG [main] command.imp.ConnectCommand: data recieved from server
-2013-11-01 20:30:49,391 INFO  [main] ui.Application: Process command started
-2013-11-01 20:30:49,396 DEBUG [main] command.imp.SendCommand: Trying to send asda
-2013-11-01 20:30:49,397 INFO  [main] command.imp.SendCommand: message sent
-2013-11-01 20:30:49,399 INFO  [main] command.imp.SendCommand: response from server recieved
-2013-11-01 20:31:02,302 INFO  [main] ui.Application: Process command started
-2013-11-01 20:31:02,347 DEBUG [main] ui.Application: Setting the level ALL
-2013-11-01 20:31:07,942 INFO  [main] ui.Application: Process command started
-2013-11-01 20:31:07,982 INFO  [main] command.imp.DisConnectCommand: Disconnection is successful
-2013-11-01 20:31:13,161 INFO  [main] ui.Application: Process command started
-2013-11-01 20:31:13,162 FATAL [main] command.imp.SendCommand: Can not send if there is no connection
-2013-11-01 20:33:17,655 INFO  [main] ui.Application: Start Echo client Application
-2013-11-01 20:33:29,633 INFO  [main] ui.Application: Start Echo client Application
 2014-10-18 14:12:56,938 INFO  [main] ui.Application: Start Echo client Application
 2014-10-18 14:22:27,503 INFO  [main] ui.Application: Process command started
 2014-10-18 14:22:27,509 DEBUG [main] command.imp.ConnectCommand: try to connect to131.159.52.1 and port 50000
@@ -58,3 +12,12 @@
 2014-10-18 14:26:19,735 DEBUG [main] socket.SocketClient: Cannot connect to Server, No response
 2014-10-18 14:26:28,038 FATAL [main] command.imp.ConnectCommand: Connection is not successful
 2014-10-18 14:26:58,545 INFO  [main] ui.Application: Start Echo client Application
+2014-10-18 14:37:50,895 INFO  [main] ui.Application: Start Echo client Application
+2014-10-18 14:38:23,199 INFO  [main] ui.Application: Start Echo client Application
+2014-10-22 13:20:41,924 INFO  [main] ui.Application: Start Echo client Application
+2014-10-22 13:21:25,351 INFO  [main] ui.Application: Process command started
+2014-10-22 13:21:25,358 DEBUG [main] command.imp.ConnectCommand: try to connect to131.159.52.2 and port 50000
+2014-10-22 13:21:25,557 INFO  [main] command.imp.ConnectCommand: connect to131.159.52.2 and port 50000 is successful
+2014-10-22 13:21:25,734 DEBUG [main] command.imp.ConnectCommand: data recieved from server
+2014-10-22 13:21:29,503 INFO  [main] ui.Application: Process command started
+2014-10-22 13:21:29,509 FATAL [main] command.imp.UnknownCommand: Unknown command
