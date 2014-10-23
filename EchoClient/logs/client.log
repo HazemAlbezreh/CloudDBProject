@@ -21,3 +21,8 @@
 2014-10-22 13:21:25,734 DEBUG [main] command.imp.ConnectCommand: data recieved from server
 2014-10-22 13:21:29,503 INFO  [main] ui.Application: Process command started
 2014-10-22 13:21:29,509 FATAL [main] command.imp.UnknownCommand: Unknown command
+2014-10-23 13:01:29,741 INFO  [main] ui.Application: Start Echo client Application
+2014-10-23 13:01:48,924 INFO  [main] ui.Application: Start Echo client Application
+2014-10-23 13:01:59,371 INFO  [main] ui.Application: Start Echo client Application
+2014-10-23 13:04:59,130 INFO  [main] ui.Application: Start Echo client Application
+2014-10-23 13:05:29,421 INFO  [main] ui.Application: Start Echo client Application
