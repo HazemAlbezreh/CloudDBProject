@@ -46,6 +46,7 @@ public class ConnectCommand implements Command {
 		} catch (Exception e) {
 			
 			logger.fatal("Connection is not successful");
+			e.printStackTrace();
 		}
 		
 	 }

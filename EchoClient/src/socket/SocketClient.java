@@ -143,7 +143,10 @@ public SocketClient() {
 		try {
 			return socket.isConnected();
 		} catch (Exception e) {
+			
+			
 			return false;
+			
 		}
 	}	
 
