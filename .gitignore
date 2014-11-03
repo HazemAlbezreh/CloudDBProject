@@ -1,1 +1,9 @@
 /bin
+
+#Java
+KVServer/*.class
+
+# Package Files #
+KVServer/*.jar
+KVServer/*.war
+KVServer/*.ear
