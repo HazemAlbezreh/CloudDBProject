@@ -28,8 +28,6 @@ public class KVStore implements KVCommInterface {
 	private boolean running;
 
 	private SocketWrapper clientSocket;
-	private OutputStream output;
-	private InputStream input;
 	private static final int BUFFER_SIZE = 1024;
 	private static final int DROP_SIZE = 1024 * BUFFER_SIZE;
 
@@ -40,8 +38,6 @@ public class KVStore implements KVCommInterface {
 	 * Initialize KVStore with address and port of KVServer
 	 * @param address the address of the KVServer
 	 * @param port the port of the KVServer
-	 * @throws IOException 
-	 * @throws UnknownHostException 
 	 */
 
 	public KVStore(String address, int port)  {
@@ -57,16 +53,18 @@ public class KVStore implements KVCommInterface {
 	@Override
 	public void connect() throws IOException {
 		try {
+			//connects to the socket of server
 			clientSocket = new SocketWrapper();
 			clientSocket.connect(this.address, this.port);
 			setRunning(true);
 			
-			
+			//waits until it receives the answer from server
 			TextMessage latestMsg = clientSocket.receiveMessage();
 			for(ClientSocketListener listener : listeners) {
 				listener.handleNewMessage(latestMsg);
 			}
 		} catch (IOException ioe) {
+			//if there was an error connecting
 			if(isRunning()) {
 				logger.error("Connection lost!");
 				try {
@@ -90,6 +88,7 @@ public class KVStore implements KVCommInterface {
 		logger.info("try to close connection ...");
 
 		try {
+			
 			tearDownConnection();
 			for(ClientSocketListener listener : listeners) {
 				listener.handleStatus(SocketStatus.DISCONNECTED);
@@ -116,6 +115,7 @@ public class KVStore implements KVCommInterface {
 		if (value.equals("null")){
 			value=null;
 		}
+		//creating KVMSG message 
 		KVMSG newmsg=new KVMSG(key,value,StatusType.PUT);
 		
 		
@@ -135,10 +135,11 @@ public class KVStore implements KVCommInterface {
 		String msg = "get"+" "+key;
 
 		KVMSG newmsg=new KVMSG(key,StatusType.GET);
-
+		//sending the message to the socket
 		clientSocket.sendMessage(newmsg);
 
-		logger.info("Send message:\t '" + msg+ "'");	
+		logger.info("Send message:\t '" + msg+ "'");
+		//wait until receive an answer 
 		KVMessage latestMsg = clientSocket.recieveKVMesssage();
 		for(ClientSocketListener listener : listeners) {
 			listener.handleNewGetKVMessage(latestMsg);

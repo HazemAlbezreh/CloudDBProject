@@ -19,9 +19,6 @@ import client.KVStore;
 import client.ClientSocketListener.SocketStatus;
 
 
-
-
-
 public class KVClient implements ClientSocketListener {
 
 	private static Logger logger = Logger.getRootLogger();
@@ -34,7 +31,11 @@ public class KVClient implements ClientSocketListener {
 	private KVStore client = null;
 
 
-
+	/**
+	 * kvClientrun reads the user command line and calls handleCommand to recognize the type 
+	 * 
+	 * @throws Exception 
+	 */
 	public void kvClientrun() throws Exception {
 		while(!stop) {
 			stdin = new BufferedReader(new InputStreamReader(System.in));
@@ -50,6 +51,13 @@ public class KVClient implements ClientSocketListener {
 		}
 	}
 
+	
+	/**
+	 * handleCommand is responsible for recognising the type of command  
+	 * 
+	 * @param cmdLine
+	 * @throws Exception when problem in connection
+	 */
 	private void handleCommand(String cmdLine) throws Exception {
 		String[] tokens = cmdLine.split("\\s+");
 		String key;
@@ -99,8 +107,11 @@ public class KVClient implements ClientSocketListener {
 
 		} 
 		else if(tokens[0].equals("put")) {
+			//the new command
 			if(tokens.length >=2){
 				key =tokens[1];
+				//if user does not write second argument on put command, then we assume 
+				//the null value aka DELETE key
 				if (tokens.length==3)
 					value=tokens[2];
 				else
@@ -139,18 +150,35 @@ public class KVClient implements ClientSocketListener {
 		}
 	}
 
+	
+	/** Uses get function from KVStore class
+	 *  
+	 * @param key
+	 * @throws Exception when getting the value of the key
+	 */
 	private void getTuples(String key) throws Exception {
 		logger.info("Going to fetch value of key "+key);
 		 client.get(key);
 
 	}
-
+	
+	
+	/** Uses put function from KVStore class
+	 *  
+	 * @param key,value
+	 * @throws Exception when putting the tuple key,value
+	 */
 	private void putTuples(String key, String value) throws Exception {
 		logger.info("Going to put this pair of tuples < "+key+" , "+value+" >");
 		client.put(key, value);
 		
 	}
 
+	/** Initiates the connection with the server
+	 *  
+	 * @param address,port
+	 * 
+	 */
 	private void connect(String address, int port) 
 			throws Exception {
 		client = new KVStore(address, port);
@@ -158,6 +186,10 @@ public class KVClient implements ClientSocketListener {
 		client.connect();
 	}
 
+	
+	/** disconnects from the server
+	 *  
+	 */
 	private void disconnect() {
 		if(client != null) {
 			client.disconnect();
@@ -166,7 +198,7 @@ public class KVClient implements ClientSocketListener {
 	}
 
 	/**
-	 * Main entry point for the echo server application. 
+	 * Main entry point for the server application. 
 	 * @param args contains the port number at args[0].
 	 * @throws Exception 
 	 */
@@ -244,6 +276,11 @@ public class KVClient implements ClientSocketListener {
 		System.out.println(PROMPT + "Error! " +  error);
 	}
 
+	
+	
+	/** Functions for the different types of messages that client receives from the server
+	 * 
+	 */
 	@Override
 	public void handleNewMessage(TextMessage msg) {
 		if(!stop) {
