@@ -85,7 +85,7 @@ public class ClientConnection implements Runnable {
 					case PUT:
 						try {
 							value=latestMsg.getValue();
-							if (latestMsg.getValue()==null ) {
+					/*		if (latestMsg.getValue()==null ) {
 								String status=server.getKVCache().deleteDatasetEntry(latestMsg.getKey());
 								if(status.equals("DELETE_ERROR")){
 									statusType=StatusType.DELETE_ERROR;
@@ -113,7 +113,10 @@ public class ClientConnection implements Runnable {
 								}
 
 							}
-						} catch (Exception e) {
+						*/
+							}
+						
+						 catch (Exception e) {
 							logger.error("Error! "
 									+ "Error in put into store. \n", e);
 							statusType = StatusType.PUT_ERROR;

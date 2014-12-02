@@ -31,7 +31,7 @@ public class KVServer extends Thread  {
 	
 	public KVServer(int port, int cacheSize, String strategy) {
 		this.port= port;
-		this.kvCache = new KVCache(cacheSize, strategy);
+		this.kvCache = new KVCache(String.valueOf(port),cacheSize, strategy);
 		this.start();
 	}
 	

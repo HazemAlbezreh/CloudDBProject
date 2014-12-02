@@ -6,10 +6,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import consistent_hashing.HashFunction;
 
 
 
@@ -19,6 +23,7 @@ public class KVCache  {
 	private LinkedHashMap<String, MapValue> cache;
 	private int cachesize;
 	private String strategy;
+	private String serverName;
 	/**
 	 * Start KV Server at given port
 	 * @param cacheSize specifies how many key-value pairs the server is allowed 
@@ -28,11 +33,75 @@ public class KVCache  {
 	 *           currently not contained in the cache. Options are "FIFO", "LRU", 
 	 *           and "LFU".
 	 */
-	public KVCache(int cacheSize, String strategy) {
+	
+	public KVCache(String serverName, int cacheSize, String strategy) {
 		this.cachesize = cacheSize;
 		cache = new LinkedHashMap<String,MapValue>(cachesize);
 		this.strategy = strategy;
+		this.serverName = serverName;
 	}
+	
+	public HashMap<String,String> calculateRange(int low, int high, HashFunction hashfunct){
+		String line;
+		HashMap<String,String> outOfRange= new HashMap<String,String>();
+		int hashvalue = 0;
+		try{
+			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
+			while ((line = br.readLine()) != null) {
+				String [] str = line.split(",");
+				hashvalue = hashfunct.hash(str[0]);
+				if(!(hashvalue >= low && hashvalue < high)){
+					outOfRange.put(str[0], str[1]);
+				}
+			}
+			br.close();
+			return outOfRange;
+		}
+		catch(Exception e){
+			return null;
+		}
+	}
+	
+	public String processPutRequest(HashMap<String,String> values){
+		String updateResult = "";
+		Set s = values.entrySet();
+		MapValue mp = null;
+		Iterator itr = s.iterator();
+		String key,value ;
+		if(values.size() == 1){
+			Map.Entry ent = (Map.Entry)itr.next();
+			key = ((String)ent.getKey());
+			value = ((String)ent.getValue());
+			updateResult = updateDatasetEntry(key, value);
+		}
+		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
+		int cachCount = 0;
+			try {
+				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt",true));
+				while(itr.hasNext()){
+					Map.Entry ent = (Map.Entry)itr.next();
+					key = ((String)ent.getKey());
+					value = ((String)ent.getValue());
+					pr.println( key+ "," +value );
+					if(cachCount< cachesize){
+						addCacheEntry(key, value);
+						cachCount++;
+					}
+				}
+				pr.close();
+			}
+			catch(IOException e) {
+				e.printStackTrace();
+				return "PUT_ERROR";
+			}
+		 return "PUT_SUCCESS";
+		}
+		else{
+			//addCacheEntry(key, value);
+			return "PUT_UPDATE";
+		}
+	}
+	
 	
 	public String processGetRequest(String key){
 		//check the cache first
@@ -43,7 +112,7 @@ public class KVCache  {
 		else{
 			String line;
 			try{
-				BufferedReader br = new BufferedReader(new FileReader("output.txt"));
+				BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
 				while ((line = br.readLine()) != null) {
 					String [] str = line.split(",");
 					if(str[0].equals(key)){
@@ -76,7 +145,7 @@ public class KVCache  {
 		
 		
 		try{
-			BufferedReader br = new BufferedReader(new FileReader("./output.txt"));
+			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
 			String line = "";
 			while ((line = br.readLine()) != null) {
 				String [] str = line.split(",");
@@ -94,7 +163,7 @@ public class KVCache  {
 		
 		if(updateResult.equals("PUT_UPDATE")){
 			try{
-				PrintWriter pr = new PrintWriter(new FileWriter("./output.txt"));
+				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt"));
 				pr.print(sbld);
 				pr.close();
 				if(!cache.containsKey(key)){
@@ -109,27 +178,30 @@ public class KVCache  {
 			updateResult = "UPDATE_NOT_PERFORMD";
 		return updateResult;
 	}
-
 	
-	
-	public String deleteDatasetEntry(String key){
+	public String deleteDatasetEntry(ArrayList<String> keys){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String deleteResult = "";
-		if(cache.containsKey(key))
-			cache.remove(key);
+		String line = "";
 		try{
-			BufferedReader br = new BufferedReader(new FileReader("./output.txt"));
-			String line = "";
-			while ((line = br.readLine()) != null) {
-				String [] str = line.split(",");
-				if(str[0].equals(key)){
-					deleteResult = "DELETE_SUCCESS";
-					continue;
-				}
-				else
-					sbld.append(line + newline);
+			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
+			for(String key:keys){
+				if(cache.containsKey(key))
+					cache.remove(key);
 			}
+				while ((line = br.readLine()) != null) {
+					String [] str = line.split(",");
+					for(String key:keys){
+						if(str[0].equals(key)){
+							deleteResult = "DELETE_SUCCESS";
+							keys.remove(key);
+							break;
+						}
+						else
+							sbld.append(line + newline);
+					}
+				}
 		}
 		catch(IOException e){
 			e.printStackTrace();
@@ -137,7 +209,7 @@ public class KVCache  {
 		
 		if(deleteResult.equals("DELETE_SUCCESS")){
 			try{
-				PrintWriter pr = new PrintWriter(new FileWriter("./output.txt"));
+				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt"));
 				pr.print(sbld);
 				pr.close();
 			} 
@@ -153,11 +225,11 @@ public class KVCache  {
 	}
 	
 	
-	public String processPutRequest(String key, String value){
+/*	public String processPutRequest(String key, String value){
 		String updateResult = updateDatasetEntry(key, value);
 		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
 			try {
-				PrintWriter pr = new PrintWriter(new FileWriter("./output.txt",true));
+				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt",true));
 				pr.println(key + "," + value);
 				pr.close();
 				addCacheEntry(key, value);
@@ -169,11 +241,10 @@ public class KVCache  {
 			}
 		}
 		else{
-
 			//addCacheEntry(key, value);
 			return "PUT_UPDATE";
 		}
-	}
+	}*/
 	
 	public String checkGetHitOrMiss(String key){
 		String val = "";
