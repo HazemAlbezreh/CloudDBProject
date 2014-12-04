@@ -48,5 +48,11 @@ public interface KVCommInterface {
 	 */
 	public KVMessage get(String key) throws Exception;
 	
-
+	
+	
+	public void updateMetaData(SortedMap<Integer,ServerInfo> ring);
+	
+	
+	
+	public void shutDown();
 }
