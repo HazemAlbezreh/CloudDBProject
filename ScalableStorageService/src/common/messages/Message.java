@@ -10,5 +10,4 @@ public interface Message {
 	
 	public MessageType getMessageType();
 	public String getJson();
-	
 }

@@ -6,6 +6,7 @@ import java.net.*;
 import org.apache.log4j.Logger;
 
 import common.messages.KVMSG;
+import common.messages.Message;
 import common.messages.TextMessage;
 
 
@@ -117,7 +118,7 @@ public class SocketWrapper {
 	 * @param msg the message that is to be sent.
 	 * @throws IOException some I/O error regarding the output stream 
 	 */
-	public void sendMessage(TextMessage msg) throws IOException {
+	public void sendTextMessage(TextMessage msg) throws IOException {
 		byte[] msgBytes = msg.getMsgBytes();
 		OutputStream output = this.getSocket().getOutputStream();
 		output.write(msgBytes, 0, msgBytes.length);
@@ -128,7 +129,7 @@ public class SocketWrapper {
 				+ msg.getMsg() +"'");
     }
 	
-	public TextMessage receiveMessage() throws IOException {
+	public TextMessage receiveTextMessage() throws IOException {
 		
 		int index = 0;
 		byte[] msgBytes = null, tmp = null;
@@ -194,13 +195,12 @@ public class SocketWrapper {
 		return msg;
     }
 	
-	
-
-	public boolean sendMessage(KVMSG msg) {
+		
+	public boolean sendMessage(Message msg) {
 		if (this.getSocket() != null) {
 			try {
-				TextMessage tm= new TextMessage(msg.msgToSend());
-				this.sendMessage(tm);
+				TextMessage tm= new TextMessage(msg.getJson());
+				this.sendTextMessage(tm);
 				return true;
 			} catch (SocketTimeoutException TimeOutEx) {
 				logger.debug("No response from server");
@@ -215,11 +215,11 @@ public class SocketWrapper {
 		}
 	}
 
-	public KVMSG recieveKVMesssage() {
-		KVMSG kvmsg = null;
+	public Message recieveMesssage() {
+		Message message = null;
 		try {
-			String s = this.receiveMessage().getMsg();
-			kvmsg= KVMSG.messageParser( s );			
+			String s = this.receiveTextMessage().getMsg();
+			message= MessageFactory.parse(s);			
 		} catch (IOException e) {
 //			e.printStackTrace();
 			disconnect();
