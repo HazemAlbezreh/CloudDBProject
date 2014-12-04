@@ -13,9 +13,15 @@ public class MessageFactory {
 		}
 		JsonObject jo=JsonObject.readFrom(source);
 		if(jo.get("messageType").isNull()){
-			throw new MessageParseException("MessageFactory : Type not found")
+			throw new MessageParseException("MessageFactory : Type not found");
 		}else{
-			
+			Message.MessageType type=Message.MessageType.valueOf(jo.get("messageType").asString());
+			switch(type){
+				case KVMESSAGE:
+					return ClientMessage.parseFromString(source);
+				case CONFIGMESSAGE:
+					return ECSMessage.parseFromString(source);
+			}
 		}
 		return null;
 	}

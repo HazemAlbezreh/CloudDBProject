@@ -7,6 +7,8 @@ import org.apache.log4j.Logger;
 
 import common.messages.KVMSG;
 import common.messages.Message;
+import common.messages.MessageFactory;
+import common.messages.MessageParseException;
 import common.messages.TextMessage;
 
 
@@ -223,8 +225,10 @@ public class SocketWrapper {
 		} catch (IOException e) {
 //			e.printStackTrace();
 			disconnect();
-		} 
-		return kvmsg;
+		} catch (MessageParseException e){
+			// TO-DO 
+		}
+		return message;
 	}
 
 	
