@@ -21,6 +21,7 @@ public class ECSClient {
 	private static final String PROMPT = "ECSClient> ";
 
 	private ECS ecs = null;
+	boolean success=false;
 
 
 
@@ -112,24 +113,53 @@ public class ECSClient {
 
 
 	private void removeServer() throws IOException {
-		ecs.removeNode();
+		success=ecs.removeNode();
+		if(success){
+			System.out.println(PROMPT+"A node has been removed!");
+		}
+		else{
+			System.out.println(PROMPT+"There was an error removing the node!");
+
+		}
 	}
 
 
 	private void addServer(String cacheSize, String displacementStrategy) throws IOException{
 		int cache=Integer.parseInt(cacheSize);
+		
 		ecs.addNode(cache,displacementStrategy);
+		if(success){
+			System.out.println(PROMPT+"A node has been added!");
+		}
+		else{
+			System.out.println(PROMPT+"There was an error adding the node!");
+
+		}
 	}
 
 
 	private void stop() throws IOException{
-		ecs.stop();
+		success=ecs.stop();
+		if(success){
+			System.out.println(PROMPT+"All nodes have been stopped!");
+		}
+		else{
+			System.out.println(PROMPT+"There was an error stopping all nodes!");
+
+		}
 	}
 
 
 	private void start() {
 		ecs = ECS.getInstance(filepath);
-		ecs.start();
+		success=ecs.start();
+		if(success){
+			System.out.println(PROMPT+"All nodes have been started!");
+		}
+		else{
+			System.out.println(PROMPT+"There was an error starting all nodes!");
+
+		}
 	}
 
 
