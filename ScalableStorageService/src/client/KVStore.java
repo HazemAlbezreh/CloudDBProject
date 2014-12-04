@@ -4,6 +4,8 @@ package client;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
@@ -12,12 +14,15 @@ import socket.SocketWrapper;
 
 import client.ClientSocketListener.SocketStatus;
 
+
+import common.messages.ECSMessage;
 import common.messages.KVMSG;
 import common.messages.KVMessage;
 import common.messages.KVMessage.StatusType;
 import common.messages.TextMessage;
-
-
+import config.ServerInfo;
+import consistent_hashing.HashFunction;
+import consistent_hashing.Range;
 
 public class KVStore implements KVCommInterface {
 	private Logger logger = Logger.getRootLogger();
@@ -28,6 +33,11 @@ public class KVStore implements KVCommInterface {
 
 	private String address;
 	private int port;
+
+	private HashFunction hashFunction;
+	private SortedMap<Integer, ServerInfo> ring = new TreeMap<Integer, ServerInfo>();
+
+
 	/**
 	 * Initialize KVStore with address and port of KVServer
 	 * @param address the address of the KVServer
@@ -39,7 +49,7 @@ public class KVStore implements KVCommInterface {
 		this.port=port;
 		listeners = new HashSet<ClientSocketListener>();
 		logger.info("Connection established");
-		
+
 	}
 
 
@@ -51,7 +61,7 @@ public class KVStore implements KVCommInterface {
 			clientSocket = new SocketWrapper();
 			clientSocket.connect(this.address, this.port);
 			setRunning(true);
-			
+
 			//waits until it receives the answer from server
 			TextMessage latestMsg = clientSocket.receiveMessage();
 			for(ClientSocketListener listener : listeners) {
@@ -82,7 +92,7 @@ public class KVStore implements KVCommInterface {
 		logger.info("try to close connection ...");
 
 		try {
-			
+
 			tearDownConnection();
 			for(ClientSocketListener listener : listeners) {
 				listener.handleStatus(SocketStatus.DISCONNECTED);
@@ -111,34 +121,123 @@ public class KVStore implements KVCommInterface {
 		}
 		//creating KVMSG message 
 		KVMSG newmsg=new KVMSG(key,value,StatusType.PUT);
-		
-		
-		clientSocket.sendMessage(newmsg);
-		logger.info("Send message:\t '" + msg+ "'");	
 
-		KVMessage latestMsg = clientSocket.recieveKVMesssage();
-		for(ClientSocketListener listener : listeners) {
-			listener.handleNewPostKVMessage(latestMsg);
+
+		if (ring==null){
+			clientSocket.sendMessage(newmsg);
+			logger.info("Send message:\t '" + msg+ "'");	
+
+			KVMessage latestMsg = clientSocket.recieveKVMesssage();
+			switch (latestMsg.getStatus()) {
+			case SERVER_NOT_RESPONSIBLE:
+				updateMetaData(latestMsg.getMetaData());
+				put(key,value);
+				break;
+			case SERVER_STOPPED:
+				System.out.println("The Server has stopped for some time!Please wait or try later!");
+				break;
+			case SERVER_WRITE_LOCK:
+				System.out.println("The Server is busy! Please try put requests later!");
+				break;
+			}
+
+			for(ClientSocketListener listener : listeners) {
+				listener.handleNewPostKVMessage(latestMsg);
+			}
+			return latestMsg;
+
 		}
-		return latestMsg;
+		else{
+			int hashKey = hashFunction.hash(key);
+			ServerInfo si=ring.get(hashKey);
+			//disconnects from the running server
+			disconnect();
+			//and connects to the new one
+			this.address=si.getServerIP();
+			this.port= si.getPort();
+			connect();
+			clientSocket.sendMessage(newmsg);
+			logger.info("Send message:\t '" + msg+ "'");	
+
+			KVMessage latestMsg = clientSocket.recieveKVMesssage();
+			switch (latestMsg.getStatus()) {
+			case SERVER_NOT_RESPONSIBLE:
+				updateMetaData(latestMsg.getMetaData());
+				put(key,value);
+				break;
+			case SERVER_STOPPED:
+				System.out.println("The Server has stopped for some time!Please wait or try later!");
+				break;
+			case SERVER_WRITE_LOCK:
+				System.out.println("The Server is busy! Please try put requests later!");
+				break;
+			}
+			for(ClientSocketListener listener : listeners) {
+				listener.handleNewPostKVMessage(latestMsg);
+			}
+			return latestMsg;
+
+		}
+
 
 	}
 
 	@Override
 	public KVMessage get(String key) throws Exception {
 		String msg = "get"+" "+key;
-
 		KVMSG newmsg=new KVMSG(key,StatusType.GET);
-		//sending the message to the socket
-		clientSocket.sendMessage(newmsg);
 
-		logger.info("Send message:\t '" + msg+ "'");
-		//wait until receive an answer 
-		KVMessage latestMsg = clientSocket.recieveKVMesssage();
-		for(ClientSocketListener listener : listeners) {
-			listener.handleNewGetKVMessage(latestMsg);
+		if (ring==null){
+			
+			clientSocket.sendMessage(newmsg);
+
+			logger.info("Send message:\t '" + msg+ "'");
+			//wait until receive an answer 
+			KVMessage latestMsg = clientSocket.recieveKVMesssage();
+			switch (latestMsg.getStatus()) {
+			case SERVER_NOT_RESPONSIBLE:
+				updateMetaData(latestMsg.getMetaData());
+				get(key);
+				break;
+			case SERVER_STOPPED:
+				System.out.println("The Server has stopped for some time!Please wait or try later!");
+				break;
+			}
+			for(ClientSocketListener listener : listeners) {
+				listener.handleNewGetKVMessage(latestMsg);
+			}
+			return latestMsg;
+
+			
 		}
-		return latestMsg;
+		else{
+			int hashKey = hashFunction.hash(key);
+			ServerInfo si=ring.get(hashKey);
+			//disconnects from the running server
+			disconnect();
+			//and connects to the new one
+			this.address=si.getServerIP();
+			this.port= si.getPort();
+			connect();
+			clientSocket.sendMessage(newmsg);
+			logger.info("Send message:\t '" + msg+ "'");
+			//wait until receive an answer 
+			KVMessage latestMsg = clientSocket.recieveKVMesssage();
+			switch (latestMsg.getStatus()) {
+			case SERVER_NOT_RESPONSIBLE:
+				updateMetaData(latestMsg.getMetaData());
+				get(key);
+				break;
+			case SERVER_STOPPED:
+				System.out.println("The Server has stopped for some time!Please wait or try later!");
+				break;
+			}
+			for(ClientSocketListener listener : listeners) {
+				listener.handleNewGetKVMessage(latestMsg);
+			}
+			return latestMsg;
+		}
+		//sending the message to the socket
 	}
 
 	public void setRunning(boolean run) {
@@ -151,5 +250,24 @@ public class KVStore implements KVCommInterface {
 	public boolean isRunning() {
 		return running;
 	}
+
+
+
+	@Override
+	public void updateMetaData(SortedMap<Integer, ServerInfo> updatedRing) {
+		this.ring=updatedRing;
+	}
+
+
+
+	@Override
+	public void shutDown() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	
 
 }
