@@ -1,25 +1,23 @@
-package client;
-
+package ecs;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedMap;
 
 import org.apache.log4j.Logger;
 
 import socket.SocketWrapper;
-
-
+import client.ClientSocketListener;
 import client.ClientSocketListener.SocketStatus;
-
-import common.messages.KVMSG;
-import common.messages.KVMessage;
-import common.messages.KVMessage.StatusType;
+import common.messages.ECSMessage;
 import common.messages.TextMessage;
+import config.ServerInfo;
+import consistent_hashing.Range;
 
-
-
-public class KVStore implements KVCommInterface {
+public class EcsStore implements EcsCommInterface {
+	
+	
 	private Logger logger = Logger.getRootLogger();
 	private Set<ClientSocketListener> listeners;
 	private boolean running;
@@ -34,7 +32,7 @@ public class KVStore implements KVCommInterface {
 	 * @param port the port of the KVServer
 	 */
 
-	public KVStore(String address, int port)  {
+	public EcsStore(String address, int port)  {
 		this.address=address;
 		this.port=port;
 		listeners = new HashSet<ClientSocketListener>();
@@ -102,45 +100,61 @@ public class KVStore implements KVCommInterface {
 			logger.info("connection closed!");
 		}
 	}
-
+	
 	@Override
-	public KVMessage put(String key, String value) throws Exception {
-		String msg = "put"+" "+key+" "+value;
-		if (value.equals("null")){
-			value=null;
-		}
-		//creating KVMSG message 
-		KVMSG newmsg=new KVMSG(key,value,StatusType.PUT);
-		
-		
-		clientSocket.sendMessage(newmsg);
-		logger.info("Send message:\t '" + msg+ "'");	
-
-		KVMessage latestMsg = clientSocket.recieveKVMesssage();
-		for(ClientSocketListener listener : listeners) {
-			listener.handleNewPostKVMessage(latestMsg);
-		}
-		return latestMsg;
-
+	public ECSMessage updateMetaData(SortedMap<Integer, ServerInfo> ring) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+
+
 	@Override
-	public KVMessage get(String key) throws Exception {
-		String msg = "get"+" "+key;
-
-		KVMSG newmsg=new KVMSG(key,StatusType.GET);
-		//sending the message to the socket
-		clientSocket.sendMessage(newmsg);
-
-		logger.info("Send message:\t '" + msg+ "'");
-		//wait until receive an answer 
-		KVMessage latestMsg = clientSocket.recieveKVMesssage();
-		for(ClientSocketListener listener : listeners) {
-			listener.handleNewGetKVMessage(latestMsg);
-		}
-		return latestMsg;
+	public ECSMessage start() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+
+
+	@Override
+	public ECSMessage stop() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public ECSMessage lockWrite() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public ECSMessage unLockWrite() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public ECSMessage moveData(Range range, ServerInfo targetServer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public void shutDown() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void setRunning(boolean run) {
 		running = run;
 	}
