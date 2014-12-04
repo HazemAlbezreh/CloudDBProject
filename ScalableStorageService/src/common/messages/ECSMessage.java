@@ -8,8 +8,8 @@ import java.util.TreeMap;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
-import common.messages.KVMessage.StatusType;
 
+import common.messages.KVMessage.StatusType;
 import config.ServerInfo;
 import consistent_hashing.Range;
 
@@ -139,13 +139,12 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 	}
 	
 
-	public static ECSMessage parseFromString(String source){
+	public static ECSMessage parseFromString(String source) throws MessageParseException{
 		Range nRange;
 		ServerInfo nServer;
-		private ConfigMessage.StatusType nStatus;
-		private SortedMap<Integer, ServerInfo> ring=null;
+		ConfigMessage.StatusType nStatus;
 		SortedMap<Integer, ServerInfo> data;
-
+		
 		try{
 			if(source==null || source.isEmpty()){
 				throw new MessageParseException("String is null");
@@ -153,9 +152,26 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 			JsonObject jo=JsonObject.readFrom(source);
 			
 			nStatus=StatusType.valueOf( jo.get("statusType").asString() );
+			
+			if(jo.get("range").isNull()){
+				nRange=null;
+			}else{
+				JsonObject jo2=jo.get("range").asObject();
+				nRange=new Range(jo2.get("low").asInt(),jo2.get("high").asInt());
+			}
+			
+			if(jo.get("server").isNull()){
+				nServer=null;
+			}else{
+				JsonObject jo2=jo.get("server").asObject();
+				nServer=new ServerInfo(jo2.get("address").asString(),jo2.get("port").asInt());
+			}
+			
 
 			if(nStatus==ConfigMessage.StatusType.UPDATE_META_DATA){
 				JsonArray nested=jo.get("metadata").asArray();
+				data=new TreeMap<Integer, ServerInfo> ();
+
 				for(JsonValue ob : nested){
 					JsonObject temp=ob.asObject();
 					String ad=temp.get("address").asString();
@@ -165,10 +181,10 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 				}
 				return new ECSMessage(data);
 			}
-			return new ECS(nKey,nValue,nStatus);
+			return new ECSMessage(nStatus,nServer,nRange);
 					
 		}catch(Exception e){
-			throw new MessageParseException("ClientMessage : " +e.getMessage());
+			throw new MessageParseException("ECSMessage : " +e.getMessage());
 		}	
 	}
 }
