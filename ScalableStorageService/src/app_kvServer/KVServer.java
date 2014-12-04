@@ -9,7 +9,7 @@ import logger.LogSetup;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
+import app_kvServer.ServerStatus;
 
 public class KVServer extends Thread  {
 	
@@ -134,5 +134,32 @@ public class KVServer extends Thread  {
 
 	public void setKVCache(KVCache kvStore) {
 		this.kvCache = kvStore;
+	}
+	
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	public synchronized  void stopServer2(){
+		
+	}
+	
+	public synchronized  void lockWrite(){
+		
+	}
+	
+	public synchronized void unlockWrite(){
+		
+	}
+	
+	public synchronized void update (){
+		
+	}
+	
+	public synchronized ServerStatus getStatus(){
+		return null;
+		
+	}
+
+	public synchronized void shutDown(){
+		
 	}
 }

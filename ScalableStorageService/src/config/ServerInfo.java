@@ -67,6 +67,13 @@ public class ServerInfo implements  java.io.Serializable {
      *     {@link String }
      *     
      */
+    public ServerInfo(){}
+    
+    public ServerInfo(String ip,int port){
+    	this.serverIP=ip;
+    	this.port=port;
+    }
+    
     public String getServerIP() {
         return serverIP;
     }
