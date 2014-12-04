@@ -121,7 +121,12 @@ public class KVClient implements ClientSocketListener {
 				} catch (IOException e) {
 					printError("Could not execute put command!");
 					logger.warn("Could not execute put command!", e);
+				}catch (NullPointerException ne){
+					printError("You must be connected to a server first!");
+					logger.warn("You must be connected to a server first!", ne);
+
 				}
+				
 			}
 			else {
 				printError("Invalid number of parameters!");
@@ -135,6 +140,10 @@ public class KVClient implements ClientSocketListener {
 				} catch (IOException e) {
 					printError("Could not execute get command!");
 					logger.warn("Could not execute get command!", e);
+				}catch (NullPointerException ne){
+					printError("You must be connected to a server first!");
+					logger.warn("You must be connected to a server first!", ne);
+
 				}
 			}
 			else{
