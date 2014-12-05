@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import logger.LogSetup;
 
@@ -29,9 +31,15 @@ public class KVServer extends Thread  {
 	private boolean running;
 	private KVCache kvCache;
 	
+/////////////////////////////////////////////////////////////////////////////////////////////////
+	private int lock;
+	List<ClientConnection> activeThreads;
+/////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	public KVServer(int port, int cacheSize, String strategy) {
 		this.port= port;
 		this.kvCache = new KVCache(String.valueOf(port),cacheSize, strategy);
+		activeThreads=new ArrayList<ClientConnection>();
 		this.start();
 	}
 	
@@ -42,8 +50,8 @@ public class KVServer extends Thread  {
 			while (isRunning()) {
 				try {
 					Socket client = serverSocket.accept();
-					ClientConnection connection = new ClientConnection(client,
-							this);
+					ClientConnection connection = new ClientConnection(client,this);
+					activeThreads.add(connection);
 					new Thread(connection).start();
 
 					logger.info("Connected to "

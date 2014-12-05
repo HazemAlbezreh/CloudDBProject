@@ -15,10 +15,12 @@ import socket.SocketWrapper;
 import client.ClientSocketListener.SocketStatus;
 
 
+import common.messages.ClientMessage;
 import common.messages.ECSMessage;
 import common.messages.KVMSG;
 import common.messages.KVMessage;
 import common.messages.KVMessage.StatusType;
+import common.messages.Message;
 import common.messages.TextMessage;
 import config.ServerInfo;
 import consistent_hashing.HashFunction;
@@ -63,7 +65,7 @@ public class KVStore implements KVCommInterface {
 			setRunning(true);
 
 			//waits until it receives the answer from server
-			TextMessage latestMsg = clientSocket.receiveMessage();
+			TextMessage latestMsg = clientSocket.receiveTextMessage();
 			for(ClientSocketListener listener : listeners) {
 				listener.handleNewMessage(latestMsg);
 			}
@@ -115,36 +117,26 @@ public class KVStore implements KVCommInterface {
 
 	@Override
 	public KVMessage put(String key, String value) throws Exception {
+		ClientMessage reply;
 		String msg = "put"+" "+key+" "+value;
 		if (value.equals("null")){
 			value=null;
 		}
 		//creating KVMSG message 
-		KVMSG newmsg=new KVMSG(key,value,StatusType.PUT);
+		ClientMessage newmsg=new ClientMessage(key,value,StatusType.PUT);
 
 
 		if (ring==null){
 			clientSocket.sendMessage(newmsg);
 			logger.info("Send message:\t '" + msg+ "'");	
 
-			KVMessage latestMsg = clientSocket.recieveKVMesssage();
-			switch (latestMsg.getStatus()) {
-			case SERVER_NOT_RESPONSIBLE:
-				updateMetaData(latestMsg.getMetaData());
-				put(key,value);
-				break;
-			case SERVER_STOPPED:
-				System.out.println("The Server has stopped for some time!Please wait or try later!");
-				break;
-			case SERVER_WRITE_LOCK:
-				System.out.println("The Server is busy! Please try put requests later!");
-				break;
-			}
-
+			Message latestMsg = clientSocket.recieveMesssage();
+			reply=handleReceivedPutMsg(latestMsg,key,value);
+			
 			for(ClientSocketListener listener : listeners) {
-				listener.handleNewPostKVMessage(latestMsg);
+				listener.handleNewPostKVMessage(reply);
 			}
-			return latestMsg;
+			return reply;
 
 		}
 		else{
@@ -159,10 +151,28 @@ public class KVStore implements KVCommInterface {
 			clientSocket.sendMessage(newmsg);
 			logger.info("Send message:\t '" + msg+ "'");	
 
-			KVMessage latestMsg = clientSocket.recieveKVMesssage();
-			switch (latestMsg.getStatus()) {
+			Message latestMsg = clientSocket.recieveMesssage();
+			reply=handleReceivedPutMsg(latestMsg,key,value);
+
+			for(ClientSocketListener listener : listeners) {
+				listener.handleNewPostKVMessage(reply);
+			}
+			return reply;
+
+		}
+
+
+	}
+	
+	
+	public ClientMessage handleReceivedPutMsg(Message latestMsg,String key,String value) throws Exception{
+		ClientMessage reply=null;
+		switch (latestMsg.getMessageType()){
+		case KVMESSAGE:
+			reply=(ClientMessage)latestMsg;
+			switch (reply.getStatus()) {
 			case SERVER_NOT_RESPONSIBLE:
-				updateMetaData(latestMsg.getMetaData());
+				updateMetaData(reply.getMetadata());
 				put(key,value);
 				break;
 			case SERVER_STOPPED:
@@ -171,21 +181,23 @@ public class KVStore implements KVCommInterface {
 			case SERVER_WRITE_LOCK:
 				System.out.println("The Server is busy! Please try put requests later!");
 				break;
+			default:
+				logger.debug("Invalid Message Status received" + latestMsg.getJson());	
 			}
-			for(ClientSocketListener listener : listeners) {
-				listener.handleNewPostKVMessage(latestMsg);
-			}
-			return latestMsg;
-
+			break;
+		default:
+			logger.debug("Invalid Message type received" + latestMsg.getJson());	
+			break;
 		}
-
+		return reply;
 
 	}
 
 	@Override
 	public KVMessage get(String key) throws Exception {
+		ClientMessage reply;
 		String msg = "get"+" "+key;
-		KVMSG newmsg=new KVMSG(key,StatusType.GET);
+		ClientMessage newmsg=new ClientMessage(key,StatusType.GET);
 
 		if (ring==null){
 			
@@ -193,20 +205,13 @@ public class KVStore implements KVCommInterface {
 
 			logger.info("Send message:\t '" + msg+ "'");
 			//wait until receive an answer 
-			KVMessage latestMsg = clientSocket.recieveKVMesssage();
-			switch (latestMsg.getStatus()) {
-			case SERVER_NOT_RESPONSIBLE:
-				updateMetaData(latestMsg.getMetaData());
-				get(key);
-				break;
-			case SERVER_STOPPED:
-				System.out.println("The Server has stopped for some time!Please wait or try later!");
-				break;
-			}
+			Message latestMsg = clientSocket.recieveMesssage();
+			reply=handleReceivedGetMsg(latestMsg,key);
+			
 			for(ClientSocketListener listener : listeners) {
-				listener.handleNewGetKVMessage(latestMsg);
+				listener.handleNewGetKVMessage(reply);
 			}
-			return latestMsg;
+			return reply;
 
 			
 		}
@@ -222,24 +227,44 @@ public class KVStore implements KVCommInterface {
 			clientSocket.sendMessage(newmsg);
 			logger.info("Send message:\t '" + msg+ "'");
 			//wait until receive an answer 
-			KVMessage latestMsg = clientSocket.recieveKVMesssage();
-			switch (latestMsg.getStatus()) {
+			Message latestMsg = clientSocket.recieveMesssage();
+			
+			reply=handleReceivedGetMsg(latestMsg,key);
+			for(ClientSocketListener listener : listeners) {
+				listener.handleNewGetKVMessage(reply);
+			}
+			return reply;
+		}
+		//sending the message to the socket
+	}
+
+	
+	public ClientMessage handleReceivedGetMsg(Message latestMsg,String key) throws Exception{
+		
+		ClientMessage reply=null;
+		switch (latestMsg.getMessageType()){
+		case KVMESSAGE:
+			reply=(ClientMessage)latestMsg;
+			switch (reply.getStatus()) {
 			case SERVER_NOT_RESPONSIBLE:
-				updateMetaData(latestMsg.getMetaData());
+				updateMetaData(reply.getMetadata());
 				get(key);
 				break;
 			case SERVER_STOPPED:
 				System.out.println("The Server has stopped for some time!Please wait or try later!");
 				break;
+			default:
+				logger.debug("Invalid Message Status received" + latestMsg.getJson());	
 			}
-			for(ClientSocketListener listener : listeners) {
-				listener.handleNewGetKVMessage(latestMsg);
-			}
-			return latestMsg;
+			break;
+		default:
+			logger.debug("Invalid Message type received" + latestMsg.getJson());	
+			break;
 		}
-		//sending the message to the socket
+		return reply;
 	}
-
+	
+	
 	public void setRunning(boolean run) {
 		running = run;
 	}
