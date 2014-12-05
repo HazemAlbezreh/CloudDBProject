@@ -51,7 +51,7 @@ public class EcsStore implements EcsCommInterface {
 			setRunning(true);
 			
 			//waits until it receives the answer from server
-			TextMessage latestMsg = clientSocket.receiveMessage();
+			TextMessage latestMsg = clientSocket.receiveTextMessage();
 			for(ClientSocketListener listener : listeners) {
 				listener.handleNewMessage(latestMsg);
 			}

@@ -77,6 +77,7 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		this.statusType=st;
 	}
 
+	@Override
 	public SortedMap<Integer, ServerInfo> getMetadata(){
 		return this.metadata;
 	}
@@ -177,4 +178,6 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 				}catch(Exception e){e.printStackTrace();}
 		
 	}
+
+
 }

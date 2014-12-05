@@ -47,6 +47,6 @@ public interface KVMessage {
 	
 	
 
-	public SortedMap<Integer, ServerInfo> getMetaData();
+	public SortedMap<Integer, ServerInfo> getMetadata();
 	
 }
