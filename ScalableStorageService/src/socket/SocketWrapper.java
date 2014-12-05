@@ -5,7 +5,6 @@ import java.net.*;
 
 import org.apache.log4j.Logger;
 
-import common.messages.KVMSG;
 import common.messages.Message;
 import common.messages.MessageFactory;
 import common.messages.MessageParseException;
@@ -209,6 +208,7 @@ public class SocketWrapper {
 				return false;
 			} catch (IOException ioEx) {
 				ioEx.printStackTrace();
+				logger.debug("IOException sending message : "+ msg.getClass().getName()+" : "+ioEx.getMessage());
 				disconnect();
 				return false;
 			}
@@ -226,7 +226,7 @@ public class SocketWrapper {
 //			e.printStackTrace();
 			disconnect();
 		} catch (MessageParseException e){
-			// TO-DO 
+			logger.debug("Unknown Message Format received : "+e.getMessage());		
 		}
 		return message;
 	}
