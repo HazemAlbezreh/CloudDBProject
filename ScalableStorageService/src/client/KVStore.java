@@ -16,15 +16,12 @@ import client.ClientSocketListener.SocketStatus;
 
 
 import common.messages.ClientMessage;
-import common.messages.ECSMessage;
-import common.messages.KVMSG;
 import common.messages.KVMessage;
 import common.messages.KVMessage.StatusType;
 import common.messages.Message;
 import common.messages.TextMessage;
 import config.ServerInfo;
-import consistent_hashing.HashFunction;
-import consistent_hashing.Range;
+import consistent_hashing.CommonFunctions;
 
 public class KVStore implements KVCommInterface {
 	private Logger logger = Logger.getRootLogger();
@@ -36,7 +33,6 @@ public class KVStore implements KVCommInterface {
 	private String address;
 	private int port;
 
-	private HashFunction hashFunction;
 	private SortedMap<Integer, ServerInfo> ring = new TreeMap<Integer, ServerInfo>();
 
 
@@ -133,15 +129,16 @@ public class KVStore implements KVCommInterface {
 			Message latestMsg = clientSocket.recieveMesssage();
 			reply=handleReceivedPutMsg(latestMsg,key,value);
 			
-			for(ClientSocketListener listener : listeners) {
-				listener.handleNewPostKVMessage(reply);
-			}
+			//for(ClientSocketListener listener : listeners) {
+			//	listener.handleNewPostKVMessage(reply);
+			//}
 			return reply;
 
 		}
 		else{
-			int hashKey = hashFunction.hash(key);
-			ServerInfo si=ring.get(hashKey);
+			
+			
+			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
 			//disconnects from the running server
 			disconnect();
 			//and connects to the new one
@@ -154,9 +151,9 @@ public class KVStore implements KVCommInterface {
 			Message latestMsg = clientSocket.recieveMesssage();
 			reply=handleReceivedPutMsg(latestMsg,key,value);
 
-			for(ClientSocketListener listener : listeners) {
-				listener.handleNewPostKVMessage(reply);
-			}
+			//for(ClientSocketListener listener : listeners) {
+			//	listener.handleNewPostKVMessage(reply);
+			//}
 			return reply;
 
 		}
@@ -180,6 +177,15 @@ public class KVStore implements KVCommInterface {
 				break;
 			case SERVER_WRITE_LOCK:
 				System.out.println("The Server is busy! Please try put requests later!");
+				break;
+			case PUT_ERROR:
+				System.out.println("Your request was not successful!");				
+				break;
+			case PUT_SUCCESS:
+				System.out.println(reply.getStatus().name()+"  < "+reply.getKey()+","+reply.getValue()+" >");
+				break;
+			case PUT_UPDATE:
+				System.out.println(reply.getStatus().name()+"  < "+reply.getKey()+","+reply.getValue()+" >");
 				break;
 			default:
 				logger.debug("Invalid Message Status received" + latestMsg.getJson());	
@@ -208,16 +214,15 @@ public class KVStore implements KVCommInterface {
 			Message latestMsg = clientSocket.recieveMesssage();
 			reply=handleReceivedGetMsg(latestMsg,key);
 			
-			for(ClientSocketListener listener : listeners) {
-				listener.handleNewGetKVMessage(reply);
-			}
+		//	for(ClientSocketListener listener : listeners) {
+			//	listener.handleNewGetKVMessage(reply);
+			//}
 			return reply;
 
 			
 		}
 		else{
-			int hashKey = hashFunction.hash(key);
-			ServerInfo si=ring.get(hashKey);
+			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
 			//disconnects from the running server
 			disconnect();
 			//and connects to the new one
@@ -230,9 +235,9 @@ public class KVStore implements KVCommInterface {
 			Message latestMsg = clientSocket.recieveMesssage();
 			
 			reply=handleReceivedGetMsg(latestMsg,key);
-			for(ClientSocketListener listener : listeners) {
-				listener.handleNewGetKVMessage(reply);
-			}
+			//for(ClientSocketListener listener : listeners) {
+			//	listener.handleNewGetKVMessage(reply);
+			//}
 			return reply;
 		}
 		//sending the message to the socket
@@ -252,6 +257,12 @@ public class KVStore implements KVCommInterface {
 				break;
 			case SERVER_STOPPED:
 				System.out.println("The Server has stopped for some time!Please wait or try later!");
+				break;
+			case GET_ERROR:
+				System.out.println("Tuple not found!");				
+				break;
+			case GET_SUCCESS:
+				System.out.println(reply.getStatus()+"  < "+reply.getKey()+","+reply.getValue()+" >");
 				break;
 			default:
 				logger.debug("Invalid Message Status received" + latestMsg.getJson());	
