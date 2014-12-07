@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import consistent_hashing.HashFunction;
+import consistent_hashing.Range;
 
 
 
@@ -41,7 +42,7 @@ public class KVCache  {
 		this.serverName = serverName;
 	}
 	
-	public synchronized HashMap<String,String> calculateRange(int low, int high, HashFunction hashfunct){
+	public synchronized Map<String,String> calculateRange(int low, int high, HashFunction hashfunct){
 		String line;
 		HashMap<String,String> outOfRange= new HashMap<String,String>();
 		int hashvalue = 0;
@@ -50,7 +51,32 @@ public class KVCache  {
 			while ((line = br.readLine()) != null) {
 				String [] str = line.split(",");
 				hashvalue = hashfunct.hash(str[0]);
+				
 				if(!(hashvalue >= low && hashvalue < high)){
+					outOfRange.put(str[0], str[1]);
+				}
+			}
+			br.close();
+			return outOfRange;
+		}
+		catch(Exception e){
+			return null;
+		}
+	}
+
+	
+	public synchronized Map<String,String> calculateRange(Range range, HashFunction hashfunct){
+		String line;
+		HashMap<String,String> outOfRange= new HashMap<String,String>();
+		boolean inRange;
+		int hashvalue = 0;
+		try{
+			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
+			while ((line = br.readLine()) != null) {
+				String [] str = line.split(",");
+				hashvalue = hashfunct.hash(str[0]);
+				inRange=range.isWithin(hashvalue);
+				if(!inRange){
 					outOfRange.put(str[0], str[1]);
 				}
 			}
@@ -223,6 +249,9 @@ public class KVCache  {
 		
 		return deleteResult;
 	}
+	
+	
+	
 	
 	
 /*	public String processPutRequest(String key, String value){
