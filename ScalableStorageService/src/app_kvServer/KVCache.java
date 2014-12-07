@@ -62,7 +62,7 @@ public class KVCache  {
 		}
 	}
 	
-	public synchronized String processPutRequest(HashMap<String,String> values){
+	public synchronized String processPutRequest(Map<String,String> values){
 		String updateResult = "";
 		Set s = values.entrySet();
 		MapValue mp = null;
