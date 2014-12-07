@@ -39,6 +39,10 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		this.metadata=ring;
 	}
 	
+	public ClientMessage(KVMessage.StatusType type) {
+		this.statusType=type;
+	}
+	
 	public ClientMessage(String key,KVMessage.StatusType type) {
 		this.setKey(key);
 		this.setStatus(type);

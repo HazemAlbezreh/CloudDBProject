@@ -17,7 +17,9 @@ public class ServerMessage implements Message{
 	
 	public enum StatusType{
 		DATA_TRANSFER,								//Move data across servers
-		PLACEHOLDER
+		DATA_TRANSFER_SUCCESS,
+		DATA_TRANSFER_FAILED,
+		FAILURE
 	}
 	
 	private Message.MessageType messageType=MessageType.SERVERMESSAGE;
@@ -34,6 +36,9 @@ public class ServerMessage implements Message{
 		this.statusType=type;
 	}
 	
+	public ServerMessage(ServerMessage.StatusType type){
+		this.statusType=type;
+	}
 	
 	public Map<String,String> getData(){
 		return this.data;

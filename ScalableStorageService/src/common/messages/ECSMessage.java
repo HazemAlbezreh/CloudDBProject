@@ -23,7 +23,8 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 	private ConfigMessage.StatusType statusType ;
 	private SortedMap<Integer, ServerInfo> ring=null;
 	private Message.MessageType messageType=Message.MessageType.CONFIGMESSAGE;
-	
+	private int cacheSize=-1;
+	private String strategy=null;
 	
 	public ECSMessage(ConfigMessage.StatusType type){
 		this.setStatus(type);
@@ -38,6 +39,22 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 	public ECSMessage(SortedMap<Integer, ServerInfo> ring) {
 		this(ConfigMessage.StatusType.UPDATE_META_DATA);
 		this.setRing(ring);
+	}
+	
+	public ECSMessage(StatusType type,ServerInfo server,Range range,SortedMap<Integer, ServerInfo> ring) {
+		this.setStatus(type);
+		this.setRange(range);
+		this.setServerInfo(server);		
+		this.setRing(ring);
+	}
+	
+	public ECSMessage(StatusType type,ServerInfo server,Range range,SortedMap<Integer, ServerInfo> ring,String strat,int cs) {
+		this.setStatus(type);
+		this.setRange(range);
+		this.setServerInfo(server);		
+		this.setRing(ring);
+		this.cacheSize=cs;
+		this.strategy=strat;
 	}
 	
 	@Override
@@ -121,6 +138,14 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 			jo.add("server", nullie);
 		}
 		
+		if(this.strategy != null){
+			jo.add("strategy", this.strategy);
+		}else{
+			jo.add("strategy", nullie);
+		}
+		
+		jo.add("cache", this.cacheSize);
+		
 		if(this.ring != null){
 			JsonArray ja= new JsonArray();
 			for(Map.Entry<Integer, ServerInfo> entry : ring.entrySet()){
@@ -144,6 +169,8 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 		ServerInfo nServer;
 		ConfigMessage.StatusType nStatus;
 		SortedMap<Integer, ServerInfo> data;
+		String nStrategy=null;
+		
 		
 		try{
 			if(source==null || source.isEmpty()){
@@ -166,9 +193,18 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 				JsonObject jo2=jo.get("server").asObject();
 				nServer=new ServerInfo(jo2.get("address").asString(),jo2.get("port").asInt());
 			}
-			
 
-			if(nStatus==ConfigMessage.StatusType.UPDATE_META_DATA){
+			if(jo.get("strategy").isNull()){
+				nStrategy=null;
+			}else{
+				nStrategy=jo.get("strategy").asString();
+			}
+
+			int nCache=jo.get("cache").asInt();
+			
+			if(jo.get("metadata").isNull()){
+				data=null;
+			}else{
 				JsonArray nested=jo.get("metadata").asArray();
 				data=new TreeMap<Integer, ServerInfo> ();
 
@@ -179,9 +215,8 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 					int hash=temp.get("hash").asInt();
 					data.put(hash, new ServerInfo(ad,port));
 				}
-				return new ECSMessage(data);
 			}
-			return new ECSMessage(nStatus,nServer,nRange);
+			return new ECSMessage(nStatus,nServer,nRange,data,nStrategy,nCache);
 					
 		}catch(Exception e){
 			throw new MessageParseException("ECSMessage : " +e.getMessage());

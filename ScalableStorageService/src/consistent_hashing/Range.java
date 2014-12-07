@@ -30,7 +30,7 @@ public class Range implements  java.io.Serializable{
 	}
 
 	public boolean isWithin(int hash) {
-		if (this.low > hash || this.high < hash)
+		if (this.low > hash || this.high < hash)	// WRONG FOR EDGE CASES
 			return false;
 		return true;
 	}

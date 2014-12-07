@@ -22,11 +22,7 @@ import socket.SocketWrapper;
 public class ClientConnection implements Runnable {
 
 	private static Logger logger = Logger.getRootLogger();
-
-
-
 	private KVServer server;
-
 	boolean firstMessage = true;
 	private SocketWrapper clientSocket;
 
@@ -40,18 +36,19 @@ public class ClientConnection implements Runnable {
 		this.server = server;
 	}
 
-	/**tr
+	/**
 	 * Initializes and starts the client connection. 
 	 * Loops until the connection is closed or aborted by the client.
 	 */
 	public void run() {
-
+		
 		StatusType statusType = null;
 		String value=null;
+		
 		while (this.clientSocket.isAlive()) {
 			if (firstMessage) {
 				try {
-					clientSocket.sendMessage(new TextMessage(
+					clientSocket.sendTextMessage(new TextMessage(
 							"Connection to MSRG Echo server established: " 
 									+ clientSocket.getSocket().getLocalAddress() + " / "
 									+ clientSocket.getSocket().getLocalPort()));
@@ -140,5 +137,9 @@ public class ClientConnection implements Runnable {
 			}
 		}
 		logger.info("Thread Terminated ");
+	}
+	
+	public void terminateThread() throws IOException{
+		return;
 	}
 }
