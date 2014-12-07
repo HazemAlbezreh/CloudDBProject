@@ -41,7 +41,7 @@ public class KVCache  {
 		this.serverName = serverName;
 	}
 	
-	public HashMap<String,String> calculateRange(int low, int high, HashFunction hashfunct){
+	public synchronized HashMap<String,String> calculateRange(int low, int high, HashFunction hashfunct){
 		String line;
 		HashMap<String,String> outOfRange= new HashMap<String,String>();
 		int hashvalue = 0;
@@ -62,7 +62,7 @@ public class KVCache  {
 		}
 	}
 	
-	public String processPutRequest(Map<String,String> values){
+	public synchronized String processPutRequest(HashMap<String,String> values){
 		String updateResult = "";
 		Set s = values.entrySet();
 		MapValue mp = null;
@@ -103,7 +103,7 @@ public class KVCache  {
 	}
 	
 	
-	public String processGetRequest(String key){
+	public synchronized String processGetRequest(String key){
 		//check the cache first
 		String response = checkGetHitOrMiss(key);
 		if(response != null )
@@ -131,7 +131,7 @@ public class KVCache  {
 	}
 	
 	
-	public String updateDatasetEntry(String key,String newValue){
+	public synchronized String updateDatasetEntry(String key,String newValue){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String updateResult = "";
@@ -179,7 +179,7 @@ public class KVCache  {
 		return updateResult;
 	}
 	
-	public String deleteDatasetEntry(ArrayList<String> keys){
+	public synchronized String deleteDatasetEntry(ArrayList<String> keys){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String deleteResult = "";
@@ -246,7 +246,7 @@ public class KVCache  {
 		}
 	}*/
 	
-	public String checkGetHitOrMiss(String key){
+	public synchronized String checkGetHitOrMiss(String key){
 		String val = "";
 		if(cache.containsKey(key)){
 			val = cache.get(key).getValue();
@@ -258,7 +258,7 @@ public class KVCache  {
 			return null;
 	}
 
-	public void updateCache(String key){
+	public synchronized void updateCache(String key){
 		switch(strategy){
 			case "FIFO":{
 				break;
@@ -292,7 +292,7 @@ public class KVCache  {
 	}
 
 	
-	public String findMinScore(String key){
+	public synchronized String findMinScore(String key){
 		Set st = cache.entrySet();
 		Iterator itr = st.iterator();
 		MapValue mapval = new MapValue();
@@ -314,7 +314,7 @@ public class KVCache  {
 	}
 
 	
-	public void addCacheEntry(String key, String value){
+	public synchronized void addCacheEntry(String key, String value){
 		MapValue mp = new MapValue();
 		switch(strategy){
 			case "FIFO":{
@@ -378,7 +378,7 @@ public class KVCache  {
 		}
 	}
 	
-	public LinkedHashMap<String, MapValue> getCache(){
+	public synchronized LinkedHashMap<String, MapValue> getCache(){
 		return this.cache;
 	}
 }
