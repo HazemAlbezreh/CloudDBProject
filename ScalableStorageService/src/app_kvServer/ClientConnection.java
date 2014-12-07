@@ -11,8 +11,10 @@ import org.apache.log4j.*;
 
 import common.messages.*;
 import common.messages.KVMessage.StatusType;
+import config.ServerInfo;
 import consistent_hashing.HashFunction;
 import consistent_hashing.Md5HashFunction;
+import consistent_hashing.Range;
 import socket.SocketWrapper;
 
 
@@ -163,7 +165,60 @@ public class ClientConnection implements Runnable {
 					}
 					break;
 				case CONFIGMESSAGE:
-					ConfigMessage config = (ConfigMessage)message;
+					ECSMessage config = (ECSMessage)message;
+					ECSMessage ecsReply=null;
+					boolean result=false;
+					
+					switch(config.getStatus()){
+					case INIT:
+						result=this.server.initKVServer(config.getCacheSize(), config.getCacheStrategy(), config.getRing(),config.getRange());
+						if(result){
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.INIT_SUCCESS);
+						}else{
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.INIT_FAILURE);
+						}
+						break;
+					case START:
+						result=this.server.startServer();
+						if(result){
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.START_SUCCESS);
+						}else{
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.START_FAILURE);
+						}
+						break;
+					case STOP:
+						result=this.server.stopServer();
+						if(result){
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.STOP_SUCCESS);
+						}else{
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.STOP_FAILURE);
+						}
+						break;
+					case LOCK_WRITE:	
+						result=this.server.lockWrite();
+						if(result){
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.LOCK_WRITE_SUCCESS);
+						}else{
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.LOCK_WRITE_FAILURE);
+						}
+						break;
+					case UN_LOCK_WRITE:
+						result=this.server.unlockWrite();
+						if(result){
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE_SUCCESS);
+						}else{
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE_FAILURE);
+						}
+						break;
+					case UPDATE_META_DATA:
+						this.server.update(config.getRing(), config.getRange());
+						ecsReply=new ECSMessage(ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS);
+						break;
+					case MOVE_DATA:
+						ServerInfo receipient = config.getServerInfo();
+						Range dataRange=config.getRange();
+						ServerMessage dataMap=new ServerMessage(this.cache.calculateRange(dataRange,this.hashFunction));
+					}
 					
 					break;
 				default : 

@@ -33,11 +33,10 @@ public class KVServer extends Thread  {
 	
 	///////////////////////////////////////////////////////////////////////////////
 	
-	private KVCache kvCache;
+	private KVCache kvCache=null;
 	private static Logger logger = Logger.getRootLogger();
-	private ServerSocket serverSocket;
+	private ServerSocket serverSocket=null;
 	private int port;
-	private String address;
 	
 	///////////////////////////////////////////////////////////////////////////////
 	private boolean running;
@@ -45,8 +44,7 @@ public class KVServer extends Thread  {
 	private ServerStatus serverStatus;
 	private List<ClientConnection> activeThreads;
 	private SortedMap<Integer, ServerInfo> ring=null;
-	private Object lock=new Object();
-	private Range range;
+	private Range range=null;;
 	
 	///////////////////////////////////////////////////////////////////////////////
 	
@@ -55,14 +53,14 @@ public class KVServer extends Thread  {
 		this.kvCache = new KVCache(String.valueOf(port),cacheSize, strategy);
 		this.activeThreads=new ArrayList<ClientConnection>();
 		this.serverStatus=ServerStatus.STOPPED;
-		this.ring=new TreeMap<Integer,ServerInfo>();
+		this.ring=null;
 		this.start();
 	}
 	
 	public KVServer(int port) {
 		this.port= port;
 		this.activeThreads=new ArrayList<ClientConnection>();
-		this.serverStatus=ServerStatus.STOPPED;
+		this.serverStatus=ServerStatus.INIT;
 		this.ring=new TreeMap<Integer,ServerInfo>();
 		this.start();
 	}
@@ -78,7 +76,15 @@ public class KVServer extends Thread  {
 					new Thread(connection).start();
 					logger.info("Connected to " + client.getInetAddress().getHostName()+ " on port " + client.getPort());
 				} catch (IOException e) {
-					logger.error("Error! Unable to establish connection. \n", e);
+					if(isRunning()){
+						logger.error("Error! Unable to establish connection. \n", e);
+					}else{
+						logger.info("Shutdown server");
+					}
+				}finally{
+					if(isRunning()){
+						this.shutDown();
+					}
 				}
 			}
 		}
@@ -125,7 +131,11 @@ public class KVServer extends Thread  {
 				new LogSetup("logs/server" + port + ".log", loglevel);
 				new KVServer(port,cacheSize,strategy); //.start();
 				break;
-
+			case 1:
+				int port2 = Integer.parseInt(args[0]);
+				new LogSetup("logs/server" + port2 + ".log", loglevel);
+				new KVServer(port2);
+				break;
 			default:
 				System.out.println("Error! Invalid number of arguments!");
 				System.out.println("Usage: Server <port>!");
@@ -167,25 +177,45 @@ public class KVServer extends Thread  {
 		this.ring=data;
 	}
 	
-	public synchronized void initKVServer(int cacheSize, String strategy,SortedMap<Integer,ServerInfo> data){
+	public synchronized boolean initKVServer(int cacheSize, String strategy,SortedMap<Integer,ServerInfo> data,Range range){
 		this.kvCache=new KVCache(String.valueOf(port), cacheSize, strategy);
-		this.setStatus(ServerStatus.STOPPED);
-	}
-	
-	public synchronized  void stopServer(){
-		this.setStatus(ServerStatus.STOPPED);
-	}
-	
-	public synchronized  void lockWrite(){
-		this.serverStatus=ServerStatus.LOCKED;
-	}
-	
-	public synchronized void unlockWrite(){
-		this.serverStatus=ServerStatus.STARTED;
-	}
-	
-	public synchronized void update (SortedMap<Integer,ServerInfo> data){
 		this.setMetadata(data);
+		this.setRange(range);
+		if(this.getMetadata()==null || this.getRange()==null || 
+				this.getKVCache()==null || this.getStatus()!=ServerStatus.INIT){
+			return false;
+		}
+		this.setStatus(ServerStatus.STOPPED);
+		return true;
+	}
+	
+	public synchronized boolean stopServer(){
+		if(this.getStatus()!=ServerStatus.STARTED){
+			return false;
+		}
+		this.setStatus(ServerStatus.STOPPED);
+		return true;
+	}
+	
+	public synchronized boolean lockWrite(){
+		if(this.getStatus()!=ServerStatus.STARTED){
+			return false;
+		}
+		this.setStatus(ServerStatus.LOCKED);
+		return true;	
+	}
+	
+	public synchronized boolean unlockWrite(){
+		if(this.getStatus()!=ServerStatus.LOCKED){
+			return false;
+		}
+		this.setStatus(ServerStatus.STARTED);
+		return true;
+	}
+	
+	public synchronized void update (SortedMap<Integer,ServerInfo> data,Range r){
+		this.setMetadata(data);
+		this.setRange(r);
 	}
 	
 	public synchronized void shutDown(){
@@ -205,11 +235,25 @@ public class KVServer extends Thread  {
 		//toDo close all sockets;
 	}
 
+	public synchronized boolean startServer(){
+		if(this.getMetadata()==null || this.getRange()==null || 
+				this.getKVCache()==null || this.getStatus()!=ServerStatus.STOPPED){
+			return false;
+		}
+		this.setStatus(ServerStatus.STARTED);
+		return true;
+	}
 
-
-	public boolean inRange(int i) {
-		// TODO Auto-generated method stub
-		return false;
+	public synchronized void setRange(Range r){
+		this.range=r;
+	}
+	
+	public synchronized Range getRange(){
+		return this.range;
+	}
+	
+	public synchronized boolean inRange(int i) {
+		return this.range.isWithin(i);
 	}
 
 

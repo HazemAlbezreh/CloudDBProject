@@ -163,7 +163,14 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 		return result;
 	}
 	
-
+	public int getCacheSize(){
+		return this.cacheSize;
+	}
+	
+	public String getCacheStrategy(){
+		return this.strategy;
+	}
+	
 	public static ECSMessage parseFromString(String source) throws MessageParseException{
 		Range nRange;
 		ServerInfo nServer;

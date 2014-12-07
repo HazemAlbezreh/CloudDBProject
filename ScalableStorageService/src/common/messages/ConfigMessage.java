@@ -7,19 +7,27 @@ public interface ConfigMessage {
 	
     public enum StatusType {
     	INIT,
+    		INIT_SUCCESS,
+    		INIT_FAILURE,
     	START,
-    	START_SUCCESS,
+    		START_SUCCESS,
+    		START_FAILURE,
     	STOP,
-    	STOP_SUCCESS,
-    	SHUT_DOWN,    
-    	lOCK_WRITE,
-    	lOCK_WRITE_SUCCESS,
-    	UN_lOCK_WRITE,
-    	UN_lOCK_WRITE_SUCCESS,
+    		STOP_SUCCESS,
+    		STOP_FAILURE,
+    	LOCK_WRITE,
+    		LOCK_WRITE_SUCCESS,
+    		LOCK_WRITE_FAILURE,
+    	UN_LOCK_WRITE,
+    		UN_LOCK_WRITE_SUCCESS,
+    		UN_LOCK_WRITE_FAILURE,
     	MOVE_DATA,
-    	MOVE_DATA_SUCCESS,
+    		MOVE_DATA_SUCCESS,
+    		MOVE_DATA_FAILURE,
     	UPDATE_META_DATA,
-    	UPDATE_META_DATA_SUCCESS,
+    		UPDATE_META_DATA_SUCCESS,
+    		UPDATE_META_DATA_FAILURE,
+        SHUT_DOWN    
     }
 
 	
