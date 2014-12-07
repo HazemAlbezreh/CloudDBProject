@@ -166,4 +166,7 @@ public class EcsStore implements EcsCommInterface {
 		return running;
 	}
 
+	public SocketWrapper getSocketWrapper(){
+		return this.clientSocket;
+	}
 }

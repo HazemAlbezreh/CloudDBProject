@@ -219,7 +219,8 @@ public class KVServer extends Thread  {
 	}
 	
 	public synchronized void shutDown(){
-		this.serverStatus=ServerStatus.SHUTDOWNED;
+		logger.info("Initiating Shutdown of server");
+		this.setStatus(ServerStatus.SHUTDOWNED);
 		try {
 			serverSocket.close();
 			for(ClientConnection cc : this.activeThreads){
@@ -232,7 +233,6 @@ public class KVServer extends Thread  {
 		} catch (IOException e) {
 			logger.error("Error! " + "Unable to close socket on port: " + port,e);
 		}
-		//toDo close all sockets;
 	}
 
 	public synchronized boolean startServer(){

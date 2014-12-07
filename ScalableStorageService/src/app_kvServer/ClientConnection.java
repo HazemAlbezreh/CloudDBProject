@@ -16,7 +16,7 @@ import consistent_hashing.HashFunction;
 import consistent_hashing.Md5HashFunction;
 import consistent_hashing.Range;
 import socket.SocketWrapper;
-
+import ecs.EcsStore;
 
 /**
  * Represents a connection end point for a particular client that is 
@@ -177,6 +177,7 @@ public class ClientConnection implements Runnable {
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.INIT_FAILURE);
 						}
+						clientSocket.sendMessage(ecsReply);
 						break;
 					case START:
 						result=this.server.startServer();
@@ -185,6 +186,7 @@ public class ClientConnection implements Runnable {
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.START_FAILURE);
 						}
+						clientSocket.sendMessage(ecsReply);
 						break;
 					case STOP:
 						result=this.server.stopServer();
@@ -193,6 +195,7 @@ public class ClientConnection implements Runnable {
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.STOP_FAILURE);
 						}
+						clientSocket.sendMessage(ecsReply);
 						break;
 					case LOCK_WRITE:	
 						result=this.server.lockWrite();
@@ -201,6 +204,7 @@ public class ClientConnection implements Runnable {
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.LOCK_WRITE_FAILURE);
 						}
+						clientSocket.sendMessage(ecsReply);
 						break;
 					case UN_LOCK_WRITE:
 						result=this.server.unlockWrite();
@@ -209,17 +213,43 @@ public class ClientConnection implements Runnable {
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE_FAILURE);
 						}
+						clientSocket.sendMessage(ecsReply);
 						break;
 					case UPDATE_META_DATA:
 						this.server.update(config.getRing(), config.getRange());
 						ecsReply=new ECSMessage(ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS);
+						clientSocket.sendMessage(ecsReply);
 						break;
 					case MOVE_DATA:
 						ServerInfo receipient = config.getServerInfo();
 						Range dataRange=config.getRange();
 						ServerMessage dataMap=new ServerMessage(this.cache.calculateRange(dataRange,this.hashFunction));
+						try{
+							EcsStore ecsStore = new EcsStore(receipient.getServerIP(), receipient.getPort());
+							ecsStore.connect();
+							SocketWrapper target = ecsStore.getSocketWrapper();
+							target.sendMessage(dataMap);
+							ServerMessage recReply=(ServerMessage)target.recieveMesssage();
+							if(recReply.getStatus()==ServerMessage.StatusType.DATA_TRANSFER_SUCCESS){
+								ecsReply=new ECSMessage(ConfigMessage.StatusType.MOVE_DATA_SUCCESS);
+								clientSocket.sendMessage(ecsReply);
+							}else{
+								throw new Exception("KVServer responded with " + recReply.getStatus().toString());
+							}
+						}catch(Exception e){
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.MOVE_DATA_FAILURE);
+							clientSocket.sendMessage(ecsReply);
+							logger.error("Data transfer to KVServer failed with IOException "+e.getMessage());
+						}
+						break;
+					case SHUT_DOWN:
+						this.server.shutDown();
+						break;
+					default:
+						logger.debug("Let's Hope this does not get printed or I forgot a message type");
+						break;
 					}
-					
+		
 					break;
 				default : 
 					logger.debug("Let's Hope this does not get printed");
@@ -227,11 +257,18 @@ public class ClientConnection implements Runnable {
 				}
 			}
 		}catch(Exception e){
-			//TODO HANDLE EXCEPTIONS
+			if(isRunning()){
+				logger.error("Received Exception at ClientConnection "+e.getMessage());
+			}else{
+				logger.error("Received Terminate Thread "+e.getMessage());
+			}
 		}
 	}
 	
-	public void terminateThread() throws IOException{
+	public synchronized void terminateThread() throws IOException{
+		logger.info("Initiating Terminate Thread ");
+		this.running=false;
+		this.clientSocket.disconnect();
 		return;
 	}
 	

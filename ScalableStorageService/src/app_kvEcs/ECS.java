@@ -206,7 +206,7 @@ public class ECS {
 		ECSMessage response = serverSocket.lockWrite();
 		if (response == null) {
 			return false;
-		} else if (response.getStatus() != ConfigMessage.StatusType.lOCK_WRITE_SUCCESS) {
+		} else if (response.getStatus() != ConfigMessage.StatusType.LOCK_WRITE_SUCCESS) {
 			return false;
 		}
 		return lockWriteSuccess;
@@ -218,7 +218,7 @@ public class ECS {
 		ECSMessage response = serverSocket.unLockWrite();
 		if (response == null) {
 			return false;
-		} else if (response.getStatus() != ConfigMessage.StatusType.UN_lOCK_WRITE_SUCCESS) {
+		} else if (response.getStatus() != ConfigMessage.StatusType.UN_LOCK_WRITE_SUCCESS) {
 			return false;
 		}
 		return unLockWriteSuccess;
