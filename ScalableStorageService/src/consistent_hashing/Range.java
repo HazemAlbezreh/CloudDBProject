@@ -33,6 +33,8 @@ public class Range implements  java.io.Serializable{
 		if(this.low < this.high){
 			if (this.low < hash && this.high >= hash)
 				return true;
+		}else if(this.low==this.high){
+			return true;
 		}
 		else{
 			if (this.low < hash || this.high >= hash)

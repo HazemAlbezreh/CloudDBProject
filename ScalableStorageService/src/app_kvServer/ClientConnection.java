@@ -260,7 +260,7 @@ public class ClientConnection implements Runnable {
 			if(isRunning()){
 				logger.error("Received Exception at ClientConnection "+e.getMessage());
 			}else{
-				logger.error("Received Terminate Thread "+e.getMessage());
+				logger.error("Received Terminate Thread " + e.getMessage());
 			}
 		}
 	}
