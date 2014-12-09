@@ -59,6 +59,9 @@ public class ClientConnection implements Runnable {
 										+ clientSocket.getSocket().getLocalPort()));
 			while(isRunning()){
 				Message message=clientSocket.recieveMesssage();
+				if(message == null){
+					continue;				//IF MESSAGE PARSE FAILS THEN WAIT NEXT MESSAGE
+				}
 				switch (message.getMessageType()){
 				case KVMESSAGE:
 					if(server.getStatus()==ServerStatus.STOPPED){
@@ -236,6 +239,7 @@ public class ClientConnection implements Runnable {
 							}else{
 								throw new Exception("KVServer responded with " + recReply.getStatus().toString());
 							}
+							target.disconnect();
 						}catch(Exception e){
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.MOVE_DATA_FAILURE);
 							clientSocket.sendMessage(ecsReply);
@@ -262,6 +266,7 @@ public class ClientConnection implements Runnable {
 			}else{
 				logger.error("Received Terminate Thread " + e.getMessage());
 			}
+			this.clientSocket.disconnect();
 		}
 	}
 	

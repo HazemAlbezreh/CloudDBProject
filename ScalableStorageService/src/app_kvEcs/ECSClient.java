@@ -127,7 +127,7 @@ public class ECSClient {
 	private void addServer(String cacheSize, String displacementStrategy) throws IOException{
 		int cache=Integer.parseInt(cacheSize);
 		
-		ecs.addNode(cache,displacementStrategy);
+		success=ecs.addNode(cache,displacementStrategy);
 		if(success){
 			System.out.println(PROMPT+"A node has been added!");
 		}

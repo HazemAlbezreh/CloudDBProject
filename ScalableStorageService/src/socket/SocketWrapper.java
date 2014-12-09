@@ -226,7 +226,8 @@ public class SocketWrapper {
 //			e.printStackTrace();
 			disconnect();
 		} catch (MessageParseException e){
-			logger.debug("Unknown Message Format received : "+e.getMessage());		
+			logger.debug("Unknown Message Format received : "+e.getMessage());	
+			message=null;
 		}
 		return message;
 	}
