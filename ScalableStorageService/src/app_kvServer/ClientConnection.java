@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.*;
@@ -226,16 +227,23 @@ public class ClientConnection implements Runnable {
 					case MOVE_DATA:
 						ServerInfo receipient = config.getServerInfo();
 						Range dataRange=config.getRange();
-						ServerMessage dataMap=new ServerMessage(this.cache.calculateRange(dataRange,this.hashFunction));
+						Map<String,String> dataSet=this.cache.calculateRange(dataRange,this.hashFunction); //CALCULATE RANGE TO TRANSFER
+						ServerMessage dataMap=new ServerMessage(dataSet);
 						try{
 							EcsStore ecsStore = new EcsStore(receipient.getServerIP(), receipient.getPort());
 							ecsStore.connect();
 							SocketWrapper target = ecsStore.getSocketWrapper();
 							target.sendMessage(dataMap);
 							ServerMessage recReply=(ServerMessage)target.recieveMesssage();
-							if(recReply.getStatus()==ServerMessage.StatusType.DATA_TRANSFER_SUCCESS){
-								ecsReply=new ECSMessage(ConfigMessage.StatusType.MOVE_DATA_SUCCESS);
+							if(recReply.getStatus()==ServerMessage.StatusType.DATA_TRANSFER_SUCCESS){	//IF SUCCESSFUL
+								ecsReply=new ECSMessage(ConfigMessage.StatusType.MOVE_DATA_SUCCESS);	
 								clientSocket.sendMessage(ecsReply);
+								ArrayList<String> keys= new ArrayList<String>();						//CREATE A LIST OF THE KEYS IN THE SENT MAP
+								for(String keytemp :dataSet.keySet()){				
+									keys.add(keytemp);
+								}
+								this.cache.deleteDatasetEntry(keys);									//DELETE KEYS THAT WERE TRANSFERED
+								logger.info("Move data sent successfully ... Removing keys from cache");
 							}else{
 								throw new Exception("KVServer responded with " + recReply.getStatus().toString());
 							}
