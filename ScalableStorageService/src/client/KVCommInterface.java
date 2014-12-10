@@ -50,17 +50,9 @@ public interface KVCommInterface {
 	
 	
 	
-	public ECSMessage updateMetaData(SortedMap<Integer,ServerInfo> ring);
+	public void updateMetaData(SortedMap<Integer,ServerInfo> ring);
 	
-	public ECSMessage start();
 	
-	public ECSMessage stop();
-	
-	public ECSMessage lockWrite();
-	
-	public ECSMessage unLockWrite();
-	
-	public ECSMessage moveData(Range range,ServerInfo targetServer);
 	
 	public void shutDown();
 }

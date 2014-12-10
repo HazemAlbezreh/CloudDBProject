@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import consistent_hashing.HashFunction;
+import consistent_hashing.Range;
 
 
  
@@ -41,7 +42,7 @@ public class KVCache  {
 		this.serverName = serverName;
 	}
 	
-	public HashMap<String,String> calculateRange(int low, int high, HashFunction hashfunct){
+	public synchronized Map<String,String> calculateRange(int low, int high, HashFunction hashfunct){
 		String line;
 		HashMap<String,String> outOfRange= new HashMap<String,String>();
 		int hashvalue = 0;
@@ -50,6 +51,7 @@ public class KVCache  {
 			while ((line = br.readLine()) != null) {
 				String [] str = line.split(",");
 				hashvalue = hashfunct.hash(str[0]);
+				
 				if(!(hashvalue >= low && hashvalue < high)){
 					outOfRange.put(str[0], str[1]);
 				}
@@ -61,8 +63,32 @@ public class KVCache  {
 			return null;
 		}
 	}
+
 	
-	public String processPutRequest(HashMap<String,String> values){
+	public synchronized Map<String,String> calculateRange(Range range, HashFunction hashfunct){
+		String line;
+		HashMap<String,String> outOfRange= new HashMap<String,String>();
+		boolean inRange;
+		int hashvalue = 0;
+		try{
+			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
+			while ((line = br.readLine()) != null) {
+				String [] str = line.split(",");
+				hashvalue = hashfunct.hash(str[0]);
+				inRange=range.isWithin(hashvalue);
+				if(!inRange){
+					outOfRange.put(str[0], str[1]);
+				}
+			}
+			br.close();
+			return outOfRange;
+		}
+		catch(Exception e){
+			return null;
+		}
+	}
+	
+	public synchronized String processPutRequest(Map<String,String> values){
 		String updateResult = "";
 		Set s = values.entrySet();
 		MapValue mp = null;
@@ -103,7 +129,7 @@ public class KVCache  {
 	}
 	
 	
-	public String processGetRequest(String key){
+	public synchronized String processGetRequest(String key){
 		//check the cache first
 		String response = checkGetHitOrMiss(key);
 		if(response != null )
@@ -131,7 +157,7 @@ public class KVCache  {
 	}
 	
 	
-	public String updateDatasetEntry(String key,String newValue){
+	public synchronized String updateDatasetEntry(String key,String newValue){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String updateResult = "";
@@ -177,7 +203,7 @@ public class KVCache  {
 		return updateResult;
 	}
 	
-	public String deleteDatasetEntry(ArrayList<String> keys){
+	public synchronized String deleteDatasetEntry(ArrayList<String> keys){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String deleteResult = "";
@@ -223,6 +249,9 @@ public class KVCache  {
 	}
 	
 	
+	
+	
+	
 /*	public String processPutRequest(String key, String value){
 		String updateResult = updateDatasetEntry(key, value);
 		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
@@ -244,7 +273,7 @@ public class KVCache  {
 		}
 	}*/
 	
-	public String checkGetHitOrMiss(String key){
+	public synchronized String checkGetHitOrMiss(String key){
 		String val = "";
 		if(cache.containsKey(key)){
 			val = cache.get(key).getValue();
@@ -256,7 +285,7 @@ public class KVCache  {
 			return null;
 	}
 
-	public void updateCache(String key){
+	public synchronized void updateCache(String key){
 		switch(strategy){
 			case "FIFO":{
 				break;
@@ -290,7 +319,7 @@ public class KVCache  {
 	}
 
 	
-	public String findMinScore(String key){
+	public synchronized String findMinScore(String key){
 		Set st = cache.entrySet();
 		Iterator itr = st.iterator();
 		MapValue mapval = new MapValue();
@@ -312,7 +341,7 @@ public class KVCache  {
 	}
 
 	
-	public void addCacheEntry(String key, String value){
+	public synchronized void addCacheEntry(String key, String value){
 		MapValue mp = new MapValue();
 		switch(strategy){
 			case "FIFO":{
@@ -376,7 +405,7 @@ public class KVCache  {
 		}
 	}
 	
-	public LinkedHashMap<String, MapValue> getCache(){
+	public synchronized LinkedHashMap<String, MapValue> getCache(){
 		return this.cache;
 	}
 }

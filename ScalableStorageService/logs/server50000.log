@@ -1,0 +1,48 @@
+2014-12-10 14:58:35,764 INFO  [Thread-0] root: Initialize server ...
+2014-12-10 14:58:35,769 INFO  [Thread-0] root: Server listening on port: 50000
+2014-12-10 15:26:32,558 INFO  [Thread-0] root: Initialize server ...
+2014-12-10 15:26:32,561 INFO  [Thread-0] root: Server listening on port: 50000
+2014-12-10 15:28:37,259 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:29968>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50000'
+2014-12-10 15:28:37,267 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 29968
+2014-12-10 15:28:37,267 INFO  [Thread-0] root: Initiating Shutdown of server
+2014-12-10 15:28:37,268 INFO  [Thread-0] root: Initiating Terminate Thread 
+2014-12-10 15:28:37,268 INFO  [Thread-0] socket.SocketWrapper: Client Disconnected 
+2014-12-10 15:28:37,268 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-10 15:28:37,268 INFO  [Thread-0] root: Server stopped.
+2014-12-10 15:28:37,269 ERROR [Thread-1] root: Received Terminate Thread null
+2014-12-10 15:30:17,227 INFO  [Thread-0] root: Initialize server ...
+2014-12-10 15:30:17,231 INFO  [Thread-0] root: Server listening on port: 50000
+2014-12-10 15:33:21,862 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:29999>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50000'
+2014-12-10 15:33:21,866 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 29999
+2014-12-10 15:33:21,866 INFO  [Thread-0] root: Initiating Shutdown of server
+2014-12-10 15:33:21,866 INFO  [Thread-0] root: Initiating Terminate Thread 
+2014-12-10 15:33:21,866 INFO  [Thread-0] socket.SocketWrapper: Client Disconnected 
+2014-12-10 15:33:21,866 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-10 15:33:21,866 INFO  [Thread-0] root: Server stopped.
+2014-12-10 15:33:21,867 ERROR [Thread-1] root: Received Terminate Thread null
+2014-12-10 15:35:55,240 INFO  [Thread-0] root: Initialize server ...
+2014-12-10 15:35:55,244 INFO  [Thread-0] root: Server listening on port: 50000
+2014-12-10 15:37:00,584 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:30016>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50000'
+2014-12-10 15:37:00,589 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 30016
+2014-12-10 15:37:00,591 INFO  [Thread-0] root: Initiating Shutdown of server
+2014-12-10 15:37:00,591 INFO  [Thread-0] root: Initiating Terminate Thread 
+2014-12-10 15:37:00,591 INFO  [Thread-0] socket.SocketWrapper: Client Disconnected 
+2014-12-10 15:37:00,591 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-10 15:37:00,591 INFO  [Thread-0] root: Server stopped.
+2014-12-10 15:37:00,591 ERROR [Thread-1] root: Received Terminate Thread null
+2014-12-10 16:45:22,857 INFO  [Thread-0] root: Initialize server ...
+2014-12-10 16:45:22,861 INFO  [Thread-0] root: Server listening on port: 50000
+2014-12-10 16:49:06,609 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 30286
+2014-12-10 16:49:06,609 INFO  [Thread-0] root: Initiating Shutdown of server
+2014-12-10 16:49:06,610 INFO  [Thread-0] root: Initiating Terminate Thread 
+2014-12-10 16:49:06,610 INFO  [Thread-0] socket.SocketWrapper: Client Disconnected 
+2014-12-10 16:49:06,610 INFO  [Thread-0] root: Server stopped.
+2014-12-10 16:49:32,963 ERROR [Thread-1] root: Received Terminate Thread null
+2014-12-10 16:50:47,970 INFO  [Thread-0] root: Initialize server ...
+2014-12-10 16:50:47,974 INFO  [Thread-0] root: Server listening on port: 50000
+2014-12-10 16:53:04,317 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 30314
+2014-12-10 16:53:04,317 INFO  [Thread-0] root: Initiating Shutdown of server
+2014-12-10 16:53:04,317 INFO  [Thread-0] root: Initiating Terminate Thread 
+2014-12-10 16:53:04,317 INFO  [Thread-0] socket.SocketWrapper: Client Disconnected 
+2014-12-10 16:53:04,317 INFO  [Thread-0] root: Server stopped.
+2014-12-10 16:54:00,284 ERROR [Thread-1] root: Received Terminate Thread null

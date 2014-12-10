@@ -10,16 +10,11 @@ import logger.LogSetup;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import common.messages.KVMessage;
-import common.messages.TextMessage;
-
-
-import client.ClientSocketListener;
 import client.KVStore;
 
 
 
-public class KVClient implements ClientSocketListener {
+public class KVClient {
 
 	private static Logger logger = Logger.getRootLogger();
 	private static final String PROMPT = "EchoClient> ";
@@ -66,6 +61,7 @@ public class KVClient implements ClientSocketListener {
 		if(tokens[0].equals("quit")) {	
 			stop = true;
 			disconnect();
+			
 			System.out.println(PROMPT + "Application exit!");
 
 		} else if (tokens[0].equals("connect")){
@@ -74,10 +70,11 @@ public class KVClient implements ClientSocketListener {
 					serverAddress = tokens[1];
 					serverPort = Integer.parseInt(tokens[2]);
 					connect(serverAddress, serverPort);
-				} catch(NumberFormatException nfe) {
+				}catch(NumberFormatException nfe) {
 					printError("No valid address. Port must be a number!");
 					logger.info("Unable to parse argument <port>", nfe);
-				} catch (UnknownHostException e) {
+				}
+				catch (UnknownHostException e) {
 					printError("Unknown Host!");
 					logger.info("Unknown Host!", e);
 				} catch (IOException e) {
@@ -121,7 +118,12 @@ public class KVClient implements ClientSocketListener {
 				} catch (IOException e) {
 					printError("Could not execute put command!");
 					logger.warn("Could not execute put command!", e);
+				}catch (NullPointerException ne){
+					printError("You must be connected to a server first!");
+					logger.warn("You must be connected to a server first!", ne);
+
 				}
+				
 			}
 			else {
 				printError("Invalid number of parameters!");
@@ -135,6 +137,10 @@ public class KVClient implements ClientSocketListener {
 				} catch (IOException e) {
 					printError("Could not execute get command!");
 					logger.warn("Could not execute get command!", e);
+				}catch (NullPointerException ne){
+					printError("You must be connected to a server first!");
+					logger.warn("You must be connected to a server first!", ne);
+
 				}
 			}
 			else{
@@ -182,7 +188,6 @@ public class KVClient implements ClientSocketListener {
 	private void connect(String address, int port) 
 			throws Exception {
 		client = new KVStore(address, port);
-		client.addListener(this);
 		client.connect();
 	}
 
@@ -278,57 +283,7 @@ public class KVClient implements ClientSocketListener {
 
 	
 	
-	/** Functions for the different types of messages that client receives from the server
-	 * 
-	 */
-	@Override
-	public void handleNewMessage(TextMessage msg) {
-		if(!stop) {
-			System.out.println(msg.getMsg());
-		}
-	}
-
-	@Override
-	public void handleNewPostKVMessage(KVMessage msg) {
-		if(!stop) {
-			if (msg.getStatus().equals("PUT_ERROR")){
-				System.out.println("Your request was not successful!");				
-			}
-			else{
-				System.out.println(msg.getStatus().name()+"  < "+msg.getKey()+","+msg.getValue()+" >");
-			}
-		}
-	}
 
 
-	@Override
-	public void handleNewGetKVMessage(KVMessage msg) {
-		if(!stop) {
-			if (msg.getStatus().equals("GET_ERROR")){
-				System.out.println("Tuple not found!");				
-			}
-			else{
-				System.out.println(msg.getStatus()+"  < "+msg.getKey()+","+msg.getValue()+" >");
-			}
-		}
-	}
-
-
-	@Override
-	public void handleStatus(SocketStatus status) {
-		if(status == SocketStatus.CONNECTED) {
-
-		} else if (status == SocketStatus.DISCONNECTED) {
-			System.out.print(PROMPT);
-			System.out.println("Connection terminated: " 
-					+ serverAddress + " / " + serverPort);
-
-		} else if (status == SocketStatus.CONNECTION_LOST) {
-			System.out.println("Connection lost: " 
-					+ serverAddress + " / " + serverPort);
-			System.out.print(PROMPT);
-		}
-
-	}
 
 }

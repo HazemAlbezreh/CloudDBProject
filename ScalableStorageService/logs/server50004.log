@@ -1,0 +1,10 @@
+2014-12-10 15:27:06,040 INFO  [Thread-0] root: Initialize server ...
+2014-12-10 15:27:06,043 INFO  [Thread-0] root: Server listening on port: 50004
+2014-12-10 15:28:37,284 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:29969>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50004'
+2014-12-10 15:28:37,289 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 29969
+2014-12-10 15:28:37,289 INFO  [Thread-0] root: Initiating Shutdown of server
+2014-12-10 15:28:37,289 INFO  [Thread-0] root: Initiating Terminate Thread 
+2014-12-10 15:28:37,289 INFO  [Thread-0] socket.SocketWrapper: Client Disconnected 
+2014-12-10 15:28:37,290 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-10 15:28:37,290 INFO  [Thread-0] root: Server stopped.
+2014-12-10 15:28:37,290 ERROR [Thread-1] root: Received Terminate Thread null
