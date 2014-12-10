@@ -80,11 +80,7 @@ public class KVServer extends Thread  {
 						logger.error("Error! Unable to establish connection. \n", e);
 					}else{
 						logger.info("Shutdown server");
-					}
-				}finally{
-					if(isRunning()){
-						this.shutDown();
-					}
+					}					
 				}
 			}
 		}

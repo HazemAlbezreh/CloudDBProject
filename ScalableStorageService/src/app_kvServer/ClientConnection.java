@@ -31,7 +31,6 @@ public class ClientConnection implements Runnable {
 	private static Logger logger = Logger.getRootLogger();
 	private KVServer server;
 	private SocketWrapper clientSocket;
-	private KVCache cache;
 	private boolean running;
 	private HashFunction hashFunction;
 
@@ -43,7 +42,6 @@ public class ClientConnection implements Runnable {
 	public ClientConnection(Socket clientSocket,KVServer server) {
 		this.clientSocket = new SocketWrapper(clientSocket);
 		this.server = server;
-		this.cache=server.getKVCache();
 		this.running=true;
 		this.hashFunction=Md5HashFunction.getInstance();
 	}
@@ -84,7 +82,7 @@ public class ClientConnection implements Runnable {
 							reply= new ClientMessage(this.server.getMetadata());
 							this.clientSocket.sendMessage(reply);
 						}
-						value = cache.processGetRequest(cm.getKey());
+						value = this.server.getKVCache().processGetRequest(cm.getKey());
 						if(value == null){										
 							replyStatus=KVMessage.StatusType.GET_ERROR;
 						}else{
@@ -95,6 +93,7 @@ public class ClientConnection implements Runnable {
 						clientSocket.sendMessage(reply);
 						break;		
 					case PUT:
+						key = cm.getKey();
 						if(server.getStatus()==ServerStatus.LOCKED){					//WRITE LOCK
 							reply=new ClientMessage(StatusType.SERVER_WRITE_LOCK);
 							clientSocket.sendMessage(reply);
@@ -107,7 +106,7 @@ public class ClientConnection implements Runnable {
 							if(value==null){		//delete key
 								ArrayList<String> l=new ArrayList<String>();
 								l.add(key);
-								replyStatus=KVMessage.StatusType.valueOf(cache.deleteDatasetEntry(l));
+								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().deleteDatasetEntry(l));
 								if(replyStatus==StatusType.DELETE_ERROR){
 									logger.info("Delete is not successful");
 									reply=new ClientMessage(replyStatus);
@@ -120,7 +119,7 @@ public class ClientConnection implements Runnable {
 							}else{
 								HashMap<String,String> h=new HashMap<String,String>();
 								h.put(key, value);
-								replyStatus=KVMessage.StatusType.valueOf(cache.processPutRequest(h));
+								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(h));
 								if(replyStatus==StatusType.PUT_SUCCESS){ 		//PUT SUCCESS
 									logger.info("Put is successful");
 									reply=new ClientMessage(key,value,replyStatus);
@@ -150,7 +149,7 @@ public class ClientConnection implements Runnable {
 					switch(sm.getStatus()){
 					case DATA_TRANSFER:
 						Map<String,String> h =sm.getData();
-						String result=cache.processPutRequest(h);
+						String result=this.server.getKVCache().processPutRequest(h);
 						if(result.equals("PUT_ERROR")){
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
 							this.clientSocket.sendMessage(serverReply);
@@ -227,7 +226,7 @@ public class ClientConnection implements Runnable {
 					case MOVE_DATA:
 						ServerInfo receipient = config.getServerInfo();
 						Range dataRange=config.getRange();
-						Map<String,String> dataSet=this.cache.calculateRange(dataRange,this.hashFunction); //CALCULATE RANGE TO TRANSFER
+						Map<String,String> dataSet=this.server.getKVCache().calculateRange(dataRange,this.hashFunction); //CALCULATE RANGE TO TRANSFER
 						ServerMessage dataMap=new ServerMessage(dataSet);
 						try{
 							EcsStore ecsStore = new EcsStore(receipient.getServerIP(), receipient.getPort());
@@ -242,7 +241,7 @@ public class ClientConnection implements Runnable {
 								for(String keytemp :dataSet.keySet()){				
 									keys.add(keytemp);
 								}
-								this.cache.deleteDatasetEntry(keys);									//DELETE KEYS THAT WERE TRANSFERED
+								this.server.getKVCache().deleteDatasetEntry(keys);									//DELETE KEYS THAT WERE TRANSFERED
 								logger.info("Move data sent successfully ... Removing keys from cache");
 							}else{
 								throw new Exception("KVServer responded with " + recReply.getStatus().toString());
