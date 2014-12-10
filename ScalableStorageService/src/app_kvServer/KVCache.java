@@ -16,7 +16,7 @@ import java.util.Set;
 import consistent_hashing.HashFunction;
 
 
-
+ 
 public class KVCache  {
 	
 	
@@ -141,8 +141,6 @@ public class KVCache  {
 			cache.put(key, entry);
 				updateCache(key);
 		}
-		
-		
 		
 		try{
 			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
