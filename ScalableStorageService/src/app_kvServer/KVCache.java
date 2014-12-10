@@ -118,6 +118,7 @@ public class KVCache  {
 		int cachCount = 0;
 			try {
 				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt",true));
+				itr= s.iterator();
 				while(itr.hasNext()){
 					Map.Entry ent = (Map.Entry)itr.next();
 					key = ((String)ent.getKey());
@@ -180,7 +181,9 @@ public class KVCache  {
 		try{
 			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
 			String line = "";
+		//	boolean emptyFile= true;
 			while ((line = br.readLine()) != null) {
+				//emptyFile=false;
 				String [] str = line.split(",");
 				if(str[0].equals(key)){
 					updateResult = "PUT_UPDATE";
@@ -189,6 +192,7 @@ public class KVCache  {
 				else
 					sbld.append(line + newline);
 			}
+	//		if (emptyFile)
 		}
 		catch(IOException e){
 			e.printStackTrace();

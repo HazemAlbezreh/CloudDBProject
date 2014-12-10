@@ -87,7 +87,6 @@ public class ECS {
 	public boolean initService(int numberOfNodes,int cacheSize,String strategy) {
 		if (numberOfNodes <= this.getInActiveServers().size()) {
 			runFirstServer();
-			// int[] arrayList = new int[] { 2, 5 };
 			Random random = new Random();
 			for (int i = 0; i < numberOfNodes - 1; i++) {
 				int randomIndex = random.nextInt(inActiveServers.size());// arrayList[i];
@@ -101,7 +100,7 @@ public class ECS {
 
 			boolean result;
 			result = this.connectToActiveServers();
-			result &= this.updateMetadata();
+			result &= this.initServers(cacheSize,strategy);
 			return result;
 
 		} else {
@@ -365,6 +364,8 @@ public class ECS {
 		args[0] = "ecs.config";
 		ECS application = new ECS(args[0]);
 		application.initService(1,10,"FIFO");
+		application.start();
+	//	application.addNode(10, "FIFO");
 		application.getInActiveServers();
 	}
 
