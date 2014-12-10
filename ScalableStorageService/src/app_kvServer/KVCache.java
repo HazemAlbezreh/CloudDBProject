@@ -20,7 +20,6 @@ import consistent_hashing.Range;
  
 public class KVCache  {
 	
-	
 	private LinkedHashMap<String, MapValue> cache;
 	private int cachesize;
 	private String strategy;
@@ -42,7 +41,7 @@ public class KVCache  {
 		this.serverName = serverName;
 	}
 	
-	public synchronized Map<String,String> calculateRange(int low, int high, HashFunction hashfunct){
+	public synchronized Map<String,String> findValuesOutOfRange(int low, int high, HashFunction hashfunct){
 		String line;
 		HashMap<String,String> outOfRange= new HashMap<String,String>();
 		int hashvalue = 0;
@@ -65,7 +64,7 @@ public class KVCache  {
 	}
 
 	
-	public synchronized Map<String,String> calculateRange(Range range, HashFunction hashfunct){
+	public synchronized Map<String,String> findValuesOutOfRange(Range range, HashFunction hashfunct){
 		String line;
 		HashMap<String,String> outOfRange= new HashMap<String,String>();
 		boolean inRange;
@@ -88,19 +87,34 @@ public class KVCache  {
 		}
 	}
 	
-	public synchronized String processPutRequest(Map<String,String> values){
-		String updateResult = "";
+	
+	public synchronized String processPutRequest(String key, String value){
+		String updateResult = updateDatasetEntry(key, value);
+		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
+			try {
+				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt",true));
+				pr.println(key + "," + value);
+				pr.close();
+				addCacheEntry(key, value);
+				return "PUT_SUCCESS";
+			} 
+			catch(IOException e) {
+				e.printStackTrace();
+				return "PUT_ERROR";
+			}
+		}
+		else{
+			//addCacheEntry(key, value);
+			return "PUT_UPDATE";
+		}
+	}
+	
+		
+	public synchronized String processMassPutRequest(Map<String,String> values){
 		Set s = values.entrySet();
 		MapValue mp = null;
 		Iterator itr = s.iterator();
-		String key,value ;
-		if(values.size() == 1){
-			Map.Entry ent = (Map.Entry)itr.next();
-			key = ((String)ent.getKey());
-			value = ((String)ent.getValue());
-			updateResult = updateDatasetEntry(key, value);
-		}
-		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
+		String key,value;
 		int cachCount = 0;
 			try {
 				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt",true));
@@ -121,11 +135,6 @@ public class KVCache  {
 				return "PUT_ERROR";
 			}
 		 return "PUT_SUCCESS";
-		}
-		else{
-			//addCacheEntry(key, value);
-			return "PUT_UPDATE";
-		}
 	}
 	
 	
@@ -202,6 +211,48 @@ public class KVCache  {
 			updateResult = "UPDATE_NOT_PERFORMD";
 		return updateResult;
 	}
+	
+
+	public synchronized String deleteEntry(String key){
+		StringBuilder sbld = new StringBuilder();
+		String newline = System.getProperty("line.separator");
+		String deleteResult = "";
+		if(cache.containsKey(key))
+			cache.remove(key);
+		try{
+			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
+			String line = "";
+			while ((line = br.readLine()) != null) {
+				String [] str = line.split(",");
+				if(str[0].equals(key)){
+					deleteResult = "DELETE_SUCCESS";
+					continue;
+				}
+				else
+					sbld.append(line + newline);
+			}
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		
+		if(deleteResult.equals("DELETE_SUCCESS")){
+			try{
+				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt"));
+				pr.print(sbld);
+				pr.close();
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			
+			}
+		}
+		else
+			deleteResult = "DELETE_ERROR";
+		
+		return deleteResult;
+	}
+	
 	
 	public synchronized String deleteDatasetEntry(ArrayList<String> keys){
 		StringBuilder sbld = new StringBuilder();
