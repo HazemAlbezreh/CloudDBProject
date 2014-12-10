@@ -10,7 +10,6 @@ import logger.LogSetup;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import client.KVStore;
 
 
 public class ECSClient {
@@ -43,19 +42,24 @@ public class ECSClient {
 
 	private void handleCommand(String cmdLine) throws Exception {
 		String[] tokens = cmdLine.split("\\s+");
-		String key;
-		String value;
 
 		if(tokens[0].equals("quit")) {	
 			stop = true;
 			shutDown();
 			System.out.println(PROMPT + "Application exit!");
 
-		} else if (tokens[0].equals("start")){
+		}else if (tokens[0].equals("init")){
+			if(tokens.length ==3){
+				init(tokens[1],tokens[2]);
+			}
+			else{
+				printError("Invalid number of parameters!");
 
+			}
+		}
+		else if (tokens[0].equals("start")){
 			start();
-
-		}  else if(tokens[0].equals("stop")) {
+		}else if(tokens[0].equals("stop")) {
 			try{
 				stop();
 			}
@@ -83,7 +87,6 @@ public class ECSClient {
 				try{
 					addServer(tokens[1],tokens[2]);
 				}
-
 				catch(NullPointerException e){
 					printError("You must type first start command");
 				}
@@ -129,11 +132,12 @@ public class ECSClient {
 		
 		success=ecs.addNode(cache,displacementStrategy);
 		if(success){
+			logger.debug("A node has been added! ");
 			System.out.println(PROMPT+"A node has been added!");
 		}
 		else{
 			System.out.println(PROMPT+"There was an error adding the node!");
-
+			logger.debug("There was an error adding the node! ");
 		}
 	}
 
@@ -141,22 +145,38 @@ public class ECSClient {
 	private void stop() throws IOException{
 		success=ecs.stop();
 		if(success){
+			logger.debug("All nodes have been stopped! ");
 			System.out.println(PROMPT+"All nodes have been stopped!");
 		}
 		else{
+			logger.debug("There was an error stopping all nodes! ");
 			System.out.println(PROMPT+"There was an error stopping all nodes!");
 
 		}
 	}
 
-
-	private void start() {
+//TODO pass arguments in ecs
+	private void init(String cacheSize, String displacementStrategy) {
 		ecs = ECS.getInstance(filepath);
+		if (ecs==null){
+			System.out.println(PROMPT+"Error in initialization!");
+			logger.debug("There was an error initiating ECS! ");
+		}
+		else{
+			System.out.println(PROMPT+"ECS is initialized!");
+			logger.debug("ECS is initialized!! ");
+
+		}
+	}
+	
+	private void start() {
 		success=ecs.start();
 		if(success){
+			logger.debug("All nodes have been started!! ");
 			System.out.println(PROMPT+"All nodes have been started!");
 		}
 		else{
+			logger.debug("There was an error starting all nodes! ");
 			System.out.println(PROMPT+"There was an error starting all nodes!");
 
 		}
