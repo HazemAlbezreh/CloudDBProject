@@ -22,10 +22,9 @@ public interface EcsCommInterface {
 	 */
 	public void disconnect();
 
+	public ECSMessage initServer(SortedMap<Integer, ServerInfo> ring,Range range,int cacheSize,String strategy);
 	
-	
-	
-	public ECSMessage updateMetaData(SortedMap<Integer,ServerInfo> ring);
+	public ECSMessage updateMetaData(SortedMap<Integer,ServerInfo> ring,Range range);
 	
 	public ECSMessage start();
 	

@@ -24,6 +24,7 @@ public class ECS {
 	private HashMap<ServerInfo, EcsStore> serversConnection;
 	private static ECS instance;
 	private static Logger logger = Logger.getLogger(ECS.class);
+	private static final String path=System.getProperty("user.dir");
 
 	public static ECS getInstance(String filePath) {
 		if (instance == null) {
@@ -76,14 +77,14 @@ public class ECS {
 	
 	
 	private void runFirstServer() {
-		this.getInActiveServers().get(0).runServerRemotly("Path");
+		//TODO this.getInActiveServers().get(0).runServerRemotly(path);
 		this.getActiveServers().add(this.getInActiveServers().get(0));
 		this.getInActiveServers().remove(0);
 	}
 
 	
 	
-	public boolean initService(int numberOfNodes) {
+	public boolean initService(int numberOfNodes,int cacheSize,String strategy) {
 		if (numberOfNodes <= this.getInActiveServers().size()) {
 			runFirstServer();
 			// int[] arrayList = new int[] { 2, 5 };
@@ -91,8 +92,7 @@ public class ECS {
 			for (int i = 0; i < numberOfNodes - 1; i++) {
 				int randomIndex = random.nextInt(inActiveServers.size());// arrayList[i];
 				ServerInfo server = this.getInActiveServers().get(randomIndex);
-				//TODO change path
-				server.runServerRemotly("Path");
+				server.runServerRemotly(path);
 				this.getInActiveServers().remove(randomIndex);
 				this.getActiveServers().add(server);
 			}
@@ -135,6 +135,39 @@ public class ECS {
 	}
 	
 	
+	private boolean initServers(int cacheSize,String strategy) {
+		boolean initAllSuccess = true;
+		for (ServerInfo server : this.getActiveServers()) {
+			if (!initServer(server,cacheSize,strategy))
+				return false;
+		}
+		return initAllSuccess;
+	}
+	
+	private boolean initServer(ServerInfo server,int cacheSize,String strategy) {
+		boolean initSuccess = true;
+		EcsStore serverSocket = this.getServersConnection().get(server);
+		Range range= this.getServerRange(server);
+		ECSMessage response = serverSocket.initServer(this.consistentHash.getMetaData()
+				,range,cacheSize,strategy);
+		if (response == null) {
+			return false;
+		} else if (response.getStatus() != ConfigMessage.StatusType.INIT_SUCCESS) {
+			return false;
+		}
+		return initSuccess;
+	}
+	
+	private Range getServerRange(ServerInfo server){
+		int key = this.consistentHash.getHashFunction().hash(server);
+		ServerInfo predecessor = CommonFunctions.getPredecessorNode(key,
+				this.consistentHash.getMetaData());
+		int preKey = this.consistentHash.getHashFunction().hash(predecessor);
+		return new Range(preKey, key);		
+	}
+
+	
+	
 	private boolean updateMetadata() {
 		boolean updateAllSuccess = true;
 		for (ServerInfo server : this.getActiveServers()) {
@@ -147,8 +180,9 @@ public class ECS {
 	private boolean updateServerMetadata(ServerInfo server) {
 		boolean updateSuccess = true;
 		EcsStore serverSocket = this.getServersConnection().get(server);
+		Range range= this.getServerRange(server);
 		ECSMessage response = serverSocket.updateMetaData(this.consistentHash
-				.getMetaData());
+				.getMetaData(),range);
 		if (response == null) {
 			return false;
 		} else if (response.getStatus() != ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS) {
@@ -243,7 +277,7 @@ public class ECS {
 	}
 	
 	
-	public boolean addNode(int cacheSize,String startegy) {
+	public boolean addNode(int cacheSize,String strategy) {
 		// If there are idle servers in the repository, randomly pick one of
 		// them
 		Random random = new Random();
@@ -251,7 +285,7 @@ public class ECS {
 		ServerInfo addedNode = this.getInActiveServers().get(randomIndex);
 		// send an SSH call to invoke the KVServer process.
 
-		addedNode.runServerRemotly("path");
+		addedNode.runServerRemotly(path);
 		this.getInActiveServers().remove(randomIndex);
 		this.getActiveServers().add(addedNode);
 		// Determine the position of the new storage
@@ -265,7 +299,8 @@ public class ECS {
 		// start it.
 		this.connectToServer(addedNode);
 		EcsStore addedServerSocket = this.getServersConnection().get(addedNode);
-		addedServerSocket.updateMetaData(this.consistentHash.getMetaData());
+		Range addedServerRange=this.getServerRange(addedNode);
+		addedServerSocket.initServer(this.consistentHash.getMetaData(), addedServerRange, cacheSize, strategy);
 		addedServerSocket.start();
 		// Set write lock (lockWrite()) on the successor node
 		this.lockWrite(successor);
@@ -280,7 +315,6 @@ public class ECS {
 		this.updateMetadata();
 		// Release the write lock on the successor node
 		this.unLockWrite(successor);
-		// TODO REMOVE UNHANDELD DATA ON THE SUCCESSOR
 
 		return true;
 
@@ -330,6 +364,7 @@ public class ECS {
 		args = new String[2];
 		args[0] = "ecs.config";
 		ECS application = new ECS(args[0]);
+		application.initService(1,10,"FIFO");
 		application.getInActiveServers();
 	}
 

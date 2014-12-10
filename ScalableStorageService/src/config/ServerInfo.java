@@ -117,14 +117,15 @@ public class ServerInfo implements  java.io.Serializable {
 		//TODO SSh 
 		//String script = "ssh -n " + this.getServerIP() + " nohup java -jar " + path + 
 			//	"/ms3-server.jar " + this.getPort();
-		String script = "ssh -n " + this.getServerIP() + " nohup java -jar " + path + "/ms3-server.jar " + this.getPort();
+		
+		String script = "java -jar "+ path + "/ms3-server.jar " + this.getPort();
 		Runtime runtime = Runtime.getRuntime();
 		
 		try {
 			Process p = runtime.exec(script);
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String s = br.readLine();
-			while (s != null && !s.contains("Initialize server ...")) {
+			while (s == null || !s.contains("Initialize server ...")) {
 				s = br.readLine();
 			}
 		} catch (IOException e) {

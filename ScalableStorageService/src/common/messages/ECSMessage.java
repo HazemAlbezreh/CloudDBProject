@@ -36,10 +36,13 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 		this.setServerInfo(server);
 	}
 	
-	public ECSMessage(SortedMap<Integer, ServerInfo> ring) {
+	public ECSMessage(SortedMap<Integer, ServerInfo> ring,Range range) {
 		this(ConfigMessage.StatusType.UPDATE_META_DATA);
 		this.setRing(ring);
+		this.setRange(range);
 	}
+	
+	
 	
 	public ECSMessage(StatusType type,ServerInfo server,Range range,SortedMap<Integer, ServerInfo> ring) {
 		this.setStatus(type);
@@ -52,6 +55,14 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 		this.setStatus(type);
 		this.setRange(range);
 		this.setServerInfo(server);		
+		this.setRing(ring);
+		this.cacheSize=cs;
+		this.strategy=strat;
+	}
+	
+	public ECSMessage(StatusType type,Range range,SortedMap<Integer, ServerInfo> ring,String strat,int cs) {
+		this.setStatus(type);
+		this.setRange(range);		
 		this.setRing(ring);
 		this.cacheSize=cs;
 		this.strategy=strat;

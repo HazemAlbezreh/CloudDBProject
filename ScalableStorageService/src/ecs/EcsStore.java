@@ -10,7 +10,9 @@ import org.apache.log4j.Logger;
 import socket.SocketWrapper;
 import client.ClientSocketListener;
 import client.ClientSocketListener.SocketStatus;
+import common.messages.ConfigMessage;
 import common.messages.ECSMessage;
+import common.messages.Message;
 import common.messages.TextMessage;
 import config.ServerInfo;
 import consistent_hashing.Range;
@@ -102,57 +104,109 @@ public class EcsStore implements EcsCommInterface {
 	}
 	
 	@Override
-	public ECSMessage updateMetaData(SortedMap<Integer, ServerInfo> ring) {
-		// TODO Auto-generated method stub
-		return null;
+	public ECSMessage initServer(SortedMap<Integer, ServerInfo> ring,Range range,int cacheSize, String strategy){
+		ECSMessage reply;
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.INIT,range,ring,strategy,cacheSize);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (update meta data):\t '" + msg+ "'");	
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply=handleResponse(latestMsg);
+		return reply;
 	}
+	
+	@Override
+	public ECSMessage updateMetaData(SortedMap<Integer, ServerInfo> ring,Range range) {
+		
+		ECSMessage reply;
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ring,range);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (update meta data):\t '" + msg+ "'");	
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply=handleResponse(latestMsg);
+		return reply;
+	}
+
 
 
 
 	@Override
 	public ECSMessage start() {
-		// TODO Auto-generated method stub
-		return null;
+		ECSMessage reply;
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.START);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (start):\t '" + msg + "'");	
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply=handleResponse(latestMsg);
+		return reply;
 	}
 
 
 
 	@Override
 	public ECSMessage stop() {
-		// TODO Auto-generated method stub
-		return null;
+		ECSMessage reply;
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.STOP);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (stop):\t '" + msg + "'");	
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply=handleResponse(latestMsg);
+		return reply;
 	}
 
 
 
 	@Override
 	public ECSMessage lockWrite() {
-		// TODO Auto-generated method stub
-		return null;
+		ECSMessage reply;
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.LOCK_WRITE);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (lock write):\t '" + msg + "'");	
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply=handleResponse(latestMsg);
+		return reply;
 	}
 
 
 
 	@Override
 	public ECSMessage unLockWrite() {
-		// TODO Auto-generated method stub
-		return null;
+		ECSMessage reply;
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (unlock write):\t '" + msg + "'");	
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply=handleResponse(latestMsg);
+		return reply;
 	}
 
 
 
 	@Override
 	public ECSMessage moveData(Range range, ServerInfo targetServer) {
-		// TODO Auto-generated method stub
-		return null;
+		ECSMessage reply;
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.MOVE_DATA,targetServer,range);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (move data):\t '" + msg + "'");	
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply=handleResponse(latestMsg);
+		return reply;
 	}
 
 
 
 	@Override
 	public void shutDown() {
-		// TODO Auto-generated method stub
-		
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.SHUT_DOWN);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (unlock write):\t '" + msg + "'");
 	}
 	
 	public void setRunning(boolean run) {
@@ -169,4 +223,20 @@ public class EcsStore implements EcsCommInterface {
 	public SocketWrapper getSocketWrapper(){
 		return this.clientSocket;
 	}
+	
+	
+public ECSMessage handleResponse(Message latestMsg) {
+		
+	ECSMessage reply=null;
+		switch (latestMsg.getMessageType()){
+		case CONFIGMESSAGE:
+			reply=(ECSMessage)latestMsg;
+			break;
+		default:
+			logger.debug("Invalid Message type received" + latestMsg.getJson());	
+			break;
+		}
+		return reply;
+	}
+	
 }
