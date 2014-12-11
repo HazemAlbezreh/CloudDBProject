@@ -214,7 +214,9 @@ public class ClientConnection implements Runnable {
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE_FAILURE);
 						}
+						logger.info("server status : " + this.server.getStatus());
 						clientSocket.sendMessage(ecsReply);
+						logger.info("message sent : " + ecsReply.getStatus());
 						break;
 					case UPDATE_META_DATA:
 						this.server.update(config.getRing(), config.getRange());

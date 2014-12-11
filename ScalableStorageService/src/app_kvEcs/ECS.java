@@ -82,7 +82,7 @@ public class ECS {
 	
 	
 	private void runFirstServer() {
-		//this.getInActiveServers().get(0).runServerRemotly(path);
+		this.getInActiveServers().get(0).runServerRemotly(path);
 		this.getActiveServers().add(this.getInActiveServers().get(0));
 		this.getInActiveServers().remove(0);
 	}
@@ -97,7 +97,7 @@ public class ECS {
 				int randomIndex = random.nextInt(inActiveServers.size());// arrayList[i];
 				ServerInfo server = this.getInActiveServers().get(randomIndex);
 				System.out.println("server "+ i + " " +server.getPort());
-				//server.runServerRemotly(path);
+				server.runServerRemotly(path);
 				this.getInActiveServers().remove(randomIndex);
 				this.getActiveServers().add(server);
 			}
@@ -355,36 +355,32 @@ public class ECS {
 
 	
 	public static void main(String[] args) throws IOException {
-		
-		
 		args = new String[2];
 		args[0] = "ecs.config";
 		ECS application = new ECS(args[0]);
-		application.initService(4,10,"FIFO");
+		application.initService(1,10,"FIFO");
 		for(Map.Entry<Integer, ServerInfo> entry : application.consistentHash.getMetaData().entrySet()){
 			System.out.println("Server key " + entry.getKey()+ " Server port " + ((ServerInfo)entry.getValue()).getPort());
 		}
-		
-		 System.out.println("\nh0 " + application.consistentHash.getHashFunction().hash("h0"));
+
+		System.out.println("\nh0 " + application.consistentHash.getHashFunction().hash("h0"));
 		 System.out.println("h1 " + application.consistentHash.getHashFunction().hash("h1"));
 		 System.out.println("h2 " + application.consistentHash.getHashFunction().hash("h2"));
 		 System.out.println("h3 " + application.consistentHash.getHashFunction().hash("h3"));
 		 System.out.println("a0 " + application.consistentHash.getHashFunction().hash("a0"));
 		 System.out.println("a1 " + application.consistentHash.getHashFunction().hash("a1"));
 		 System.out.println("a2 " + application.consistentHash.getHashFunction().hash("a2"));
-		application.start();
-		application.removeNode();
+		 application.start();
+//		application.removeNode();
+		 application.addNode(10, "FIFO");
+		 application.addNode(10, "FIFO");
+
 		
 		for(Map.Entry<Integer, ServerInfo> entry : application.consistentHash.getMetaData().entrySet()){
 			System.out.println("Server key " + entry.getKey()+ " Server port " + ((ServerInfo)entry.getValue()).getPort());
 		}
 		
 		
-		application.addNode(10, "FIFO");
-		 
-		
-		 
-
 	//	application.addNode(10, "FIFO");
 		application.getInActiveServers();
 		application.shutDown();
