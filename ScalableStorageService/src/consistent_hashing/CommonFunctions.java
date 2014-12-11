@@ -10,11 +10,16 @@ public final class CommonFunctions {
 	      return null;
 	    }
 	    int hash = Md5HashFunction.getInstance().hash(key);
+	    int nodeHash;
 	    if (!ring.containsKey(hash)) {
 	      SortedMap<Integer, ServerInfo> tailMap = ring.tailMap(hash);
-	      hash = tailMap.isEmpty() ? ring.firstKey() : tailMap.firstKey();
+	      nodeHash = tailMap.isEmpty() ? ring.firstKey() : tailMap.firstKey();
+	    }else {
+	    	SortedMap<Integer, ServerInfo> tailMap = ring.tailMap(hash+1);
+	    	nodeHash = tailMap.isEmpty() ? ring.firstKey() : tailMap.firstKey();
 	    }
-	    return ring.get(hash);
+	    return ring.get(nodeHash);
+	    
 	  }
 	
 	
@@ -23,10 +28,14 @@ public final class CommonFunctions {
 	      return null;
 	    }
 	    int hash = Md5HashFunction.getInstance().hash(key);
+	    int nodeHash;
 	    if (!ring.containsKey(hash)) {
 	      SortedMap<Integer, ServerInfo> headMap = ring.headMap(hash);
-	      hash = headMap.isEmpty() ? ring.lastKey() : headMap.lastKey();
+	      nodeHash = headMap.isEmpty() ? ring.lastKey() : headMap.lastKey();
+	    }else {
+	    	SortedMap<Integer, ServerInfo> headMap = ring.headMap(hash-1);
+		      nodeHash = headMap.isEmpty() ? ring.lastKey() : headMap.lastKey();
 	    }
-	    return ring.get(hash);
+	    return ring.get(nodeHash);
 	  }
 }

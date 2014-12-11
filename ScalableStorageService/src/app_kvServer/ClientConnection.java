@@ -117,9 +117,7 @@ public class ClientConnection implements Runnable {
 									clientSocket.sendMessage(reply);
 								}
 							}else{
-								HashMap<String,String> h=new HashMap<String,String>();
-								h.put(key, value);
-								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(h));
+								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(key, value));
 								if(replyStatus==StatusType.PUT_SUCCESS){ 		//PUT SUCCESS
 									logger.info("Put is successful");
 									reply=new ClientMessage(key,value,replyStatus);
@@ -149,7 +147,7 @@ public class ClientConnection implements Runnable {
 					switch(sm.getStatus()){
 					case DATA_TRANSFER:
 						Map<String,String> h =sm.getData();
-						String result=this.server.getKVCache().processPutRequest(h);
+						String result=this.server.getKVCache().processMassPutRequest(h);
 						if(result.equals("PUT_ERROR")){
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
 							this.clientSocket.sendMessage(serverReply);
@@ -226,7 +224,7 @@ public class ClientConnection implements Runnable {
 					case MOVE_DATA:
 						ServerInfo receipient = config.getServerInfo();
 						Range dataRange=config.getRange();
-						Map<String,String> dataSet=this.server.getKVCache().calculateRange(dataRange,this.hashFunction); //CALCULATE RANGE TO TRANSFER
+						Map<String,String> dataSet=this.server.getKVCache().findValuesOutOfRange(dataRange,this.hashFunction); //CALCULATE RANGE TO TRANSFER
 						ServerMessage dataMap=new ServerMessage(dataSet);
 						try{
 							EcsStore ecsStore = new EcsStore(receipient.getServerIP(), receipient.getPort());

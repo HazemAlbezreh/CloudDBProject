@@ -1,13 +1,18 @@
 package app_kvEcs;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+
+import com.eclipsesource.json.JsonObject;
 
 import common.messages.ConfigMessage;
 import common.messages.ECSMessage;
@@ -77,7 +82,7 @@ public class ECS {
 	
 	
 	private void runFirstServer() {
-		//TODO this.getInActiveServers().get(0).runServerRemotly(path);
+		this.getInActiveServers().get(0).runServerRemotly(path);
 		this.getActiveServers().add(this.getInActiveServers().get(0));
 		this.getInActiveServers().remove(0);
 	}
@@ -91,6 +96,7 @@ public class ECS {
 			for (int i = 0; i < numberOfNodes - 1; i++) {
 				int randomIndex = random.nextInt(inActiveServers.size());// arrayList[i];
 				ServerInfo server = this.getInActiveServers().get(randomIndex);
+				System.out.println("server "+ i + " " +server.getPort());
 				server.runServerRemotly(path);
 				this.getInActiveServers().remove(randomIndex);
 				this.getActiveServers().add(server);
@@ -159,7 +165,7 @@ public class ECS {
 	
 	private Range getServerRange(ServerInfo server){
 		int key = this.consistentHash.getHashFunction().hash(server);
-		ServerInfo predecessor = CommonFunctions.getPredecessorNode(key,
+		ServerInfo predecessor = CommonFunctions.getPredecessorNode(server,
 				this.consistentHash.getMetaData());
 		int preKey = this.consistentHash.getHashFunction().hash(predecessor);
 		return new Range(preKey, key);		
@@ -363,10 +369,25 @@ public class ECS {
 		args = new String[2];
 		args[0] = "ecs.config";
 		ECS application = new ECS(args[0]);
-		application.initService(1,10,"FIFO");
+		application.initService(3,10,"FIFO");
+		for(Map.Entry<Integer, ServerInfo> entry : application.consistentHash.getMetaData().entrySet()){
+			System.out.println("Server key " + entry.getKey()+ " Server port " + ((ServerInfo)entry.getValue()).getPort());
+		}
+
+		 
+		 System.out.println("h0 " + application.consistentHash.getHashFunction().hash("h0"));
+		 System.out.println("h1 " + application.consistentHash.getHashFunction().hash("h1"));
+		 System.out.println("h2 " + application.consistentHash.getHashFunction().hash("h2"));
+		 System.out.println("h3 " + application.consistentHash.getHashFunction().hash("h3"));
+		 System.out.println("a0 " + application.consistentHash.getHashFunction().hash("a0"));
+		 System.out.println("a1 " + application.consistentHash.getHashFunction().hash("a1"));
+		 System.out.println("a2 " + application.consistentHash.getHashFunction().hash("a2"));
+		 
+		
 		application.start();
 	//	application.addNode(10, "FIFO");
 		application.getInActiveServers();
+		application.shutDown();
 	}
 
 }

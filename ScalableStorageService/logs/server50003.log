@@ -8,3 +8,94 @@
 2014-12-10 15:28:37,303 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
 2014-12-10 15:28:37,304 INFO  [Thread-0] root: Server stopped.
 2014-12-10 15:28:37,304 ERROR [Thread-1] root: Received Terminate Thread null
+2014-12-11 14:35:44,010 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 14:35:44,025 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 14:35:44,395 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:4723>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 14:35:44,401 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 4723
+2014-12-11 14:35:44,401 INFO  [Thread-0] root: Initiating Shutdown of server
+2014-12-11 14:35:44,401 INFO  [Thread-0] root: Initiating Terminate Thread 
+2014-12-11 14:35:44,402 INFO  [Thread-0] socket.SocketWrapper: Client Disconnected 
+2014-12-11 14:35:44,402 INFO  [Thread-0] root: Server stopped.
+2014-12-11 14:35:44,402 ERROR [Thread-1] root: Received Terminate Thread null
+2014-12-11 14:56:00,820 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 14:56:00,824 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 14:56:04,425 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:4940>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 14:56:04,429 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 4940
+2014-12-11 14:56:41,433 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<127.0.0.1:4940>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":1493795241,"low":1594364803},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"127.0.0.1","port":50000,"hash":-1824292043},{"address":"127.0.0.1","port":50005,"hash":760380969},{"address":"127.0.0.1","port":50003,"hash":1493795241},{"address":"127.0.0.1","port":50006,"hash":1594364803}]}'
+2014-12-11 14:56:41,442 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:4940>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 14:57:18,647 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<127.0.0.1:4940>: '{"messageType":"CONFIGMESSAGE","statusType":"START","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 14:57:18,648 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:4940>: '{"messageType":"CONFIGMESSAGE","statusType":"START_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 15:04:51,588 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-11 15:04:51,588 ERROR [Thread-1] root: Received Exception at ClientConnection null
+2014-12-11 15:19:18,667 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 15:19:18,671 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-11 15:19:18,671 ERROR [Thread-0] root: Port 50003 is already bound!
+2014-12-11 15:19:18,671 INFO  [Thread-0] root: Server stopped.
+2014-12-11 15:19:18,869 INFO  [Thread-2] socket.SocketWrapper: SEND 	<127.0.0.1:5005>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 15:19:18,869 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5005
+2014-12-11 15:20:06,057 INFO  [Thread-2] socket.SocketWrapper: Client Disconnected 
+2014-12-11 15:20:06,057 ERROR [Thread-2] root: Received Exception at ClientConnection null
+2014-12-11 15:20:21,903 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 15:20:21,907 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-11 15:20:21,907 ERROR [Thread-0] root: Port 50003 is already bound!
+2014-12-11 15:20:21,907 INFO  [Thread-0] root: Server stopped.
+2014-12-11 15:20:22,606 INFO  [Thread-3] socket.SocketWrapper: SEND 	<127.0.0.1:5011>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 15:20:22,606 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5011
+2014-12-11 15:20:22,652 INFO  [Thread-3] socket.SocketWrapper: Client Disconnected 
+2014-12-11 15:20:22,652 ERROR [Thread-3] root: Received Exception at ClientConnection null
+2014-12-11 15:21:35,120 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 15:21:35,123 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 15:21:35,541 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:5026>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 15:21:35,546 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5026
+2014-12-11 15:22:16,964 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<127.0.0.1:5026>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":1493795241,"low":1594364803},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"127.0.0.1","port":50000,"hash":-1824292043},{"address":"127.0.0.1","port":50004,"hash":151356890},{"address":"127.0.0.1","port":50005,"hash":760380969},{"address":"127.0.0.1","port":50007,"hash":776117024},{"address":"127.0.0.1","port":50002,"hash":847930291},{"address":"127.0.0.1","port":50003,"hash":1493795241},{"address":"127.0.0.1","port":50006,"hash":1594364803},{"address":"127.0.0.1","port":50001,"hash":1996680924}]}'
+2014-12-11 15:22:16,991 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:5026>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 15:23:18,056 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-11 15:23:18,057 ERROR [Thread-1] root: Received Exception at ClientConnection null
+2014-12-11 15:25:04,760 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 15:25:04,764 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-11 15:25:04,764 ERROR [Thread-0] root: Port 50003 is already bound!
+2014-12-11 15:25:04,764 INFO  [Thread-0] root: Server stopped.
+2014-12-11 15:25:05,433 INFO  [Thread-2] socket.SocketWrapper: SEND 	<127.0.0.1:5039>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 15:25:05,433 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5039
+2014-12-11 15:35:04,732 INFO  [Thread-2] socket.SocketWrapper: RECEIVE 	<127.0.0.1:5039>: '{"messageType":"CONFIGMESSAGE","statusType":"START","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 15:35:04,733 INFO  [Thread-2] socket.SocketWrapper: SEND 	<127.0.0.1:5039>: '{"messageType":"CONFIGMESSAGE","statusType":"START_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 15:37:06,169 INFO  [Thread-2] socket.SocketWrapper: Client Disconnected 
+2014-12-11 15:37:06,169 ERROR [Thread-2] root: Received Exception at ClientConnection null
+2014-12-11 15:49:16,478 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 15:49:16,482 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-11 15:49:16,482 ERROR [Thread-0] root: Port 50003 is already bound!
+2014-12-11 15:49:16,482 INFO  [Thread-0] root: Server stopped.
+2014-12-11 15:49:17,154 INFO  [Thread-3] socket.SocketWrapper: SEND 	<127.0.0.1:5120>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 15:49:17,154 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5120
+2014-12-11 15:51:04,982 INFO  [Thread-3] socket.SocketWrapper: Client Disconnected 
+2014-12-11 15:51:04,983 ERROR [Thread-3] root: Received Exception at ClientConnection null
+2014-12-11 16:02:28,096 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 16:02:28,100 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 16:02:28,526 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:5207>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 16:02:28,530 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5207
+2014-12-11 16:02:41,129 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<127.0.0.1:5207>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":1493795241,"low":1594364803},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"127.0.0.1","port":50000,"hash":-1824292043},{"address":"127.0.0.1","port":50004,"hash":151356890},{"address":"127.0.0.1","port":50005,"hash":760380969},{"address":"127.0.0.1","port":50007,"hash":776117024},{"address":"127.0.0.1","port":50002,"hash":847930291},{"address":"127.0.0.1","port":50003,"hash":1493795241},{"address":"127.0.0.1","port":50006,"hash":1594364803},{"address":"127.0.0.1","port":50001,"hash":1996680924}]}'
+2014-12-11 16:02:41,156 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:5207>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 16:04:04,364 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<127.0.0.1:5207>: '{"messageType":"CONFIGMESSAGE","statusType":"START","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 16:04:04,365 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:5207>: '{"messageType":"CONFIGMESSAGE","statusType":"START_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 16:04:06,621 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-11 16:04:06,622 ERROR [Thread-1] root: Received Exception at ClientConnection null
+2014-12-11 16:04:44,640 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 16:04:44,644 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-11 16:04:44,644 ERROR [Thread-0] root: Port 50003 is already bound!
+2014-12-11 16:04:44,644 INFO  [Thread-0] root: Server stopped.
+2014-12-11 16:04:44,683 INFO  [Thread-2] socket.SocketWrapper: SEND 	<127.0.0.1:5225>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 16:04:44,683 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5225
+2014-12-11 16:11:43,232 INFO  [Thread-2] socket.SocketWrapper: Client Disconnected 
+2014-12-11 16:11:43,233 ERROR [Thread-2] root: Received Exception at ClientConnection null
+2014-12-11 16:39:18,066 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 16:39:18,069 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 16:39:40,868 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:5332>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 16:39:40,872 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5332
+2014-12-11 16:46:30,265 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-11 16:46:30,265 ERROR [Thread-1] root: Received Exception at ClientConnection null
+2014-12-11 16:57:11,128 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 16:57:11,133 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 16:57:17,981 INFO  [Thread-1] socket.SocketWrapper: SEND 	<127.0.0.1:5412>: 'Connection to MSRG Echo server established: /127.0.0.1 / 50003'
+2014-12-11 16:57:17,984 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5412
+2014-12-11 16:59:32,116 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-11 16:59:32,117 ERROR [Thread-1] root: Received Exception at ClientConnection null
