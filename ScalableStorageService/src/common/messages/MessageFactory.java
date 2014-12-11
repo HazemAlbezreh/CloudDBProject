@@ -21,6 +21,8 @@ public class MessageFactory {
 					return ClientMessage.parseFromString(source);
 				case CONFIGMESSAGE:
 					return ECSMessage.parseFromString(source);
+				case SERVERMESSAGE:
+					return ServerMessage.parseFromString(source);
 			}
 		}
 		return null;

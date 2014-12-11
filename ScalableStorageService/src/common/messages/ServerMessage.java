@@ -109,7 +109,16 @@ public class ServerMessage implements Message{
 			throw new MessageParseException("ServerMessage : " +e.getMessage());
 		}	
 	}
-
+	
+	
+	public static void main(String args[]){
+		ServerMessage sm=new ServerMessage(new TreeMap<String,String>());
+		System.out.println(sm.getJson());
+		try{
+		ServerMessage sm2=(ServerMessage)MessageFactory.parse(sm.getJson());
+		String s="";
+		}catch(Exception e){System.out.println(e.getMessage());}
+	}
 	
 	
 }

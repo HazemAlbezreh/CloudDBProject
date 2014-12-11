@@ -99,3 +99,93 @@
 2014-12-11 16:57:17,984 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 5412
 2014-12-11 16:59:32,116 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
 2014-12-11 16:59:32,117 ERROR [Thread-1] root: Received Exception at ClientConnection null
+2014-12-11 18:08:18,327 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 18:08:18,331 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 18:08:18,545 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5704>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50003'
+2014-12-11 18:08:18,547 INFO  [Thread-0] root: Connected to 131.159.200.132 on port 5704
+2014-12-11 18:08:18,591 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5704>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":-550859951,"low":-629251947},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"131.159.200.132","port":50002,"hash":-629251947},{"address":"131.159.200.132","port":50003,"hash":-550859951},{"address":"131.159.200.132","port":50000,"hash":164031803}]}'
+2014-12-11 18:08:18,600 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5704>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:08:26,703 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-11 18:08:26,704 ERROR [Thread-1] root: Received Exception at ClientConnection null
+2014-12-11 18:09:14,693 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 18:09:14,696 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 18:09:15,066 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5711>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50003'
+2014-12-11 18:09:15,069 INFO  [Thread-0] root: Connected to 131.159.200.132 on port 5711
+2014-12-11 18:09:15,124 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5711>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":-550859951,"low":-629251947},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"131.159.200.132","port":50001,"hash":-1069564321},{"address":"131.159.200.132","port":50002,"hash":-629251947},{"address":"131.159.200.132","port":50003,"hash":-550859951},{"address":"131.159.200.132","port":50000,"hash":164031803}]}'
+2014-12-11 18:09:15,133 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5711>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:09:29,448 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5711>: '{"messageType":"CONFIGMESSAGE","statusType":"START","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:09:29,450 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5711>: '{"messageType":"CONFIGMESSAGE","statusType":"START_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:10:14,302 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-11 18:10:14,303 ERROR [Thread-1] root: Received Exception at ClientConnection null
+2014-12-11 18:11:47,601 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 18:11:47,604 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 18:11:47,681 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5723>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50003'
+2014-12-11 18:11:47,684 INFO  [Thread-0] root: Connected to 131.159.200.132 on port 5723
+2014-12-11 18:11:47,739 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5723>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":-550859951,"low":-629251947},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"131.159.200.132","port":50001,"hash":-1069564321},{"address":"131.159.200.132","port":50002,"hash":-629251947},{"address":"131.159.200.132","port":50003,"hash":-550859951},{"address":"131.159.200.132","port":50000,"hash":164031803}]}'
+2014-12-11 18:11:47,748 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5723>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:11:54,899 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5723>: '{"messageType":"CONFIGMESSAGE","statusType":"START","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:11:54,900 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5723>: '{"messageType":"CONFIGMESSAGE","statusType":"START_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:13:20,408 INFO  [Thread-2] socket.SocketWrapper: SEND 	<131.159.201.134:53153>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50003'
+2014-12-11 18:13:20,414 INFO  [Thread-0] root: Connected to 134.201.eduroam.dynamic.rbg.tum.de on port 53153
+2014-12-11 18:13:20,422 INFO  [Thread-2] socket.SocketWrapper: RECEIVE 	<131.159.201.134:53153>: '{"messageType":"KVMESSAGE","statusType":"PUT","key":"h0","value":"qwerty"}'
+2014-12-11 18:13:20,435 INFO  [Thread-2] root: Put is successful
+2014-12-11 18:13:20,436 INFO  [Thread-2] socket.SocketWrapper: SEND 	<131.159.201.134:53153>: '{"messageType":"KVMESSAGE","statusType":"PUT_SUCCESS","key":"h0","value":"qwerty"}'
+2014-12-11 18:13:57,475 INFO  [Thread-2] socket.SocketWrapper: RECEIVE 	<131.159.201.134:53153>: '{"messageType":"KVMESSAGE","statusType":"PUT","key":"h0","value":"wwwww"}'
+2014-12-11 18:13:57,479 INFO  [Thread-2] root: Put update is successful
+2014-12-11 18:13:57,480 INFO  [Thread-2] socket.SocketWrapper: SEND 	<131.159.201.134:53153>: '{"messageType":"KVMESSAGE","statusType":"PUT_UPDATE","key":"h0","value":"wwwww"}'
+2014-12-11 18:14:54,334 INFO  [Thread-2] socket.SocketWrapper: Client Disconnected 
+2014-12-11 18:14:54,335 ERROR [Thread-2] root: Received Exception at ClientConnection null
+2014-12-11 18:22:56,382 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5723>: '{"messageType":"CONFIGMESSAGE","statusType":"UPDATE_META_DATA","range":{"high":-550859951,"low":-1069564321},"server":null,"strategy":null,"cache":-1,"metadata":[{"address":"131.159.200.132","port":50001,"hash":-1069564321},{"address":"131.159.200.132","port":50003,"hash":-550859951},{"address":"131.159.200.132","port":50000,"hash":164031803}]}'
+2014-12-11 18:22:56,384 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5723>: '{"messageType":"CONFIGMESSAGE","statusType":"UPDATE_META_DATA_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:25:11,987 INFO  [Thread-3] socket.SocketWrapper: SEND 	<131.159.200.132:5763>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50003'
+2014-12-11 18:25:11,989 INFO  [Thread-3] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5763>: '{"messageType":"SERVERMESSAGE","statusType":"DATA_TRANSFER","data":[]}'
+2014-12-11 18:25:11,997 INFO  [Thread-0] root: Connected to 131.159.200.132 on port 5763
+2014-12-11 18:27:17,510 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-11 18:27:17,510 ERROR [Thread-1] root: Received Exception at ClientConnection null
+2014-12-11 18:30:25,801 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 18:30:25,805 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 18:30:35,328 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5786>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50003'
+2014-12-11 18:30:35,329 INFO  [Thread-0] root: Connected to 131.159.200.132 on port 5786
+2014-12-11 18:31:23,399 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5786>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":-550859951,"low":-629251947},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"131.159.200.132","port":50001,"hash":-1069564321},{"address":"131.159.200.132","port":50002,"hash":-629251947},{"address":"131.159.200.132","port":50003,"hash":-550859951},{"address":"131.159.200.132","port":50000,"hash":164031803}]}'
+2014-12-11 18:31:30,377 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5786>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:32:39,534 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5786>: '{"messageType":"CONFIGMESSAGE","statusType":"START","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:32:48,209 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5786>: '{"messageType":"CONFIGMESSAGE","statusType":"START_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:52:35,625 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 18:52:35,629 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 18:53:02,027 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5856>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50003'
+2014-12-11 18:53:02,028 INFO  [Thread-0] root: Connected to 131.159.200.132 on port 5856
+2014-12-11 18:53:23,674 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5856>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":-550859951,"low":-629251947},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"131.159.200.132","port":50001,"hash":-1069564321},{"address":"131.159.200.132","port":50002,"hash":-629251947},{"address":"131.159.200.132","port":50003,"hash":-550859951},{"address":"131.159.200.132","port":50000,"hash":164031803}]}'
+2014-12-11 18:53:40,872 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5856>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:54:44,054 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5856>: '{"messageType":"CONFIGMESSAGE","statusType":"START","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:54:55,091 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5856>: '{"messageType":"CONFIGMESSAGE","statusType":"START_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:55:27,891 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5856>: '{"messageType":"CONFIGMESSAGE","statusType":"LOCK_WRITE","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:56:27,789 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5856>: '{"messageType":"CONFIGMESSAGE","statusType":"LOCK_WRITE_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 18:58:28,225 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5856>: '{"messageType":"CONFIGMESSAGE","statusType":"MOVE_DATA","range":{"high":164031803,"low":-629251947},"server":{"address":"131.159.200.132","port":50000},"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:03:08,384 INFO  [Thread-1] root: Connection established
+2014-12-11 19:03:10,071 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:50000>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50000'
+2014-12-11 19:03:28,985 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:50000>: '{"messageType":"SERVERMESSAGE","statusType":"DATA_TRANSFER","data":[]}'
+2014-12-11 19:15:18,987 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-11 19:18:24,838 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 19:18:24,842 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 19:18:56,608 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5942>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50003'
+2014-12-11 19:18:56,609 INFO  [Thread-0] root: Connected to 131.159.200.132 on port 5942
+2014-12-11 19:19:26,561 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5942>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":-550859951,"low":-629251947},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"131.159.200.132","port":50001,"hash":-1069564321},{"address":"131.159.200.132","port":50002,"hash":-629251947},{"address":"131.159.200.132","port":50003,"hash":-550859951},{"address":"131.159.200.132","port":50000,"hash":164031803}]}'
+2014-12-11 19:19:29,020 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5942>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:20:26,942 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5942>: '{"messageType":"CONFIGMESSAGE","statusType":"START","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:20:34,956 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5942>: '{"messageType":"CONFIGMESSAGE","statusType":"START_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:20:54,694 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5942>: '{"messageType":"CONFIGMESSAGE","statusType":"LOCK_WRITE","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:21:01,273 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:5942>: '{"messageType":"CONFIGMESSAGE","statusType":"LOCK_WRITE_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:21:37,816 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:5942>: '{"messageType":"CONFIGMESSAGE","statusType":"MOVE_DATA","range":{"high":164031803,"low":-629251947},"server":{"address":"131.159.200.132","port":50000},"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:23:35,191 INFO  [Thread-1] root: Connection established
+2014-12-11 19:23:38,428 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:50000>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50000'
+2014-12-11 19:24:27,924 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:50000>: '{"messageType":"SERVERMESSAGE","statusType":"DATA_TRANSFER","data":[]}'
+2014-12-11 19:48:30,440 INFO  [Thread-0] root: Initialize server ...
+2014-12-11 19:48:30,444 INFO  [Thread-0] root: Server listening on port: 50003
+2014-12-11 19:49:40,988 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:6064>: 'Connection to MSRG Echo server established: /131.159.200.132 / 50003'
+2014-12-11 19:49:40,990 INFO  [Thread-0] root: Connected to 131.159.200.132 on port 6064
+2014-12-11 19:50:16,550 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:6064>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT","range":{"high":-550859951,"low":-629251947},"server":null,"strategy":"FIFO","cache":10,"metadata":[{"address":"131.159.200.132","port":50001,"hash":-1069564321},{"address":"131.159.200.132","port":50002,"hash":-629251947},{"address":"131.159.200.132","port":50003,"hash":-550859951},{"address":"131.159.200.132","port":50000,"hash":164031803}]}'
+2014-12-11 19:50:20,228 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:6064>: '{"messageType":"CONFIGMESSAGE","statusType":"INIT_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:51:14,035 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:6064>: '{"messageType":"CONFIGMESSAGE","statusType":"START","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:51:24,217 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:6064>: '{"messageType":"CONFIGMESSAGE","statusType":"START_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'
+2014-12-11 19:57:23,838 INFO  [Thread-1] socket.SocketWrapper: RECEIVE 	<131.159.200.132:6064>: '{"messageType":"CONFIGMESSAGE","statusType":"UPDATE_META_DATA","range":{"high":-550859951,"low":-629251947},"server":null,"strategy":null,"cache":-1,"metadata":[{"address":"131.159.200.132","port":50001,"hash":-1069564321},{"address":"131.159.200.132","port":50002,"hash":-629251947},{"address":"131.159.200.132","port":50003,"hash":-550859951}]}'
+2014-12-11 19:57:34,986 INFO  [Thread-1] socket.SocketWrapper: SEND 	<131.159.200.132:6064>: '{"messageType":"CONFIGMESSAGE","statusType":"UPDATE_META_DATA_SUCCESS","range":null,"server":null,"strategy":null,"cache":-1,"metadata":null}'

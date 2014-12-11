@@ -41,32 +41,11 @@ public class KVCache  {
 		this.serverName = serverName;
 	}
 	
-	public synchronized Map<String,String> findValuesOutOfRange(int low, int high, HashFunction hashfunct){
-		String line;
-		HashMap<String,String> outOfRange= new HashMap<String,String>();
-		int hashvalue = 0;
-		try{
-			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
-			while ((line = br.readLine()) != null) {
-				String [] str = line.split(",");
-				hashvalue = hashfunct.hash(str[0]);
-				
-				if(!(hashvalue >= low && hashvalue < high)){
-					outOfRange.put(str[0], str[1]);
-				}
-			}
-			br.close();
-			return outOfRange;
-		}
-		catch(Exception e){
-			return null;
-		}
-	}
 
 	
-	public synchronized Map<String,String> findValuesOutOfRange(Range range, HashFunction hashfunct){
+	public synchronized Map<String,String> findValuesInRange(Range range, HashFunction hashfunct){
 		String line;
-		HashMap<String,String> outOfRange= new HashMap<String,String>();
+		HashMap<String,String> data= new HashMap<String,String>();
 		boolean inRange;
 		int hashvalue = 0;
 		try{
@@ -75,12 +54,12 @@ public class KVCache  {
 				String [] str = line.split(",");
 				hashvalue = hashfunct.hash(str[0]);
 				inRange=range.isWithin(hashvalue);
-				if(!inRange){
-					outOfRange.put(str[0], str[1]);
+				if(inRange){
+					data.put(str[0], str[1]);
 				}
 			}
 			br.close();
-			return outOfRange;
+			return data;
 		}
 		catch(Exception e){
 			return null;

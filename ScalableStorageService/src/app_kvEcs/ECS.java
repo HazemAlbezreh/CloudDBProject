@@ -82,7 +82,7 @@ public class ECS {
 	
 	
 	private void runFirstServer() {
-		this.getInActiveServers().get(0).runServerRemotly(path);
+		//this.getInActiveServers().get(0).runServerRemotly(path);
 		this.getActiveServers().add(this.getInActiveServers().get(0));
 		this.getInActiveServers().remove(0);
 	}
@@ -97,7 +97,7 @@ public class ECS {
 				int randomIndex = random.nextInt(inActiveServers.size());// arrayList[i];
 				ServerInfo server = this.getInActiveServers().get(randomIndex);
 				System.out.println("server "+ i + " " +server.getPort());
-				server.runServerRemotly(path);
+				//server.runServerRemotly(path);
 				this.getInActiveServers().remove(randomIndex);
 				this.getActiveServers().add(server);
 			}
@@ -295,8 +295,7 @@ public class ECS {
 		this.getActiveServers().add(addedNode);
 		// Determine the position of the new storage
 		// server within the ring by hashing its address
-		int key = this.consistentHash.getHashFunction().hash(addedNode);
-		ServerInfo successor = CommonFunctions.getSuccessorNode(key,
+		ServerInfo successor = CommonFunctions.getSuccessorNode(addedNode,
 				this.consistentHash.getMetaData());
 		// Recalculate and update the meta-data of the storage service
 		this.consistentHash.add(addedNode);
@@ -311,11 +310,7 @@ public class ECS {
 		this.lockWrite(successor);
 
 		// Invoke the transfer of the affected data items
-		ServerInfo predecessor = CommonFunctions.getPredecessorNode(key,
-				this.consistentHash.getMetaData());
-		int preKey = this.consistentHash.getHashFunction().hash(predecessor);
-		Range range = new Range(preKey, key);
-		this.serverMoveData(successor, range, addedNode);
+		this.serverMoveData(successor, this.getServerRange(addedNode), addedNode);
 		// Send a meta-data update to all storage servers
 		this.updateMetadata();
 		// Release the write lock on the successor node
@@ -336,18 +331,12 @@ public class ECS {
 		this.lockWrite(removedNode);
 		// Send meta-data update to the successor node (i.e., successor is now
 		// also responsible for the range of the server that is to be removed)
-		int key = this.consistentHash.getHashFunction().hash(removedNode);
-		ServerInfo successor = CommonFunctions.getSuccessorNode(key,
+		ServerInfo successor = CommonFunctions.getSuccessorNode(removedNode,
 				this.consistentHash.getMetaData());
 		this.updateServerMetadata(successor);
 		// Invoke the transfer of the affected data items
-		ServerInfo predecessor = CommonFunctions.getPredecessorNode(successor,
-				this.consistentHash.getMetaData());
-		int preKey = this.consistentHash.getHashFunction().hash(predecessor);
-		int successorKey = consistentHash.getHashFunction().hash(successor);
-		Range range = new Range(preKey, successorKey);
 		// serverToRemove.moveData(range, successor)
-		this.serverMoveData(removedNode, range, successor);
+		this.serverMoveData(removedNode, this.getServerRange(successor), successor);
 
 		this.getActiveServers().remove(randomIndex);
 		this.getInActiveServers().add(removedNode);
@@ -366,25 +355,36 @@ public class ECS {
 
 	
 	public static void main(String[] args) throws IOException {
+		
+		
 		args = new String[2];
 		args[0] = "ecs.config";
 		ECS application = new ECS(args[0]);
-		application.initService(3,10,"FIFO");
+		application.initService(4,10,"FIFO");
 		for(Map.Entry<Integer, ServerInfo> entry : application.consistentHash.getMetaData().entrySet()){
 			System.out.println("Server key " + entry.getKey()+ " Server port " + ((ServerInfo)entry.getValue()).getPort());
 		}
-
-		 
-		 System.out.println("h0 " + application.consistentHash.getHashFunction().hash("h0"));
+		
+		 System.out.println("\nh0 " + application.consistentHash.getHashFunction().hash("h0"));
 		 System.out.println("h1 " + application.consistentHash.getHashFunction().hash("h1"));
 		 System.out.println("h2 " + application.consistentHash.getHashFunction().hash("h2"));
 		 System.out.println("h3 " + application.consistentHash.getHashFunction().hash("h3"));
 		 System.out.println("a0 " + application.consistentHash.getHashFunction().hash("a0"));
 		 System.out.println("a1 " + application.consistentHash.getHashFunction().hash("a1"));
 		 System.out.println("a2 " + application.consistentHash.getHashFunction().hash("a2"));
+		application.start();
+		application.removeNode();
+		
+		for(Map.Entry<Integer, ServerInfo> entry : application.consistentHash.getMetaData().entrySet()){
+			System.out.println("Server key " + entry.getKey()+ " Server port " + ((ServerInfo)entry.getValue()).getPort());
+		}
+		
+		
+		application.addNode(10, "FIFO");
 		 
 		
-		application.start();
+		 
+
 	//	application.addNode(10, "FIFO");
 		application.getInActiveServers();
 		application.shutDown();
