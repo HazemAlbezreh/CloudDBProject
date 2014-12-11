@@ -209,7 +209,7 @@ public class KVClient {
 	 */
 	public static void main(String[] args) throws Exception {
 		try {
-			new LogSetup("logs/client.log", Level.OFF);
+			new LogSetup("logs/client.log", Level.ALL);
 			KVClient app = new KVClient();
 			app.kvClientrun();
 		} catch (IOException e) {

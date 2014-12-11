@@ -2,12 +2,11 @@ package client;
 
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+
 
 import socket.SocketWrapper;
 
@@ -25,7 +24,7 @@ import consistent_hashing.CommonFunctions;
 
 public class KVStore implements KVCommInterface {
 	private Logger logger = Logger.getRootLogger();
-	private Set<ClientSocketListener> listeners;
+	//private Set<ClientSocketListener> listeners;
 	private boolean running;
 
 	private SocketWrapper clientSocket;
@@ -33,7 +32,7 @@ public class KVStore implements KVCommInterface {
 	private String address;
 	private int port;
 
-	private SortedMap<Integer, ServerInfo> ring = new TreeMap<Integer, ServerInfo>();
+	private SortedMap<Integer, ServerInfo> ring = null;
 
 
 	/**
@@ -45,11 +44,19 @@ public class KVStore implements KVCommInterface {
 	public KVStore(String address, int port)  {
 		this.address=address;
 		this.port=port;
-		listeners = new HashSet<ClientSocketListener>();
+		//listeners = new HashSet<ClientSocketListener>();
 		logger.info("Connection established");
 
 	}
-
+	
+	
+	public void handleTextMessage(TextMessage msg) {
+			System.out.println(msg.getMsg());
+		
+	}
+	
+	
+	
 
 
 	@Override
@@ -62,19 +69,16 @@ public class KVStore implements KVCommInterface {
 
 			//waits until it receives the answer from server
 			TextMessage latestMsg = clientSocket.receiveTextMessage();
-			for(ClientSocketListener listener : listeners) {
-				listener.handleNewMessage(latestMsg);
-			}
+			handleTextMessage(latestMsg);
 		} catch (IOException ioe) {
 			//if there was an error connecting
 			if(isRunning()) {
 				logger.error("Connection lost!");
 				try {
 					tearDownConnection();
-					for(ClientSocketListener listener : listeners) {
-						listener.handleStatus(
-								SocketStatus.CONNECTION_LOST);
-					}
+				//	for(ClientSocketListener listener : listeners) {
+						handleStatus(SocketStatus.CONNECTION_LOST);
+				//	}
 				} catch (IOException e) {
 					logger.error("Unable to close connection!");
 					throw ioe;
@@ -92,9 +96,7 @@ public class KVStore implements KVCommInterface {
 		try {
 
 			tearDownConnection();
-			for(ClientSocketListener listener : listeners) {
-				listener.handleStatus(SocketStatus.DISCONNECTED);
-			}
+			handleStatus(SocketStatus.DISCONNECTED);
 		} catch (IOException ioe) {
 			logger.error("Unable to close connection!");
 		}
@@ -128,32 +130,25 @@ public class KVStore implements KVCommInterface {
 
 			Message latestMsg = clientSocket.recieveMesssage();
 			reply=handleReceivedPutMsg(latestMsg,key,value);
-			
-			//for(ClientSocketListener listener : listeners) {
-			//	listener.handleNewPostKVMessage(reply);
-			//}
 			return reply;
-
 		}
 		else{
 			
 			
 			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
-			//disconnects from the running server
-			disconnect();
-			//and connects to the new one
-			this.address=si.getServerIP();
-			this.port= si.getPort();
-			connect();
+			if (si.getServerIP()!=this.address || si.getPort()!=this.port){
+				//disconnects from the running server
+				disconnect();
+				//and connects to the new one
+				this.address=si.getServerIP();
+				this.port= si.getPort();
+				connect();
+			}
 			clientSocket.sendMessage(newmsg);
 			logger.info("Send message:\t '" + msg+ "'");	
 
 			Message latestMsg = clientSocket.recieveMesssage();
 			reply=handleReceivedPutMsg(latestMsg,key,value);
-
-			//for(ClientSocketListener listener : listeners) {
-			//	listener.handleNewPostKVMessage(reply);
-			//}
 			return reply;
 
 		}
@@ -187,6 +182,12 @@ public class KVStore implements KVCommInterface {
 			case PUT_UPDATE:
 				System.out.println(reply.getStatus().name()+"  < "+reply.getKey()+","+reply.getValue()+" >");
 				break;
+			case DELETE_SUCCESS:
+				System.out.println(reply.getStatus().name()+"  < "+reply.getKey());
+				break;
+			case DELETE_ERROR:
+				System.out.println(reply.getStatus().name()+"  < "+reply.getKey());
+				break;
 			default:
 				logger.debug("Invalid Message Status received" + latestMsg.getJson());	
 			}
@@ -213,31 +214,26 @@ public class KVStore implements KVCommInterface {
 			//wait until receive an answer 
 			Message latestMsg = clientSocket.recieveMesssage();
 			reply=handleReceivedGetMsg(latestMsg,key);
-			
-		//	for(ClientSocketListener listener : listeners) {
-			//	listener.handleNewGetKVMessage(reply);
-			//}
 			return reply;
 
 			
 		}
 		else{
 			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
-			//disconnects from the running server
-			disconnect();
-			//and connects to the new one
-			this.address=si.getServerIP();
-			this.port= si.getPort();
-			connect();
+			if (si.getServerIP()!=this.address || si.getPort()!=this.port){
+				//disconnects from the running server
+				disconnect();
+				//and connects to the new one
+				this.address=si.getServerIP();
+				this.port= si.getPort();
+				connect();
+			}
 			clientSocket.sendMessage(newmsg);
 			logger.info("Send message:\t '" + msg+ "'");
 			//wait until receive an answer 
 			Message latestMsg = clientSocket.recieveMesssage();
 			
 			reply=handleReceivedGetMsg(latestMsg,key);
-			//for(ClientSocketListener listener : listeners) {
-			//	listener.handleNewGetKVMessage(reply);
-			//}
 			return reply;
 		}
 		//sending the message to the socket
@@ -279,10 +275,23 @@ public class KVStore implements KVCommInterface {
 	public void setRunning(boolean run) {
 		running = run;
 	}
+	
+	
+	public void handleStatus(SocketStatus status) {
+		if(status == SocketStatus.CONNECTED) {
 
-	public void addListener(ClientSocketListener listener){
-		listeners.add(listener);
+		} else if (status == SocketStatus.DISCONNECTED) {
+			System.out.println("EchoClient> Connection terminated: " 
+					+ address + " / " + port);
+
+		} else if (status == SocketStatus.CONNECTION_LOST) {
+			System.out.println("EchoClient> Connection lost: " 
+					+ address + " / " + port);
+			System.out.print("EchoClient>");
+		}
+
 	}
+	
 	public boolean isRunning() {
 		return running;
 	}
