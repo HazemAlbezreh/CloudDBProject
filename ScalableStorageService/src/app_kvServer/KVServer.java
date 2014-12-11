@@ -222,6 +222,7 @@ public class KVServer extends Thread  {
 			for(int i=0; i<this.activeThreads.size();i++){
 				try{
 					this.activeThreads.get(i).terminateThread();
+					this.removeThread(this.activeThreads.get(i));
 				}catch (IOException e) {
 					logger.error("Error! " + "Terminate thread exception ");
 				}
@@ -257,7 +258,9 @@ public class KVServer extends Thread  {
 	}
 	
 	public synchronized void removeThread(ClientConnection cc){
-		this.activeThreads.remove(cc);
+		if(this.activeThreads.contains(cc)){
+			this.activeThreads.remove(cc);
+		}
 	}
 	
 }
