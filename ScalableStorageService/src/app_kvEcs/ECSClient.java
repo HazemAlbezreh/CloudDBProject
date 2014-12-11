@@ -4,15 +4,23 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 import logger.LogSetup;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import client.ClientSocketListener.SocketStatus;
+
+import common.messages.KVMessage;
+import common.messages.TextMessage;
+
+import ecs.ClientSocketListener;
 
 
-public class ECSClient {
+
+public class ECSClient implements ClientSocketListener{
 	private static Logger logger = Logger.getRootLogger();
 	private boolean stop = false;
 	private BufferedReader stdin;
@@ -155,15 +163,17 @@ public class ECSClient {
 		}
 	}
 
-//TODO pass arguments in ecs
 	private void init(String cacheSize, String displacementStrategy) {
 		ecs = ECS.getInstance(filepath);
+		Random rn = new Random();
+		int numNodes = rn.nextInt(10) + 1;
 		if (ecs==null){
 			System.out.println(PROMPT+"Error in initialization!");
 			logger.debug("There was an error initiating ECS! ");
 		}
 		else{
 			System.out.println(PROMPT+"ECS is initialized!");
+			ecs.initService(numNodes,Integer.parseInt(cacheSize),displacementStrategy);
 			logger.debug("ECS is initialized!! ");
 
 		}
@@ -196,10 +206,13 @@ public class ECSClient {
 		sb.append(PROMPT);
 		sb.append("::::::::::::::::::::::::::::::::");
 		sb.append("::::::::::::::::::::::::::::::::\n");
+		sb.append(PROMPT).append("init <cacheSize> <FIFO | LRU | LFU>");
+		sb.append("\t Initializes servers \n");
 		sb.append(PROMPT).append("start");
 		sb.append("\t starts the storage service\n");
 		sb.append(PROMPT).append("stop");
 		sb.append("\t\t stops the storage service - Servers do not process client requests but keep running \n");
+		
 		sb.append(PROMPT).append("addServer <cacheSize> <FIFO | LRU | LFU>");
 		sb.append("\t adds new KVServer \n");
 		sb.append(PROMPT).append("removeServer");
@@ -266,6 +279,34 @@ public class ECSClient {
 			System.exit(1);
 		}
 	}
+
+
+	@Override
+	public void handleNewMessage(TextMessage msg) {
+		if(!stop) {
+			System.out.println(msg.getMsg());
+		}
+		
+	}
+
+
+	@Override
+	public void handleStatus(SocketStatus status) {
+		if(status == SocketStatus.CONNECTED) {
+
+		} else if (status == SocketStatus.DISCONNECTED) {
+			System.out.print(PROMPT);
+			System.out.println("Connection terminated: ");
+
+		} else if (status == SocketStatus.CONNECTION_LOST) {
+			System.out.println("Connection lost: ");
+			System.out.print(PROMPT);
+		}
+		
+	}
+
+
+	
 
 
 }
