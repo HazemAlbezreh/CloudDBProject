@@ -72,7 +72,7 @@ public class KVServer extends Thread  {
 				try {
 					Socket client = serverSocket.accept();
 					ClientConnection connection = new ClientConnection(client,this);
-					this.activeThreads.add(connection);
+					this.addThread(connection);
 					new Thread(connection).start();
 					logger.info("Connected to " + client.getInetAddress().getHostName()+ " on port " + client.getPort());
 				} catch (IOException e) {
@@ -219,9 +219,9 @@ public class KVServer extends Thread  {
 		this.setStatus(ServerStatus.SHUTDOWNED);
 		try {
 			serverSocket.close();
-			for(ClientConnection cc : this.activeThreads){
+			for(int i=0; i<this.activeThreads.size();i++){
 				try{
-					cc.terminateThread();
+					this.activeThreads.get(i).terminateThread();
 				}catch (IOException e) {
 					logger.error("Error! " + "Terminate thread exception ");
 				}
@@ -252,5 +252,12 @@ public class KVServer extends Thread  {
 		return this.range.isWithin(i);
 	}
 
-
+	public synchronized void addThread(ClientConnection cc){
+		this.activeThreads.add(cc);
+	}
+	
+	public synchronized void removeThread(ClientConnection cc){
+		this.activeThreads.remove(cc);
+	}
+	
 }
