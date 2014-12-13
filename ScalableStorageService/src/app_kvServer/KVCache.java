@@ -1,6 +1,7 @@
 package app_kvServer;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -48,22 +49,34 @@ public class KVCache  {
 		HashMap<String,String> data= new HashMap<String,String>();
 		boolean inRange;
 		int hashvalue = 0;
-		try{
-			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
-			while ((line = br.readLine()) != null) {
-				String [] str = line.split(",");
-				hashvalue = hashfunct.hash(str[0]);
-				inRange=range.isWithin(hashvalue);
-				if(inRange){
-					data.put(str[0], str[1]);
+		String fileName = "./"+serverName+"dataset.txt";
+		File file = new File(fileName);
+		if(file.exists())
+		{
+			try{	
+				BufferedReader br = new BufferedReader(new FileReader(fileName));
+				while ((line = br.readLine()) != null) {
+					String [] str = line.split(",");
+					hashvalue = hashfunct.hash(str[0]);
+					inRange=range.isWithin(hashvalue);
+					if(inRange){
+						data.put(str[0], str[1]);
+					}
+				}
+				br.close();
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}else{
+				try{
+					file.createNewFile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-			br.close();
-			return data;
-		}
-		catch(Exception e){
-			return null;
-		}
+		return data;
 	}
 	
 	
