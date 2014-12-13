@@ -1,0 +1,606 @@
+2014-12-13 22:02:30,520 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 22:02:30,525 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 22:02:30,869 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19801
+2014-12-13 22:02:30,946 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19804
+2014-12-13 22:02:30,948 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19806
+2014-12-13 22:02:30,950 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19808
+2014-12-13 22:02:30,980 INFO  [Thread-4] root: Put is successful
+2014-12-13 22:02:30,985 INFO  [Thread-3] socket.SocketWrapper: Client Disconnected 
+2014-12-13 22:02:30,985 ERROR [Thread-3] root: Received Exception at ClientConnection ClientSocket closed 
+2014-12-13 22:02:30,985 ERROR [Thread-3] root: Received Exception at ClientConnection While running ClientSocket closed 
+2014-12-13 22:02:30,999 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19811
+2014-12-13 22:02:31,002 INFO  [Thread-5] root: Put is successful
+2014-12-13 22:02:31,011 INFO  [Thread-4] root: Put is successful
+2014-12-13 22:02:31,021 INFO  [Thread-4] socket.SocketWrapper: Client Disconnected 
+2014-12-13 22:02:31,021 ERROR [Thread-4] root: Received Exception at ClientConnection ClientSocket closed 
+2014-12-13 22:02:31,021 ERROR [Thread-4] root: Received Exception at ClientConnection While running ClientSocket closed 
+2014-12-13 22:02:31,036 INFO  [Thread-2] socket.SocketWrapper: Client Disconnected 
+2014-12-13 22:02:31,036 ERROR [Thread-2] root: Received Exception at ClientConnection ClientSocket closed 
+2014-12-13 22:02:31,036 ERROR [Thread-2] root: Received Exception at ClientConnection While running ClientSocket closed 
+2014-12-13 22:02:31,052 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19814
+2014-12-13 22:02:31,054 INFO  [Thread-6] root: Put is successful
+2014-12-13 22:02:31,057 INFO  [Thread-5] socket.SocketWrapper: Client Disconnected 
+2014-12-13 22:02:31,057 ERROR [Thread-5] root: Received Exception at ClientConnection ClientSocket closed 
+2014-12-13 22:02:31,057 ERROR [Thread-5] root: Received Exception at ClientConnection While running ClientSocket closed 
+2014-12-13 22:02:31,067 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19816
+2014-12-13 22:02:31,069 INFO  [Thread-7] root: Put is successful
+2014-12-13 22:02:31,070 INFO  [Thread-7] socket.SocketWrapper: Client Disconnected 
+2014-12-13 22:02:31,070 ERROR [Thread-7] root: Received Exception at ClientConnection ClientSocket closed 
+2014-12-13 22:02:31,070 ERROR [Thread-7] root: Received Exception at ClientConnection While running ClientSocket closed 
+2014-12-13 22:02:31,078 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19818
+2014-12-13 22:02:31,080 INFO  [Thread-8] root: Put is successful
+2014-12-13 22:02:31,081 INFO  [Thread-6] socket.SocketWrapper: Client Disconnected 
+2014-12-13 22:02:31,081 ERROR [Thread-6] root: Received Exception at ClientConnection ClientSocket closed 
+2014-12-13 22:02:31,081 ERROR [Thread-6] root: Received Exception at ClientConnection While running ClientSocket closed 
+2014-12-13 22:02:31,104 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19822
+2014-12-13 22:02:31,107 INFO  [Thread-9] root: Put is successful
+2014-12-13 22:02:44,556 INFO  [Thread-8] socket.SocketWrapper: Client Disconnected 
+2014-12-13 22:02:44,556 ERROR [Thread-8] root: Received Exception at ClientConnection ClientSocket closed 
+2014-12-13 22:02:44,556 ERROR [Thread-8] root: Received Exception at ClientConnection While running ClientSocket closed 
+2014-12-13 22:02:44,556 INFO  [Thread-9] socket.SocketWrapper: Client Disconnected 
+2014-12-13 22:02:44,557 ERROR [Thread-9] root: Received Exception at ClientConnection ClientSocket closed 
+2014-12-13 22:02:44,556 INFO  [Thread-1] socket.SocketWrapper: Client Disconnected 
+2014-12-13 22:02:44,557 ERROR [Thread-9] root: Received Exception at ClientConnection While running ClientSocket closed 
+2014-12-13 22:02:44,558 ERROR [Thread-1] root: Received Exception at ClientConnection ClientSocket closed 
+2014-12-13 22:02:44,558 ERROR [Thread-1] root: Received Exception at ClientConnection While running ClientSocket closed 
+2014-12-13 22:13:35,582 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 22:13:35,586 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 22:13:36,128 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19957
+2014-12-13 22:13:36,262 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19968
+2014-12-13 22:13:36,320 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19973
+2014-12-13 22:13:36,358 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19976
+2014-12-13 22:13:36,460 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19993
+2014-12-13 22:13:36,498 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 19999
+2014-12-13 22:13:36,518 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20003
+2014-12-13 22:13:36,591 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20018
+2014-12-13 22:13:36,634 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20027
+2014-12-13 22:13:36,731 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 22:13:36,732 INFO  [Thread-0] root: Shutdown server
+2014-12-13 22:13:36,732 INFO  [Thread-0] root: Server stopped.
+2014-12-13 22:16:55,047 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 22:16:55,052 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 22:16:55,974 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20060
+2014-12-13 22:16:56,179 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20073
+2014-12-13 22:16:56,198 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20076
+2014-12-13 22:16:56,269 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20082
+2014-12-13 22:16:56,316 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20089
+2014-12-13 22:16:56,459 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20111
+2014-12-13 22:16:56,585 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20135
+2014-12-13 22:16:56,607 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20139
+2014-12-13 22:16:56,662 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 22:16:56,663 INFO  [Thread-0] root: Shutdown server
+2014-12-13 22:16:56,663 INFO  [Thread-0] root: Server stopped.
+2014-12-13 22:20:47,899 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 22:20:47,902 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 22:20:48,361 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20172
+2014-12-13 22:20:48,519 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20178
+2014-12-13 22:20:48,520 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20179
+2014-12-13 22:20:48,522 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20182
+2014-12-13 22:20:48,524 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20184
+2014-12-13 22:20:48,529 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20190
+2014-12-13 22:20:48,531 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20193
+2014-12-13 22:20:48,668 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20207
+2014-12-13 22:20:48,689 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20210
+2014-12-13 22:20:48,719 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20214
+2014-12-13 22:20:48,737 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20218
+2014-12-13 22:20:48,764 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20222
+2014-12-13 22:20:48,789 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20226
+2014-12-13 22:20:48,801 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20229
+2014-12-13 22:20:48,845 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20237
+2014-12-13 22:20:48,996 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20263
+2014-12-13 22:20:49,001 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20264
+2014-12-13 22:20:49,074 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 22:20:49,077 INFO  [Thread-0] root: Shutdown server
+2014-12-13 22:20:49,077 INFO  [Thread-0] root: Server stopped.
+2014-12-13 22:26:49,580 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 22:26:49,583 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 22:26:50,898 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20294
+2014-12-13 22:26:51,188 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20324
+2014-12-13 22:26:51,233 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20327
+2014-12-13 22:26:51,276 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20333
+2014-12-13 22:26:51,291 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20336
+2014-12-13 22:26:51,404 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20353
+2014-12-13 22:26:51,449 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20361
+2014-12-13 22:26:51,459 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20362
+2014-12-13 22:26:51,465 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20363
+2014-12-13 22:26:51,495 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20366
+2014-12-13 22:26:51,596 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20385
+2014-12-13 22:26:51,653 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20396
+2014-12-13 22:26:51,676 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20399
+2014-12-13 22:26:51,706 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 22:26:51,707 INFO  [Thread-0] root: Shutdown server
+2014-12-13 22:26:51,707 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:03:35,470 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:03:35,474 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:03:35,862 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20695
+2014-12-13 23:03:35,970 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20699
+2014-12-13 23:03:36,040 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20703
+2014-12-13 23:03:36,119 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20709
+2014-12-13 23:03:36,141 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20711
+2014-12-13 23:03:36,152 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20714
+2014-12-13 23:03:36,184 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20717
+2014-12-13 23:03:36,239 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20721
+2014-12-13 23:03:36,298 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20727
+2014-12-13 23:03:36,328 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20729
+2014-12-13 23:03:36,342 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20732
+2014-12-13 23:03:36,349 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20734
+2014-12-13 23:03:36,367 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20736
+2014-12-13 23:03:36,387 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20740
+2014-12-13 23:03:36,409 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20742
+2014-12-13 23:03:36,469 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20750
+2014-12-13 23:03:36,483 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20752
+2014-12-13 23:03:36,517 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20756
+2014-12-13 23:03:36,528 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20758
+2014-12-13 23:03:36,532 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:03:36,533 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:03:36,533 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:04:56,157 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:04:56,161 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:04:56,379 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20766
+2014-12-13 23:04:56,463 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20768
+2014-12-13 23:04:56,541 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20772
+2014-12-13 23:04:56,563 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20774
+2014-12-13 23:04:56,603 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20777
+2014-12-13 23:04:56,634 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20781
+2014-12-13 23:04:56,648 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20783
+2014-12-13 23:04:56,702 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20789
+2014-12-13 23:04:56,734 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20793
+2014-12-13 23:04:56,755 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20795
+2014-12-13 23:04:56,766 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20797
+2014-12-13 23:04:56,811 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20803
+2014-12-13 23:04:56,854 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20806
+2014-12-13 23:04:56,870 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20809
+2014-12-13 23:04:56,883 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20811
+2014-12-13 23:04:56,929 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20816
+2014-12-13 23:04:56,942 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20818
+2014-12-13 23:04:56,950 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20820
+2014-12-13 23:04:56,977 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20824
+2014-12-13 23:04:57,019 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20828
+2014-12-13 23:04:57,053 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20832
+2014-12-13 23:04:57,072 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:04:57,073 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:04:57,073 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:06:55,864 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:06:55,868 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:06:56,367 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20924
+2014-12-13 23:06:56,608 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20936
+2014-12-13 23:06:56,632 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20938
+2014-12-13 23:06:56,663 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20940
+2014-12-13 23:06:56,689 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20942
+2014-12-13 23:06:56,770 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20949
+2014-12-13 23:06:56,829 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20957
+2014-12-13 23:06:56,932 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20971
+2014-12-13 23:06:56,973 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20977
+2014-12-13 23:06:56,991 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20979
+2014-12-13 23:06:57,038 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20986
+2014-12-13 23:06:57,053 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20990
+2014-12-13 23:06:57,063 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 20992
+2014-12-13 23:06:57,089 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:06:57,089 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:06:57,089 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:09:30,805 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:09:30,809 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:09:31,055 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21067
+2014-12-13 23:09:31,153 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21069
+2014-12-13 23:09:31,238 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21077
+2014-12-13 23:09:31,314 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21081
+2014-12-13 23:09:31,408 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21094
+2014-12-13 23:09:31,414 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21095
+2014-12-13 23:09:31,490 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21103
+2014-12-13 23:09:31,520 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21108
+2014-12-13 23:09:31,525 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21109
+2014-12-13 23:09:31,546 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21113
+2014-12-13 23:09:31,616 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21123
+2014-12-13 23:09:31,626 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21125
+2014-12-13 23:09:31,687 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:09:31,688 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:09:31,688 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:10:02,823 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:10:02,827 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:10:03,177 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21137
+2014-12-13 23:10:03,273 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21143
+2014-12-13 23:10:03,337 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21147
+2014-12-13 23:10:03,626 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21167
+2014-12-13 23:10:03,695 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21175
+2014-12-13 23:10:03,706 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21177
+2014-12-13 23:10:03,712 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21178
+2014-12-13 23:10:03,758 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21184
+2014-12-13 23:10:03,847 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21198
+2014-12-13 23:10:03,925 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21210
+2014-12-13 23:10:03,962 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:10:03,963 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:10:03,963 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:17:53,970 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:17:53,974 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:17:54,409 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21561
+2014-12-13 23:17:54,651 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21571
+2014-12-13 23:17:54,984 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21610
+2014-12-13 23:17:55,017 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21614
+2014-12-13 23:17:55,139 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21633
+2014-12-13 23:17:55,279 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21653
+2014-12-13 23:17:55,304 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:17:55,304 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:17:55,304 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:18:54,188 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:18:54,192 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:18:55,068 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21667
+2014-12-13 23:18:55,384 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21685
+2014-12-13 23:18:55,471 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21693
+2014-12-13 23:18:55,476 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21694
+2014-12-13 23:18:55,481 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21695
+2014-12-13 23:18:55,605 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21708
+2014-12-13 23:18:55,649 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21713
+2014-12-13 23:18:55,796 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21728
+2014-12-13 23:18:55,842 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21733
+2014-12-13 23:18:55,860 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21736
+2014-12-13 23:18:55,935 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21748
+2014-12-13 23:18:55,955 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21751
+2014-12-13 23:18:56,000 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:18:56,000 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:18:56,001 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:19:57,807 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:19:57,810 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:19:58,269 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21767
+2014-12-13 23:19:58,515 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21780
+2014-12-13 23:19:58,815 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21809
+2014-12-13 23:19:58,821 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21810
+2014-12-13 23:19:58,916 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21820
+2014-12-13 23:19:58,921 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21821
+2014-12-13 23:19:58,955 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21826
+2014-12-13 23:19:58,988 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21830
+2014-12-13 23:19:59,016 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21834
+2014-12-13 23:19:59,031 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21837
+2014-12-13 23:19:59,036 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21838
+2014-12-13 23:19:59,068 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21843
+2014-12-13 23:19:59,157 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21857
+2014-12-13 23:19:59,163 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:19:59,165 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:19:59,165 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:20:40,622 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:20:40,625 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:20:40,890 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21869
+2014-12-13 23:20:41,039 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21874
+2014-12-13 23:20:41,338 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21888
+2014-12-13 23:20:41,720 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21924
+2014-12-13 23:20:41,784 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21934
+2014-12-13 23:20:41,857 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21948
+2014-12-13 23:20:41,904 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:20:41,905 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:20:41,905 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:21:25,216 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:21:25,220 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:21:26,237 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21961
+2014-12-13 23:21:26,430 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21968
+2014-12-13 23:21:26,547 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21978
+2014-12-13 23:21:26,628 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21983
+2014-12-13 23:21:26,790 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 21996
+2014-12-13 23:21:26,848 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22004
+2014-12-13 23:21:26,908 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22012
+2014-12-13 23:21:26,963 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22018
+2014-12-13 23:21:27,061 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22030
+2014-12-13 23:21:27,080 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22033
+2014-12-13 23:21:27,225 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:21:27,227 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:21:27,227 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:22:22,566 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:22:22,570 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:22:23,857 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22058
+2014-12-13 23:22:24,202 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22075
+2014-12-13 23:22:24,468 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22097
+2014-12-13 23:22:24,539 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22105
+2014-12-13 23:22:24,561 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22108
+2014-12-13 23:22:24,649 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22120
+2014-12-13 23:22:24,654 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22121
+2014-12-13 23:22:24,689 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22127
+2014-12-13 23:22:24,726 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22131
+2014-12-13 23:22:24,737 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22132
+2014-12-13 23:22:24,751 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22134
+2014-12-13 23:22:24,831 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22142
+2014-12-13 23:22:24,877 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22149
+2014-12-13 23:22:24,893 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22152
+2014-12-13 23:22:24,899 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:22:24,899 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:22:24,899 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:24:20,907 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:24:20,911 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:24:21,190 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22167
+2014-12-13 23:24:21,348 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22172
+2014-12-13 23:24:21,861 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22217
+2014-12-13 23:24:21,935 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22226
+2014-12-13 23:24:21,963 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22230
+2014-12-13 23:24:22,028 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22239
+2014-12-13 23:24:22,102 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22246
+2014-12-13 23:24:22,157 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:24:22,158 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:24:22,158 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:25:01,842 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:25:01,846 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:25:02,686 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22263
+2014-12-13 23:25:02,876 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22275
+2014-12-13 23:25:02,972 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22283
+2014-12-13 23:25:03,098 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22291
+2014-12-13 23:25:03,177 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22297
+2014-12-13 23:25:03,368 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22315
+2014-12-13 23:25:03,466 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22328
+2014-12-13 23:25:03,473 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22329
+2014-12-13 23:25:03,528 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22337
+2014-12-13 23:25:03,660 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22357
+2014-12-13 23:25:03,708 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:25:03,709 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:25:03,709 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:27:15,875 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:27:15,879 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:27:17,177 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22371
+2014-12-13 23:27:17,411 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22386
+2014-12-13 23:27:17,414 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22389
+2014-12-13 23:27:17,625 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22400
+2014-12-13 23:27:17,886 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22421
+2014-12-13 23:27:17,920 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22424
+2014-12-13 23:27:17,940 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22426
+2014-12-13 23:27:17,950 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22428
+2014-12-13 23:27:17,974 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22431
+2014-12-13 23:27:18,026 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22438
+2014-12-13 23:27:18,229 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22465
+2014-12-13 23:27:18,240 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22466
+2014-12-13 23:27:18,290 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:27:18,291 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:27:18,291 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:29:19,701 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:29:19,705 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:29:20,989 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22490
+2014-12-13 23:29:21,211 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22500
+2014-12-13 23:29:21,416 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22520
+2014-12-13 23:29:21,466 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22525
+2014-12-13 23:29:21,590 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22535
+2014-12-13 23:29:21,619 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22538
+2014-12-13 23:29:21,772 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22552
+2014-12-13 23:29:21,842 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22560
+2014-12-13 23:29:21,967 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22575
+2014-12-13 23:29:21,983 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22577
+2014-12-13 23:29:22,022 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22582
+2014-12-13 23:29:22,046 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22587
+2014-12-13 23:29:22,062 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:29:22,063 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:29:22,063 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:30:00,641 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:30:00,645 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:30:00,912 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22601
+2014-12-13 23:30:01,055 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22603
+2014-12-13 23:30:01,132 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22615
+2014-12-13 23:30:01,329 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22627
+2014-12-13 23:30:01,472 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22637
+2014-12-13 23:30:01,550 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22643
+2014-12-13 23:30:01,703 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22661
+2014-12-13 23:30:01,747 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22668
+2014-12-13 23:30:01,890 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22684
+2014-12-13 23:30:01,920 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:30:01,922 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:30:01,922 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:30:24,928 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:30:24,932 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:30:25,648 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22695
+2014-12-13 23:30:25,837 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22710
+2014-12-13 23:30:25,882 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22712
+2014-12-13 23:30:26,084 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22723
+2014-12-13 23:30:26,192 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22731
+2014-12-13 23:30:26,271 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22739
+2014-12-13 23:30:26,374 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22748
+2014-12-13 23:30:26,551 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22771
+2014-12-13 23:30:26,558 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22772
+2014-12-13 23:30:26,689 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:30:26,690 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:30:26,691 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:32:20,852 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:32:20,854 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:32:21,429 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22807
+2014-12-13 23:32:21,936 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22843
+2014-12-13 23:32:21,953 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22844
+2014-12-13 23:32:22,069 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22852
+2014-12-13 23:32:22,204 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22867
+2014-12-13 23:32:22,245 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22872
+2014-12-13 23:32:22,309 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22879
+2014-12-13 23:32:22,321 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22881
+2014-12-13 23:32:22,393 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22890
+2014-12-13 23:32:22,429 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22895
+2014-12-13 23:32:22,435 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22896
+2014-12-13 23:32:22,528 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:32:22,530 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:32:22,531 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:32:48,155 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:32:48,158 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:32:49,417 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22908
+2014-12-13 23:32:49,643 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22930
+2014-12-13 23:32:49,817 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22940
+2014-12-13 23:32:49,871 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22944
+2014-12-13 23:32:49,933 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22948
+2014-12-13 23:32:49,940 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22949
+2014-12-13 23:32:50,098 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22965
+2014-12-13 23:32:50,112 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22966
+2014-12-13 23:32:50,175 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22972
+2014-12-13 23:32:50,416 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 22993
+2014-12-13 23:32:50,487 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23002
+2014-12-13 23:32:50,494 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23003
+2014-12-13 23:32:50,573 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23014
+2014-12-13 23:32:50,600 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:32:50,600 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:32:50,600 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:33:34,245 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:33:34,249 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:33:35,412 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23024
+2014-12-13 23:33:35,839 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23056
+2014-12-13 23:33:35,946 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23067
+2014-12-13 23:33:35,980 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23070
+2014-12-13 23:33:36,127 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23083
+2014-12-13 23:33:36,153 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23086
+2014-12-13 23:33:36,446 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23124
+2014-12-13 23:33:36,523 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:33:36,524 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:33:36,524 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:34:35,959 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:34:35,963 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:34:36,231 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23149
+2014-12-13 23:34:36,382 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23151
+2014-12-13 23:34:36,383 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23152
+2014-12-13 23:34:36,386 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23156
+2014-12-13 23:34:36,388 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23158
+2014-12-13 23:34:36,717 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23184
+2014-12-13 23:34:36,734 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23186
+2014-12-13 23:34:36,796 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23191
+2014-12-13 23:34:36,996 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23209
+2014-12-13 23:34:37,024 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23212
+2014-12-13 23:34:37,060 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23217
+2014-12-13 23:34:37,097 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23223
+2014-12-13 23:34:37,265 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23239
+2014-12-13 23:34:37,280 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23242
+2014-12-13 23:34:37,317 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:34:37,318 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:34:37,318 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:35:34,121 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:35:34,125 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:35:34,960 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23256
+2014-12-13 23:35:35,156 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23273
+2014-12-13 23:35:35,299 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23283
+2014-12-13 23:35:35,418 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23291
+2014-12-13 23:35:35,483 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23297
+2014-12-13 23:35:35,516 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23300
+2014-12-13 23:35:35,541 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23303
+2014-12-13 23:35:35,768 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23325
+2014-12-13 23:35:35,787 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23327
+2014-12-13 23:35:35,842 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23333
+2014-12-13 23:35:35,853 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23335
+2014-12-13 23:35:35,858 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23336
+2014-12-13 23:35:35,936 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23346
+2014-12-13 23:35:35,993 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23353
+2014-12-13 23:35:36,064 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23363
+2014-12-13 23:35:36,078 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:35:36,080 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:35:36,080 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:36:04,292 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:36:04,296 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:36:04,560 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23375
+2014-12-13 23:36:04,878 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23398
+2014-12-13 23:36:04,928 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23403
+2014-12-13 23:36:04,993 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23407
+2014-12-13 23:36:05,086 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23412
+2014-12-13 23:36:05,303 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23427
+2014-12-13 23:36:05,362 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23432
+2014-12-13 23:36:05,455 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23441
+2014-12-13 23:36:05,524 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23449
+2014-12-13 23:36:05,632 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23463
+2014-12-13 23:36:05,703 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23471
+2014-12-13 23:36:05,726 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:36:05,727 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:36:05,727 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:37:46,796 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:37:46,800 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:37:47,065 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23486
+2014-12-13 23:37:47,217 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23495
+2014-12-13 23:37:47,248 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23508
+2014-12-13 23:37:47,328 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23510
+2014-12-13 23:37:47,339 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23511
+2014-12-13 23:37:47,368 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23513
+2014-12-13 23:37:47,413 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23516
+2014-12-13 23:37:47,549 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23524
+2014-12-13 23:37:47,614 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23527
+2014-12-13 23:37:47,758 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23535
+2014-12-13 23:37:47,829 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23541
+2014-12-13 23:37:47,868 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23545
+2014-12-13 23:37:47,875 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23546
+2014-12-13 23:37:47,971 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23554
+2014-12-13 23:37:48,179 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23577
+2014-12-13 23:37:48,234 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23586
+2014-12-13 23:37:48,240 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23587
+2014-12-13 23:37:48,252 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23589
+2014-12-13 23:37:48,294 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:37:48,294 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:37:48,294 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:38:29,494 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:38:29,498 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:38:29,907 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23605
+2014-12-13 23:38:30,072 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23624
+2014-12-13 23:38:30,144 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23630
+2014-12-13 23:38:30,290 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23636
+2014-12-13 23:38:30,313 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23638
+2014-12-13 23:38:30,492 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23652
+2014-12-13 23:38:30,668 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23673
+2014-12-13 23:38:30,675 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23674
+2014-12-13 23:38:30,798 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23688
+2014-12-13 23:38:30,954 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23706
+2014-12-13 23:38:31,009 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:38:31,009 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:38:31,010 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:39:20,374 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:39:20,378 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:39:21,375 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23719
+2014-12-13 23:39:21,567 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23726
+2014-12-13 23:39:21,569 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23728
+2014-12-13 23:39:21,571 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23731
+2014-12-13 23:39:21,577 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23738
+2014-12-13 23:39:21,580 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23742
+2014-12-13 23:39:21,916 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23763
+2014-12-13 23:39:22,138 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23782
+2014-12-13 23:39:22,197 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23789
+2014-12-13 23:39:22,281 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23799
+2014-12-13 23:39:22,356 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23807
+2014-12-13 23:39:22,379 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23811
+2014-12-13 23:39:22,469 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23821
+2014-12-13 23:39:22,476 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23822
+2014-12-13 23:39:22,482 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23823
+2014-12-13 23:39:22,547 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:39:22,548 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:39:22,548 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:39:50,989 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:39:50,992 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:39:51,260 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23845
+2014-12-13 23:39:51,410 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23855
+2014-12-13 23:39:51,416 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23860
+2014-12-13 23:39:51,416 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23861
+2014-12-13 23:39:51,417 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23862
+2014-12-13 23:39:51,973 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23903
+2014-12-13 23:39:52,043 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23909
+2014-12-13 23:39:52,081 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23913
+2014-12-13 23:39:52,102 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23914
+2014-12-13 23:39:52,147 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23919
+2014-12-13 23:39:52,206 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23923
+2014-12-13 23:39:52,222 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23924
+2014-12-13 23:39:52,329 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23937
+2014-12-13 23:39:52,337 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23938
+2014-12-13 23:39:52,440 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:39:52,442 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:39:52,442 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:40:47,094 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:40:47,097 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:40:47,217 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23962
+2014-12-13 23:40:47,348 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23964
+2014-12-13 23:40:47,353 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23969
+2014-12-13 23:40:47,360 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23976
+2014-12-13 23:40:47,361 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23977
+2014-12-13 23:40:47,365 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 23981
+2014-12-13 23:40:47,747 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24006
+2014-12-13 23:40:47,834 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24012
+2014-12-13 23:40:48,031 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24032
+2014-12-13 23:40:48,044 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24034
+2014-12-13 23:40:48,133 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24045
+2014-12-13 23:40:48,181 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24052
+2014-12-13 23:40:48,331 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:40:48,331 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:40:48,332 INFO  [Thread-0] root: Server stopped.
+2014-12-13 23:41:08,134 INFO  [Thread-0] root: Initialize server ...
+2014-12-13 23:41:08,138 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-13 23:41:08,839 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24076
+2014-12-13 23:41:09,022 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24093
+2014-12-13 23:41:09,029 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24100
+2014-12-13 23:41:09,271 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24108
+2014-12-13 23:41:09,279 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24109
+2014-12-13 23:41:09,320 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24112
+2014-12-13 23:41:09,342 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24114
+2014-12-13 23:41:09,449 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24123
+2014-12-13 23:41:09,473 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24125
+2014-12-13 23:41:09,618 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24137
+2014-12-13 23:41:09,737 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24152
+2014-12-13 23:41:09,895 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24169
+2014-12-13 23:41:09,907 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24170
+2014-12-13 23:41:09,949 INFO  [Thread-0] root: Connected to 127.0.0.1 on port 24176
+2014-12-13 23:41:10,019 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-13 23:41:10,020 INFO  [Thread-0] root: Shutdown server
+2014-12-13 23:41:10,020 INFO  [Thread-0] root: Server stopped.

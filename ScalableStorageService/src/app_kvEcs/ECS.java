@@ -279,8 +279,10 @@ public class ECS {
 	private void shutDownServer(ServerInfo server) {
 		EcsStore serverSocket = this.getServersConnection().get(server);
 		serverSocket.shutDown();
-		this.getInActiveServers().add(server);
-		this.getActiveServers().remove(server);
+		if (!this.getInActiveServers().contains(server))
+			this.getInActiveServers().add(server);
+		if (this.getActiveServers().contains(server))
+			this.getActiveServers().remove(server);
 	}
 
 	public void serverMoveData(ServerInfo server, Range range,
@@ -293,6 +295,8 @@ public class ECS {
 	public boolean addNode(int cacheSize,String strategy) {
 		// If there are idle servers in the repository, randomly pick one of
 		// them
+		if (this.getInActiveServers().size() <1 )
+			return false;
 		Random random = new Random();
 		int randomIndex = random.nextInt(this.getInActiveServers().size());// 0;
 		ServerInfo addedNode = this.getInActiveServers().get(randomIndex);
@@ -329,6 +333,8 @@ public class ECS {
 	}
 
 	public boolean removeNode() {
+		if (this.getActiveServers().size() < 1)
+			return false;
 		// Randomly select one of the storage servers.
 		Random random = new Random();
 		int randomIndex = random.nextInt(this.getActiveServers().size());
@@ -362,7 +368,7 @@ public class ECS {
 
 
 	
-/*	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {
 		args = new String[2];
 		args[0] = "ecs.config";
 		ECS application = new ECS(args[0]);
@@ -371,13 +377,7 @@ public class ECS {
 			System.out.println("Server key " + entry.getKey()+ " Server port " + ((ServerInfo)entry.getValue()).getPort());
 		}
 
-		System.out.println("\nh0 " + application.consistentHash.getHashFunction().hash("h0"));
-		 System.out.println("h1 " + application.consistentHash.getHashFunction().hash("h1"));
-		 System.out.println("h2 " + application.consistentHash.getHashFunction().hash("h2"));
-		 System.out.println("h3 " + application.consistentHash.getHashFunction().hash("h3"));
-		 System.out.println("a0 " + application.consistentHash.getHashFunction().hash("a0"));
-		 System.out.println("a1 " + application.consistentHash.getHashFunction().hash("a1"));
-		 System.out.println("a2 " + application.consistentHash.getHashFunction().hash("a2"));
+	
 		 application.start();
 		 
 		 
@@ -386,7 +386,14 @@ public class ECS {
 		 System.out.println("First node added");
 		 application.addNode(10, "FIFO");
 		 System.out.println("Second node added");
+		 
+		 application.removeNode();
+		 
+		 application.addNode(10, "FIFO");
 
+		 application.removeNode();
+		 
+		 application.addNode(10, "FIFO");
 
 		
 		for(Map.Entry<Integer, ServerInfo> entry : application.consistentHash.getMetaData().entrySet()){
@@ -398,5 +405,5 @@ public class ECS {
 		application.getInActiveServers();
 		application.shutDown();
 	}
-*/
+
 }

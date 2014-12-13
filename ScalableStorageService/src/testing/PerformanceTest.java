@@ -20,11 +20,11 @@ import app_kvEcs.ECS;
 
 public class PerformanceTest {
 
-	private static int nClients = 1;
-	private static int nServers = 1;
-	private static long nMessages = 10;
-	private static int cacheSize = 10;
-	private static String strategy = "FIFO";
+	private static int nClients = 20;
+	private static int nServers =10;
+	private static long nMessages = 100;
+	private static int cacheSize = 20;
+	private static String strategy = "LFU";
 	private static ECS ecs;
 	private static Random random;
 	private static List<Integer> charList;
@@ -201,9 +201,9 @@ public class PerformanceTest {
 		Collections.sort(latencies);
 		System.out.println("Best case: " + latencies.get(0) + "ms");
 		System.out.println("Worst case: " + latencies.get(latencies.size() - 1)
+				
 				+ "ms");
 		System.out.println("Size: " + latencies.size());
-
 		long LatencySum=0;
 
 		for (int i=0;i<latencies.size();i++){
@@ -214,7 +214,7 @@ public class PerformanceTest {
 		System.out.println("Average Latency  for 100 messages: " + AverageLatency);
 
 		System.out.println("Throughput= MAX_Num_Commands / Total_Time ===>"+result);
-
+		ecs.shutDown();
 	}
 
 }

@@ -17,7 +17,7 @@ public class SocketWrapper {
 	private Socket socket = null;
 	private static final int BUFFER_SIZE = 1024;
 	private static final int DROP_SIZE = 128 * BUFFER_SIZE;
-	private Logger logger = Logger.getLogger(SocketWrapper.class);;
+//	private Logger logger = Logger.getLogger(SocketWrapper.class);;
 
 	public SocketWrapper() {
 
@@ -44,7 +44,7 @@ public class SocketWrapper {
 			this.setSocket(new Socket(host, port));
 
 		} catch (ConnectException ConnectEx) {
-			logger.debug("Cannot connect to Server, No response");
+			//logger.debug("Cannot connect to Server, No response");
 		} catch (IOException ioEx) {
 //			ioEx.printStackTrace();
 			throw ioEx;
@@ -63,7 +63,7 @@ public class SocketWrapper {
 		if (getSocket() != null) {
 			try {
 				getSocket().close(); // Step 4.
-				logger.info("Client Disconnected ");
+			//	logger.info("Client Disconnected ");
 				setSocket(null);
 				return true;
 			} catch (IOException ioEx) {
@@ -124,10 +124,10 @@ public class SocketWrapper {
 		OutputStream output = this.getSocket().getOutputStream();
 		output.write(msgBytes, 0, msgBytes.length);
 		output.flush();
-		logger.info("SEND \t<" 
-				+ this.getSocket().getInetAddress().getHostAddress() + ":" 
-				+ this.getSocket().getPort() + ">: '" 
-				+ msg.getMsg() +"'");
+//		logger.info("SEND \t<" 
+//				+ this.getSocket().getInetAddress().getHostAddress() + ":" 
+//				+ this.getSocket().getPort() + ">: '" 
+//				+ msg.getMsg() +"'");
     }
 	
 	public TextMessage receiveTextMessage() throws IOException {
@@ -189,10 +189,10 @@ public class SocketWrapper {
 		
 		/* build final String */
 		TextMessage msg = new TextMessage(msgBytes);
-		logger.info("RECEIVE \t<" 
-				+ this.getSocket().getInetAddress().getHostAddress() + ":" 
-				+ this.getSocket().getPort() + ">: '" 
-				+ msg.getMsg().trim() + "'");
+//		logger.info("RECEIVE \t<" 
+//				+ this.getSocket().getInetAddress().getHostAddress() + ":" 
+//				+ this.getSocket().getPort() + ">: '" 
+//				+ msg.getMsg().trim() + "'");
 		return msg;
     }
 	
@@ -204,11 +204,11 @@ public class SocketWrapper {
 				this.sendTextMessage(tm);
 				return true;
 			} catch (SocketTimeoutException TimeOutEx) {
-				logger.debug("No response from server");
+			//	logger.debug("No response from server");
 				return false;
 			} catch (IOException ioEx) {
 				ioEx.printStackTrace();
-				logger.debug("IOException sending message : "+ msg.getClass().getName()+" : "+ioEx.getMessage());
+			//	logger.debug("IOException sending message : "+ msg.getClass().getName()+" : "+ioEx.getMessage());
 				disconnect();
 				return false;
 			}
@@ -226,42 +226,10 @@ public class SocketWrapper {
 //			e.printStackTrace();
 			disconnect();
 		} catch (MessageParseException e){
-			logger.debug("Unknown Message Format received : "+e.getMessage());	
+		//	logger.debug("Unknown Message Format received : "+e.getMessage());	
 			message=null;
 		}
 		return message;
 	}
 
-	
-//	public KVMSG recieveKVMesssage() {
-//		KVMSG kvmsg = null;
-//		byte[] byteMessage = null;
-//		// String res=this.parseInput(this.getSocket());
-//		try {
-//			InputStream inputStream = this.socket.getInputStream();
-//			int size = 0;
-//			do {
-//				long start = System.currentTimeMillis();
-//				long end = start + 3 * 1000; // 3 seconds
-//				while (inputStream.available() == 0) {
-//					if (System.currentTimeMillis() >= end) {
-//						break;
-//					}
-//				}
-//				size = inputStream.available();
-//				if (size != 0) {
-//					byteMessage = new byte[size];
-//					inputStream.read(byteMessage);
-//					
-//					TextMessage tm = new TextMessage(byteMessage);
-//					kvmsg= KVMSG.messageParser(tm.getMsg());
-//				}
-//			} while (size == 0);
-//
-//		} catch (IOException e) {
-//			disconnect();
-//			e.printStackTrace();
-//		}
-//		return kvmsg;
-//	}
 }

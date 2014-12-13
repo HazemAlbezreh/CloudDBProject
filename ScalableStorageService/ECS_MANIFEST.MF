@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.9.2
-Created-By: 1.7.0_51-b13 (Oracle Corporation)
-built-by: GusFangs
-Main-Class: app_kvEcs.ECS
+Ant-Version: Apache Ant 1.8.4
+Created-By: 1.7.0_55-b13 (Oracle Corporation)
+built-by: Hazem
+Main-Class: app_kvEcs.ECSClient
 Class-Path: ${project.classpath}
 

@@ -28,7 +28,7 @@ import ecs.EcsStore;
  */
 public class ClientConnection implements Runnable {
 
-	private static Logger logger = Logger.getRootLogger();
+	//private static Logger logger = Logger.getRootLogger();
 	private KVServer server;
 	private SocketWrapper clientSocket;
 	private boolean running;
@@ -92,7 +92,7 @@ public class ClientConnection implements Runnable {
 							replyStatus=KVMessage.StatusType.GET_ERROR;
 						}else{
 							replyStatus=KVMessage.StatusType.GET_SUCCESS;
-							logger.info("Get is successful " + cm.getKey() +" "+value);
+						//	logger.info("Get is successful " + cm.getKey() +" "+value);
 						}
 						reply= new ClientMessage(cm.getKey(),value,replyStatus);
 						clientSocket.sendMessage(reply);
@@ -113,26 +113,26 @@ public class ClientConnection implements Runnable {
 								l.add(key);
 								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().deleteDatasetEntry(l));
 								if(replyStatus==StatusType.DELETE_ERROR){
-									logger.info("Delete is not successful");
+								//	logger.info("Delete is not successful");
 									reply=new ClientMessage(replyStatus);
 									clientSocket.sendMessage(reply);
 								}else{
-									logger.info("Delete is successful");
+								//	logger.info("Delete is successful");
 									reply=new ClientMessage(key,replyStatus);
 									clientSocket.sendMessage(reply);
 								}
 							}else{
 								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(key, value));
 								if(replyStatus==StatusType.PUT_SUCCESS){ 		//PUT SUCCESS
-									logger.info("Put is successful");
+								//	logger.info("Put is successful");
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
 								}else if(replyStatus==StatusType.PUT_ERROR){	//PUT ERROR
-									logger.info("Put is not successful");
+								//	logger.info("Put is not successful");
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
 								}else{											//PUT UPDATE
-									logger.info("Put update is successful");
+								//	logger.info("Put update is successful");
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
 								}
@@ -156,12 +156,12 @@ public class ClientConnection implements Runnable {
 						if(result.equals("PUT_ERROR")){
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
 							this.clientSocket.sendMessage(serverReply);
-							logger.error("Mass put ended with PUT_ERROR");
+				//			logger.error("Mass put ended with PUT_ERROR");
 
 						}else{
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS);
 							this.clientSocket.sendMessage(serverReply);
-							logger.info("Mass Put is successful");
+				//			logger.info("Mass Put is successful");
 						}
 						break;
 					default :
@@ -219,9 +219,9 @@ public class ClientConnection implements Runnable {
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE_FAILURE);
 						}
-						logger.info("server status : " + this.server.getStatus());
+			//			logger.info("server status : " + this.server.getStatus());
 						clientSocket.sendMessage(ecsReply);
-						logger.info("message sent : " + ecsReply.getStatus());
+				//		logger.info("message sent : " + ecsReply.getStatus());
 						break;
 					case UPDATE_META_DATA:
 						this.server.update(config.getRing(), config.getRange());
@@ -247,7 +247,7 @@ public class ClientConnection implements Runnable {
 									keys.add(keytemp);
 								}
 								this.server.getKVCache().deleteDatasetEntry(keys);									//DELETE KEYS THAT WERE TRANSFERED
-								logger.info("Move data sent successfully ... Removing keys from cache");
+						//		logger.info("Move data sent successfully ... Removing keys from cache");
 							}else{
 								throw new Exception("KVServer responded with " + recReply.getStatus().toString());
 							}
@@ -255,31 +255,31 @@ public class ClientConnection implements Runnable {
 						}catch(Exception e){
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.MOVE_DATA_FAILURE);
 							clientSocket.sendMessage(ecsReply);
-							logger.error("Data transfer to KVServer failed with IOException "+e.getMessage());
+						//	logger.error("Data transfer to KVServer failed with IOException "+e.getMessage());
 						}
 						break;
 					case SHUT_DOWN:
 						this.server.shutDown();
 						break;
 					default:
-						logger.debug("Let's Hope this does not get printed or I forgot a message type");
+				//		logger.debug("Let's Hope this does not get printed or I forgot a message type");
 						break;
 					}
 		
 					break;
 				default : 
-					logger.debug("Let's Hope this does not get printed");
+			//		logger.debug("Let's Hope this does not get printed");
 					break;
 				}
 			}
-			logger.info("Thread Shutdown normally");
+	//		logger.info("Thread Shutdown normally");
 		}catch(Exception e){
-			logger.error("Received Exception at ClientConnection "+e.getMessage());
+	//		logger.error("Received Exception at ClientConnection "+e.getMessage());
 			if(isRunning()){
-				logger.error("Received Exception at ClientConnection While running "+e.getMessage());
+	//			logger.error("Received Exception at ClientConnection While running "+e.getMessage());
 				this.server.removeThread(this);
 			}else{
-				logger.info("Received Terminate Thread " + e.getMessage());
+	//			logger.info("Received Terminate Thread " + e.getMessage());
 			}
 			this.clientSocket.disconnect();
 		}
@@ -287,7 +287,7 @@ public class ClientConnection implements Runnable {
 	}
 	
 	public synchronized void terminateThread() throws IOException{
-		logger.info("Initiating Terminate Thread ");
+	//	logger.info("Initiating Terminate Thread ");
 		this.running=false;
 		this.clientSocket.disconnect();
 		return;
