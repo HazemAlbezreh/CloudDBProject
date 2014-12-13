@@ -362,7 +362,7 @@ public class ECS {
 
 
 	
-	public static void main(String[] args) throws IOException {
+/*	public static void main(String[] args) throws IOException {
 		args = new String[2];
 		args[0] = "ecs.config";
 		ECS application = new ECS(args[0]);
@@ -398,5 +398,5 @@ public class ECS {
 		application.getInActiveServers();
 		application.shutDown();
 	}
-
+*/
 }

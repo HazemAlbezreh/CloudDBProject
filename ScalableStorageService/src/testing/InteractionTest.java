@@ -1,6 +1,9 @@
 package testing;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import app_kvEcs.ECS;
 
 import client.KVStore;
 import junit.framework.TestCase;
@@ -9,9 +12,18 @@ import common.messages.KVMessage.StatusType;
 
 
 public class InteractionTest extends TestCase {
+	private static ECS ecs;
+	private static int nServers = 10;
+	private static int cacheSize = 10;
+	private static String strategy = "FIFO";
 
 	private KVStore kvClient;
-	
+	@BeforeClass
+	public static void init() {
+		ecs = new ECS("ecs.config");
+		ecs.initService(nServers,cacheSize,strategy);
+		ecs.start();
+	}
 	public void setUp() {
 		kvClient = new KVStore("localhost", 50000);
 		try {

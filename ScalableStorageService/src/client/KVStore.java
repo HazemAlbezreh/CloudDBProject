@@ -29,6 +29,10 @@ public class KVStore implements KVCommInterface {
 
 	private SocketWrapper clientSocket;
 
+	
+
+
+
 	private String address;
 	private int port;
 
@@ -50,7 +54,7 @@ public class KVStore implements KVCommInterface {
 	}
 	
 	
-	public void handleTextMessage(TextMessage msg) {
+	public static void handleTextMessage(TextMessage msg) {
 			System.out.println(msg.getMsg());
 		
 	}
@@ -60,7 +64,7 @@ public class KVStore implements KVCommInterface {
 
 
 	@Override
-	public void connect() throws IOException {
+	public TextMessage connect() throws IOException {
 		try {
 			//connects to the socket of server
 			clientSocket = new SocketWrapper();
@@ -69,16 +73,15 @@ public class KVStore implements KVCommInterface {
 
 			//waits until it receives the answer from server
 			TextMessage latestMsg = clientSocket.receiveTextMessage();
-			handleTextMessage(latestMsg);
+			//handleTextMessage(latestMsg);
+			return latestMsg;
 		} catch (IOException ioe) {
 			//if there was an error connecting
 			if(isRunning()) {
 				logger.error("Connection lost!");
 				try {
 					tearDownConnection();
-				//	for(ClientSocketListener listener : listeners) {
-						handleStatus(SocketStatus.CONNECTION_LOST);
-				//	}
+					handleStatus(SocketStatus.CONNECTION_LOST,address,port);
 				} catch (IOException e) {
 					logger.error("Unable to close connection!");
 					throw ioe;
@@ -90,18 +93,21 @@ public class KVStore implements KVCommInterface {
 	}
 
 	@Override
-	public synchronized void disconnect() {
+	public synchronized SocketStatus disconnect() {
 		logger.info("try to close connection ...");
 
 		try {
 
 			tearDownConnection();
-			handleStatus(SocketStatus.DISCONNECTED);
+			return SocketStatus.DISCONNECTED;
 		} catch (IOException ioe) {
 			logger.error("Unable to close connection!");
 		}
+		return null;
 	}
 
+
+	
 
 	private void tearDownConnection() throws IOException {
 		setRunning(false);
@@ -166,26 +172,34 @@ public class KVStore implements KVCommInterface {
 			case SERVER_NOT_RESPONSIBLE:
 				updateMetaData(reply.getMetadata());
 				put(key,value);
+				logger.info("Received message SERVER_NOT_RESPONSIBLE");	
 				break;
 			case SERVER_STOPPED:
+				logger.info("Received message SERVER_STOPPED");	
 				System.out.println("The Server has stopped for some time!Please wait or try later!");
 				break;
 			case SERVER_WRITE_LOCK:
+				logger.info("Received message SERVER_WRITE_LOCK");	
 				System.out.println("The Server is busy! Please try put requests later!");
 				break;
 			case PUT_ERROR:
+				logger.debug("Received message PUT_ERROR");	
 				System.out.println("Your request was not successful!");				
 				break;
 			case PUT_SUCCESS:
+				logger.info("Received message PUT_SUCCESS");	
 				System.out.println(reply.getStatus().name()+"  < "+reply.getKey()+","+reply.getValue()+" >");
 				break;
 			case PUT_UPDATE:
+				logger.info("Received message PUT_UPDATE");	
 				System.out.println(reply.getStatus().name()+"  < "+reply.getKey()+","+reply.getValue()+" >");
 				break;
 			case DELETE_SUCCESS:
+				logger.info("Received message DELETE_SUCCESS");	
 				System.out.println(reply.getStatus().name()+"  < "+reply.getKey());
 				break;
 			case DELETE_ERROR:
+				logger.debug("Received message DELETE_ERROR");	
 				System.out.println(reply.getStatus().name()+"  < "+reply.getKey());
 				break;
 			default:
@@ -277,7 +291,7 @@ public class KVStore implements KVCommInterface {
 	}
 	
 	
-	public void handleStatus(SocketStatus status) {
+	public static void handleStatus(SocketStatus status,String address,int port) {
 		if(status == SocketStatus.CONNECTED) {
 
 		} else if (status == SocketStatus.DISCONNECTED) {
@@ -312,7 +326,16 @@ public class KVStore implements KVCommInterface {
 	}
 
 
-
+	public SocketWrapper getClientSocket() {
+		return clientSocket;
+	}
 	
+	
+	public SortedMap<Integer, ServerInfo> getRing() {
+		return ring;
+	}
+
+
+
 
 }

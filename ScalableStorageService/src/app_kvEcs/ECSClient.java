@@ -82,13 +82,11 @@ public class ECSClient implements ClientSocketListener{
 					printError("No valid log level!");
 					printPossibleLogLevels();
 				} else {
-					System.out.println(PROMPT + 
-							"Log level changed to level " + level);
+					System.out.println(PROMPT +"Log level changed to level " + level);
 				}
 			} else {
 				printError("Invalid number of parameters!");
 			}
-
 		} 
 		else if(tokens[0].equals("addServer")) {
 			if(tokens.length ==3){
@@ -108,11 +106,9 @@ public class ECSClient implements ClientSocketListener{
 			try{
 				removeServer();
 			}
-
 			catch(NullPointerException e){
 				printError("You must type first start command");
 			}
-
 		}
 		else if(tokens[0].equals("help")) {
 			printHelp();
@@ -164,7 +160,7 @@ public class ECSClient implements ClientSocketListener{
 	}
 
 	private void init(String cacheSize, String displacementStrategy) {
-		ecs = ECS.getInstance(filepath);
+		ecs = new ECS(filepath);
 		Random rn = new Random();
 		int numNodes = rn.nextInt(10) + 1;
 		if (ecs==null){
@@ -212,7 +208,6 @@ public class ECSClient implements ClientSocketListener{
 		sb.append("\t starts the storage service\n");
 		sb.append(PROMPT).append("stop");
 		sb.append("\t\t stops the storage service - Servers do not process client requests but keep running \n");
-		
 		sb.append(PROMPT).append("addServer <cacheSize> <FIFO | LRU | LFU>");
 		sb.append("\t adds new KVServer \n");
 		sb.append(PROMPT).append("removeServer");
@@ -221,7 +216,6 @@ public class ECSClient implements ClientSocketListener{
 		sb.append("\t\t changes the logLevel \n");
 		sb.append(PROMPT).append("\t\t\t ");
 		sb.append("ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF \n");
-
 		sb.append(PROMPT).append("quit");
 		sb.append("\t\t stops all server instances and exits the remote processes \n");
 		System.out.println(sb.toString());

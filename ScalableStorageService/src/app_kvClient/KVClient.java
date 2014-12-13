@@ -10,6 +10,9 @@ import logger.LogSetup;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import common.messages.TextMessage;
+
+import client.ClientSocketListener.SocketStatus;
 import client.KVStore;
 
 
@@ -101,7 +104,6 @@ public class KVClient {
 			} else {
 				printError("Invalid number of parameters!");
 			}
-
 		} 
 		else if(tokens[0].equals("put")) {
 			//the new command
@@ -188,7 +190,8 @@ public class KVClient {
 	private void connect(String address, int port) 
 			throws Exception {
 		client = new KVStore(address, port);
-		client.connect();
+		TextMessage latestMsg=client.connect();
+		KVStore.handleTextMessage(latestMsg);
 	}
 
 	
@@ -197,8 +200,9 @@ public class KVClient {
 	 */
 	private void disconnect() {
 		if(client != null) {
-			client.disconnect();
+			SocketStatus status=client.disconnect();
 			client = null;
+			KVStore.handleStatus(status, this.serverAddress,this.serverPort);
 		}
 	}
 
@@ -227,16 +231,16 @@ public class KVClient {
 		sb.append("::::::::::::::::::::::::::::::::\n");
 		sb.append(PROMPT).append("connect <host> <port>");
 		sb.append("\t establishes a connection to a server\n");
-		sb.append(PROMPT).append("send <text message>");
-		sb.append("\t\t sends a text message to the server \n");
+		sb.append(PROMPT).append("put <key> <value>");
+		sb.append("\t\t puts a tuple <key,value> on server \n");
+		sb.append(PROMPT).append("get <key>");
+		sb.append("\t\t gets the value stored from tuple <key,value> stored on server \n");
 		sb.append(PROMPT).append("disconnect");
 		sb.append("\t\t\t disconnects from the server \n");
-
 		sb.append(PROMPT).append("logLevel");
 		sb.append("\t\t\t changes the logLevel \n");
 		sb.append(PROMPT).append("\t\t\t\t ");
 		sb.append("ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF \n");
-
 		sb.append(PROMPT).append("quit ");
 		sb.append("\t\t\t exits the program");
 		System.out.println(sb.toString());

@@ -2,8 +2,11 @@ package client;
 
 import java.util.SortedMap;
 
+import client.ClientSocketListener.SocketStatus;
+
 import common.messages.ECSMessage;
 import common.messages.KVMessage;
+import common.messages.TextMessage;
 import config.ServerInfo;
 import consistent_hashing.Range;
 
@@ -11,16 +14,18 @@ public interface KVCommInterface {
 
 	/**
 	 * Establishes a connection to the KV Server.
+	 * @return 
 	 * 
 	 * @throws Exception
 	 *             if connection could not be established.
 	 */
-	public void connect() throws Exception;
+	public TextMessage connect() throws Exception;
 
 	/**
 	 * disconnects the client from the currently connected server.
+	 * @return 
 	 */
-	public void disconnect();
+	public SocketStatus disconnect();
 
 	/**
 	 * Inserts a key-value pair into the KVServer.
