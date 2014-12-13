@@ -264,8 +264,16 @@ public class ECS {
 	}
 
 	public void shutDown() {
-		for (ServerInfo server : this.getActiveServers())
-			shutDownServer(server);
+//		for (ServerInfo server : this.getActiveServers())
+//			shutDownServer(server);
+		
+		for(Iterator<ServerInfo> i = this.getActiveServers().iterator(); i.hasNext();) {
+		       ServerInfo server = i.next();
+				EcsStore serverSocket = this.getServersConnection().get(server);
+				serverSocket.shutDown();
+				this.getInActiveServers().add(server);
+		       i.remove();
+		 }
 	}
 
 	private void shutDownServer(ServerInfo server) {
@@ -371,9 +379,14 @@ public class ECS {
 		 System.out.println("a1 " + application.consistentHash.getHashFunction().hash("a1"));
 		 System.out.println("a2 " + application.consistentHash.getHashFunction().hash("a2"));
 		 application.start();
-//		application.removeNode();
+		 
+		 
+//		application.removeNode();		 
 		 application.addNode(10, "FIFO");
+		 System.out.println("First node added");
 		 application.addNode(10, "FIFO");
+		 System.out.println("Second node added");
+
 
 		
 		for(Map.Entry<Integer, ServerInfo> entry : application.consistentHash.getMetaData().entrySet()){

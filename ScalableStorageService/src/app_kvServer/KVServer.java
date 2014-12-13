@@ -5,6 +5,7 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -218,15 +219,17 @@ public class KVServer extends Thread  {
 		logger.info("Initiating Shutdown of server");
 		this.setStatus(ServerStatus.SHUTDOWNED);
 		try {
-			serverSocket.close();
-			for(int i=0; i<this.activeThreads.size();i++){
+			serverSocket.close();			
+			for(Iterator<ClientConnection> i = this.activeThreads.iterator(); i.hasNext();) {
+				ClientConnection clientThread=i.next();
 				try{
-					this.activeThreads.get(i).terminateThread();
-					this.removeThread(this.activeThreads.get(i));
+					clientThread.terminateThread();
 				}catch (IOException e) {
 					logger.error("Error! " + "Terminate thread exception ");
 				}
+				i.remove();
 			}
+
 		} catch (IOException e) {
 			logger.error("Error! " + "Unable to close socket on port: " + port,e);
 		}

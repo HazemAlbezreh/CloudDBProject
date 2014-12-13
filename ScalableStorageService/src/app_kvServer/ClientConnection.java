@@ -59,11 +59,16 @@ public class ClientConnection implements Runnable {
 			while(isRunning()){
 				Message message=clientSocket.recieveMesssage();
 				if(message == null){
-					continue;				//IF MESSAGE PARSE FAILS THEN WAIT NEXT MESSAGE
+					if(this.clientSocket.isAlive()){
+						continue;				//IF MESSAGE PARSE FAILS THEN WAIT NEXT MESSAGE
+					}
+					else{
+						throw new IOException("ClientSocket closed ");
+					}
 				}
 				switch (message.getMessageType()){
 				case KVMESSAGE:
-					if(server.getStatus()==ServerStatus.STOPPED){
+					if(server.getStatus()==ServerStatus.STOPPED || server.getStatus()==ServerStatus.INIT ){
 						ClientMessage reply=new ClientMessage(KVMessage.StatusType.SERVER_STOPPED);
 						clientSocket.sendMessage(reply);
 						break;
@@ -267,15 +272,18 @@ public class ClientConnection implements Runnable {
 					break;
 				}
 			}
+			logger.info("Thread Shutdown normally");
 		}catch(Exception e){
+			logger.error("Received Exception at ClientConnection "+e.getMessage());
 			if(isRunning()){
-				logger.error("Received Exception at ClientConnection "+e.getMessage());
+				logger.error("Received Exception at ClientConnection While running "+e.getMessage());
 				this.server.removeThread(this);
 			}else{
-				logger.error("Received Terminate Thread " + e.getMessage());
+				logger.info("Received Terminate Thread " + e.getMessage());
 			}
 			this.clientSocket.disconnect();
 		}
+		
 	}
 	
 	public synchronized void terminateThread() throws IOException{

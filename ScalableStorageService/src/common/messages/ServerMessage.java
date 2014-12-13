@@ -92,7 +92,7 @@ public class ServerMessage implements Message{
 			
 			nStatus=StatusType.valueOf( jo.get("statusType").asString() );
 			if(jo.get("data").isNull()){
-				nData=null;
+				nData=new HashMap<String,String>();
 			}else{
 				JsonArray nested=jo.get("data").asArray();
 				nData=new HashMap<String,String>();
