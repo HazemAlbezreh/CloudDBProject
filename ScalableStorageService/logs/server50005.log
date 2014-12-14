@@ -858,3 +858,58 @@
 2014-12-13 23:41:10,019 INFO  [Thread-1] root: Initiating Shutdown of server
 2014-12-13 23:41:10,020 INFO  [Thread-0] root: Shutdown server
 2014-12-13 23:41:10,020 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:01:52,653 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:01:52,657 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 15:01:53,047 INFO  [Thread-0] root: Connected to localhost on port 38007
+2014-12-14 15:18:34,242 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:18:34,250 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 15:18:47,035 INFO  [Thread-0] root: Connected to localhost on port 38037
+2014-12-14 15:19:30,699 INFO  [Thread-0] root: Connected to localhost on port 38040
+2014-12-14 15:19:57,238 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:19:57,238 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:19:57,238 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:20:23,447 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:20:23,453 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 15:20:24,235 INFO  [Thread-0] root: Connected to localhost on port 38048
+2014-12-14 15:20:29,414 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:20:29,416 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:20:29,416 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:21:32,005 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:21:32,013 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 15:21:32,590 INFO  [Thread-0] root: Connected to localhost on port 38064
+2014-12-14 15:28:07,401 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:28:07,402 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:28:07,402 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:31:12,222 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:31:12,227 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 15:31:12,859 INFO  [Thread-0] root: Connected to localhost on port 38131
+2014-12-14 15:33:02,491 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:33:02,497 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 15:33:04,076 INFO  [Thread-0] root: Connected to localhost on port 38140
+2014-12-14 15:35:03,464 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:35:03,470 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 15:35:03,865 INFO  [Thread-0] root: Connected to localhost on port 38157
+2014-12-14 15:47:17,583 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:47:17,589 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 15:49:23,204 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:49:23,209 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-14 15:49:23,209 ERROR [Thread-0] root: Port 50005 is already bound!
+2014-12-14 15:49:23,209 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:49:23,222 INFO  [Thread-0] root: Connected to localhost on port 38243
+2014-12-14 15:49:23,256 INFO  [Thread-0] root: Connected to localhost on port 38244
+2014-12-14 15:54:02,727 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:54:02,735 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 15:54:16,046 INFO  [Thread-0] root: Connected to localhost on port 38259
+2014-12-14 15:54:22,539 INFO  [Thread-0] root: Connected to localhost on port 38260
+2014-12-14 16:20:39,953 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 16:20:39,982 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 16:31:39,591 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 16:31:39,598 INFO  [Thread-0] root: Server listening on port: 50005
+2014-12-14 16:31:50,176 INFO  [Thread-0] root: Connected to localhost on port 48500
+2014-12-14 16:32:23,418 INFO  [Thread-0] root: Connected to localhost on port 48501
+2014-12-14 16:32:25,876 INFO  [Thread-0] root: Connected to localhost on port 48502
+2014-12-14 16:32:59,872 INFO  [Thread-1] root: Connection established
+2014-12-14 16:33:01,958 INFO  [Thread-0] root: Connected to localhost on port 48507
+2014-12-14 16:33:31,555 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 16:33:31,556 INFO  [Thread-0] root: Shutdown server
+2014-12-14 16:33:31,556 INFO  [Thread-0] root: Server stopped.

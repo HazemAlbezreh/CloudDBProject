@@ -338,3 +338,57 @@
 2014-12-13 23:41:10,020 INFO  [Thread-1] root: Initiating Shutdown of server
 2014-12-13 23:41:10,020 INFO  [Thread-0] root: Shutdown server
 2014-12-13 23:41:10,021 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:01:52,553 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:01:52,558 INFO  [Thread-0] root: Server listening on port: 50008
+2014-12-14 15:01:53,024 INFO  [Thread-0] root: Connected to localhost on port 46561
+2014-12-14 15:02:18,524 INFO  [Thread-1] root: Connection established
+2014-12-14 15:02:18,616 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:02:18,617 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:02:18,617 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:02:27,008 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:02:27,014 INFO  [Thread-0] root: Server listening on port: 50008
+2014-12-14 15:20:23,856 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:20:23,864 INFO  [Thread-0] root: Server listening on port: 50008
+2014-12-14 15:20:24,307 INFO  [Thread-0] root: Connected to localhost on port 46607
+2014-12-14 15:20:29,415 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:20:29,416 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:20:29,416 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:21:31,696 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:21:31,702 INFO  [Thread-0] root: Server listening on port: 50008
+2014-12-14 15:21:32,529 INFO  [Thread-0] root: Connected to localhost on port 46616
+2014-12-14 15:28:07,398 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:28:07,399 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:28:07,399 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:31:12,012 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:31:12,019 INFO  [Thread-0] root: Server listening on port: 50008
+2014-12-14 15:31:12,814 INFO  [Thread-0] root: Connected to localhost on port 46684
+2014-12-14 15:33:03,131 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:33:03,823 INFO  [Thread-0] root: Server listening on port: 50008
+2014-12-14 15:33:04,188 INFO  [Thread-0] root: Connected to localhost on port 46701
+2014-12-14 15:35:02,951 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:35:02,957 INFO  [Thread-0] root: Server listening on port: 50008
+2014-12-14 15:35:03,757 INFO  [Thread-0] root: Connected to localhost on port 46707
+2014-12-14 15:35:55,485 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:35:55,491 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-14 15:35:55,491 ERROR [Thread-0] root: Port 50008 is already bound!
+2014-12-14 15:35:55,491 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:35:55,522 INFO  [Thread-0] root: Connected to localhost on port 46718
+2014-12-14 15:40:48,679 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:40:48,686 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-14 15:40:48,686 ERROR [Thread-0] root: Port 50008 is already bound!
+2014-12-14 15:40:48,686 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:40:48,909 INFO  [Thread-0] root: Connected to localhost on port 46779
+2014-12-14 15:41:41,781 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:41:41,787 INFO  [Thread-0] root: Server listening on port: 50008
+2014-12-14 15:41:41,853 INFO  [Thread-0] root: Connected to localhost on port 46784
+2014-12-14 15:43:27,881 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:43:27,881 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:43:27,881 INFO  [Thread-0] root: Server stopped.
+2014-12-14 16:21:12,097 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 16:21:12,117 INFO  [Thread-0] root: Server listening on port: 50008
+2014-12-14 16:21:41,777 INFO  [Thread-0] root: Connected to localhost on port 57638
+2014-12-14 16:21:44,573 INFO  [Thread-0] root: Connected to localhost on port 57639
+2014-12-14 16:22:12,284 INFO  [Thread-1] root: Connection established
+2014-12-14 16:22:12,300 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 16:22:12,300 INFO  [Thread-0] root: Shutdown server
+2014-12-14 16:22:12,300 INFO  [Thread-0] root: Server stopped.

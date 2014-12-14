@@ -604,3 +604,69 @@
 2014-12-13 23:41:10,019 INFO  [Thread-1] root: Initiating Shutdown of server
 2014-12-13 23:41:10,020 INFO  [Thread-0] root: Shutdown server
 2014-12-13 23:41:10,020 INFO  [Thread-0] root: Server stopped.
+2014-12-14 14:59:18,485 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 14:59:18,493 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 14:59:18,552 INFO  [Thread-0] root: Connected to localhost on port 44093
+2014-12-14 15:01:52,856 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:01:52,861 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 15:01:53,084 INFO  [Thread-0] root: Connected to localhost on port 44104
+2014-12-14 15:16:14,147 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:16:14,154 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 15:17:07,087 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:17:07,093 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 15:17:24,404 INFO  [Thread-0] root: Connected to localhost on port 44126
+2014-12-14 15:17:27,052 INFO  [Thread-0] root: Connected to localhost on port 44127
+2014-12-14 15:18:17,296 INFO  [Thread-1] root: Connection established
+2014-12-14 15:19:30,698 INFO  [Thread-1] root: Connection established
+2014-12-14 15:19:33,881 INFO  [Thread-1] root: Connection established
+2014-12-14 15:19:33,968 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:19:33,969 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:19:33,969 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:19:42,395 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:19:42,407 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 15:19:47,001 INFO  [Thread-0] root: Connected to localhost on port 44137
+2014-12-14 15:19:52,219 INFO  [Thread-0] root: Connected to localhost on port 44138
+2014-12-14 15:19:57,238 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:19:57,239 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:19:57,239 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:20:24,165 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:20:24,171 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 15:20:24,362 INFO  [Thread-0] root: Connected to localhost on port 44150
+2014-12-14 15:20:29,420 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:20:29,421 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:20:29,421 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:21:32,438 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:21:32,443 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 15:21:32,684 INFO  [Thread-0] root: Connected to localhost on port 44163
+2014-12-14 15:28:07,405 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 15:28:07,405 INFO  [Thread-0] root: Shutdown server
+2014-12-14 15:28:07,405 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:31:12,629 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:31:12,634 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 15:31:12,940 INFO  [Thread-0] root: Connected to localhost on port 44230
+2014-12-14 15:33:03,912 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:33:03,919 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 15:33:04,212 INFO  [Thread-0] root: Connected to localhost on port 44242
+2014-12-14 15:35:03,053 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:35:03,059 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 15:35:03,776 INFO  [Thread-0] root: Connected to localhost on port 44248
+2014-12-14 15:37:58,817 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:37:58,826 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-14 15:37:58,826 ERROR [Thread-0] root: Port 50001 is already bound!
+2014-12-14 15:37:58,826 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:38:14,767 INFO  [Thread-0] root: Connected to localhost on port 44259
+2014-12-14 15:38:31,528 INFO  [Thread-0] root: Connected to localhost on port 44260
+2014-12-14 15:40:48,468 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:40:48,474 ERROR [Thread-0] root: Error! Cannot open server socket:
+2014-12-14 15:40:48,475 ERROR [Thread-0] root: Port 50001 is already bound!
+2014-12-14 15:40:48,475 INFO  [Thread-0] root: Server stopped.
+2014-12-14 15:40:48,908 INFO  [Thread-0] root: Connected to localhost on port 44317
+2014-12-14 15:41:49,900 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 15:41:49,907 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 16:33:04,811 INFO  [Thread-0] root: Initialize server ...
+2014-12-14 16:33:04,832 INFO  [Thread-0] root: Server listening on port: 50001
+2014-12-14 16:33:15,061 INFO  [Thread-0] root: Connected to localhost on port 45298
+2014-12-14 16:33:21,886 INFO  [Thread-0] root: Connected to localhost on port 45299
+2014-12-14 16:33:31,556 INFO  [Thread-1] root: Initiating Shutdown of server
+2014-12-14 16:33:31,557 INFO  [Thread-0] root: Shutdown server
+2014-12-14 16:33:31,557 INFO  [Thread-0] root: Server stopped.

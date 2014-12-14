@@ -1,0 +1,41 @@
+2014-12-14 17:02:55,242 INFO  [main] root: Connection established
+2014-12-14 17:02:55,277 WARN  [main] root: Could not establish connection!
+java.net.ConnectException: Connection refused
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:339)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:200)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:182)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:579)
+	at java.net.Socket.connect(Socket.java:528)
+	at java.net.Socket.<init>(Socket.java:425)
+	at java.net.Socket.<init>(Socket.java:208)
+	at socket.SocketWrapper.connect(SocketWrapper.java:44)
+	at client.KVStore.connect(KVStore.java:71)
+	at app_kvClient.KVClient.connect(KVClient.java:193)
+	at app_kvClient.KVClient.handleCommand(KVClient.java:75)
+	at app_kvClient.KVClient.kvClientrun(KVClient.java:44)
+	at app_kvClient.KVClient.main(KVClient.java:218)
+2014-12-14 17:19:09,292 INFO  [main] root: Connection established
+2014-12-14 17:19:14,220 INFO  [main] root: Going to put this pair of tuples < lala , f >
+2014-12-14 17:19:14,229 INFO  [main] root: Send message:	 'put lala f'
+2014-12-14 17:19:14,237 INFO  [main] root: Received message PUT_SUCCESS
+2014-12-14 17:32:16,735 INFO  [main] root: Connection established
+2014-12-14 17:32:21,708 INFO  [main] root: Going to put this pair of tuples < gr , gr >
+2014-12-14 17:32:21,723 INFO  [main] root: Send message:	 'put gr gr'
+2014-12-14 17:32:21,748 INFO  [main] root: try to close connection ...
+2014-12-14 17:32:21,748 INFO  [main] root: tearing down the connection ...
+2014-12-14 17:32:21,748 INFO  [main] root: connection closed!
+2014-12-14 17:32:21,750 INFO  [main] root: Send message:	 'put gr gr'
+2014-12-14 17:32:21,758 INFO  [main] root: Received message SERVER_STOPPED
+2014-12-14 17:32:21,758 INFO  [main] root: Received message SERVER_NOT_RESPONSIBLE
+2014-12-14 17:33:12,882 INFO  [main] root: Connection established
+2014-12-14 17:33:20,003 INFO  [main] root: Going to put this pair of tuples < greg , gre >
+2014-12-14 17:33:20,013 INFO  [main] root: Send message:	 'put greg gre'
+2014-12-14 17:33:20,019 INFO  [main] root: Received message SERVER_STOPPED
+2014-12-14 17:33:29,412 INFO  [main] root: Going to put this pair of tuples < fre , freee >
+2014-12-14 17:33:29,413 INFO  [main] root: Send message:	 'put fre freee'
+2014-12-14 17:33:29,418 INFO  [main] root: Received message PUT_SUCCESS
+2014-12-14 17:33:38,874 INFO  [main] root: Going to put this pair of tuples < hj , hjk >
+2014-12-14 17:33:38,875 INFO  [main] root: Send message:	 'put hj hjk'
+2014-12-14 17:33:38,877 INFO  [main] root: Received message SERVER_STOPPED

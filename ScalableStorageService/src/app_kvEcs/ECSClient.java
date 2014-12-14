@@ -57,22 +57,29 @@ public class ECSClient implements ClientSocketListener{
 			System.out.println(PROMPT + "Application exit!");
 
 		}else if (tokens[0].equals("init")){
-			if(tokens.length ==3){
-				init(tokens[1],tokens[2]);
+			if(tokens.length ==4){
+				init(tokens[1],tokens[2],tokens[3]);
 			}
 			else{
 				printError("Invalid number of parameters!");
-
 			}
 		}
 		else if (tokens[0].equals("start")){
-			start();
+			try{
+				start();
+			}
+			catch(NullPointerException e){
+				printError("You must type first init command");
+			}
 		}else if(tokens[0].equals("stop")) {
 			try{
 				stop();
 			}
 			catch(NullPointerException e){
-				printError("You must type first start command");
+				printError("You must type first init command");
+			}
+			catch(IOException ioe){
+				printError("Error stopping servers");
 			}
 
 		} else if(tokens[0].equals("logLevel")) {
@@ -94,7 +101,7 @@ public class ECSClient implements ClientSocketListener{
 					addServer(tokens[1],tokens[2]);
 				}
 				catch(NullPointerException e){
-					printError("You must type first start command");
+					printError("You must type first init command");
 				}
 			}
 			else{
@@ -107,7 +114,7 @@ public class ECSClient implements ClientSocketListener{
 				removeServer();
 			}
 			catch(NullPointerException e){
-				printError("You must type first start command");
+				printError("You must type first init command");
 			}
 		}
 		else if(tokens[0].equals("help")) {
@@ -159,17 +166,15 @@ public class ECSClient implements ClientSocketListener{
 		}
 	}
 
-	private void init(String cacheSize, String displacementStrategy) {
+	private void init(String numNodes,String cacheSize, String displacementStrategy) {
 		ecs = new ECS(filepath);
-		Random rn = new Random();
-		int numNodes = rn.nextInt(10) + 1;
 		if (ecs==null){
 			System.out.println(PROMPT+"Error in initialization!");
 			logger.debug("There was an error initiating ECS! ");
 		}
 		else{
 			System.out.println(PROMPT+"ECS is initialized!");
-			ecs.initService(numNodes,Integer.parseInt(cacheSize),displacementStrategy);
+			ecs.initService(Integer.parseInt(numNodes),Integer.parseInt(cacheSize),displacementStrategy);
 			logger.debug("ECS is initialized!! ");
 
 		}
@@ -191,7 +196,11 @@ public class ECSClient implements ClientSocketListener{
 
 	private void shutDown() {
 		if(ecs != null) {
-			ecs.shutDown();
+			try{
+				ecs.shutDown();
+			}catch(NullPointerException ne){
+				printError("There was an error shutting down ecs!");
+			}
 			ecs = null;
 		}
 	}
@@ -202,7 +211,7 @@ public class ECSClient implements ClientSocketListener{
 		sb.append(PROMPT);
 		sb.append("::::::::::::::::::::::::::::::::");
 		sb.append("::::::::::::::::::::::::::::::::\n");
-		sb.append(PROMPT).append("init <cacheSize> <FIFO | LRU | LFU>");
+		sb.append(PROMPT).append("init <numberOfNodes> <cacheSize> <FIFO | LRU | LFU>");
 		sb.append("\t Initializes servers \n");
 		sb.append(PROMPT).append("start");
 		sb.append("\t starts the storage service\n");

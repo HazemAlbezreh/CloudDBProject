@@ -45,82 +45,82 @@ import org.apache.log4j.Logger;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServerInfo", propOrder = {
-    "serverIP",
-    "port"
+		"serverIP",
+		"port"
 })
 public class ServerInfo implements  java.io.Serializable {
 
-    /**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@XmlElement(required = true)
-    protected String serverIP;
-    protected int port;
+	protected String serverIP;
+	protected int port;
 
-    /**
-     * Gets the value of the serverIP property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public ServerInfo(){}
-    
-    public ServerInfo(String ip,int port){
-    	this.serverIP=ip;
-    	this.port=port;
-    }
-    
-    public String getServerIP() {
-        return serverIP;
-    }
-    
-    private static Logger logger = Logger.getLogger(ServerInfo.class);
+	/**
+	 * Gets the value of the serverIP property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link String }
+	 *     
+	 */
+	public ServerInfo(){}
 
-    /**
-     * Sets the value of the serverIP property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setServerIP(String value) {
-        this.serverIP = value;
-    }
+	public ServerInfo(String ip,int port){
+		this.serverIP=ip;
+		this.port=port;
+	}
 
-    /**
-     * Gets the value of the port property.
-     * 
-     */
-    public int getPort() {
-        return port;
-    }
+	public String getServerIP() {
+		return serverIP;
+	}
 
-    /**
-     * Sets the value of the port property.
-     * 
-     */
-    public void setPort(int value) {
-        this.port = value;
-    }
-    
-    @Override
+	private static Logger logger = Logger.getLogger(ServerInfo.class);
+
+	/**
+	 * Sets the value of the serverIP property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link String }
+	 *     
+	 */
+	public void setServerIP(String value) {
+		this.serverIP = value;
+	}
+
+	/**
+	 * Gets the value of the port property.
+	 * 
+	 */
+	public int getPort() {
+		return port;
+	}
+
+	/**
+	 * Sets the value of the port property.
+	 * 
+	 */
+	public void setPort(int value) {
+		this.port = value;
+	}
+
+	@Override
 	public String toString() {
 		return this.getServerIP()+":"+this.getPort(); 
 	}
-    
+
 	public boolean runServerRemotly(String path) {
 		//TODO SSh 
-		//String script = "ssh -n " + this.getServerIP() + " nohup java -jar " + path + 
-			//	"/ms3-server.jar " + this.getPort();
-		
-		String script = "java -jar "+ path + "/ms3-server.jar " + this.getPort();
+		String script = "ssh -n " + this.getServerIP() + " nohup java -jar " + path + 
+		"/ms3-server.jar " + this.getPort();
+		//String script = "java -jar "+ path + "/ms3-server.jar " + this.getPort();
 		Runtime runtime = Runtime.getRuntime();
-		
+
+
 		try {
 			Process p = runtime.exec(script);
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -135,8 +135,8 @@ public class ServerInfo implements  java.io.Serializable {
 		}
 		return true;
 	}
-	
-	
+
+
 
 	@Override
 	public int hashCode() {
