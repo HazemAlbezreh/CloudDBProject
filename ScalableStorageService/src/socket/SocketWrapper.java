@@ -43,8 +43,9 @@ public class SocketWrapper {
 		try {
 			this.setSocket(new Socket(host, port));
 
-		} catch (ConnectException ConnectEx) {
+		} catch (ConnectException connectEx) {
 			//logger.debug("Cannot connect to Server, No response");
+			throw connectEx;
 		} catch (IOException ioEx) {
 //			ioEx.printStackTrace();
 			throw ioEx;

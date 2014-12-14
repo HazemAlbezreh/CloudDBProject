@@ -10,27 +10,22 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import socket.SocketWrapper;
-
 import common.messages.ClientMessage;
 import common.messages.KVMessage;
 import common.messages.Message;
 import common.messages.KVMessage.StatusType;
-
 import client.KVStore;
-
 import config.ServerInfo;
-
 import app_kvClient.KVClient;
 import app_kvEcs.ECS;
 import app_kvServer.KVServer;
-
 import junit.framework.TestCase;
 import logger.LogSetup;
 
 public class AdditionalTest extends TestCase {
 	private static ECS ecs;
 	private static KVStore client;
-	private static int nServers = 10;
+	private static int nServers = 2;
 	private static int cacheSize = 10;
 	private static String strategy = "FIFO";
 	private static int port=50000;
@@ -38,13 +33,21 @@ public class AdditionalTest extends TestCase {
 
 	@BeforeClass
 	public static void init() {
-		ecs = new ECS("ecs.config");
-		ecs.initService(nServers,cacheSize,strategy);
+
 	}
 	
+	public void setUp() {
+		ecs = new ECS("ecs.config");
+		ecs.initService(nServers,cacheSize,strategy);
+		ecs.start();
+	}
+
+	public void tearDown() {
+		ecs.shutDown();
+	}
 	
 	@Test
-	public void testStartAllServers() {
+	public void testStartAllServers() {		//TODO MUST BE CHANGED
 		assertTrue(ecs.start());
 
 	}
@@ -52,12 +55,13 @@ public class AdditionalTest extends TestCase {
 	
 	
 	@Test
-	public void testRemoveServer() {
+	public void testRemoveServer() {     // TODO THINK IT WORKS 
 		Exception ex=null;
 		ecs.start();
 		ecs.removeNode();
 		//TODO put something from file ecs.config
-		client=new KVStore(address, port);
+		ServerInfo dc= ecs.getInActiveServers().get(0);
+		client=new KVStore(dc.getServerIP(), dc.getPort());
 		try {
 			client.connect();
 		} catch (Exception e) {
@@ -162,7 +166,8 @@ public class AdditionalTest extends TestCase {
 		} catch (Exception e) {
 			ex=e;
 		}
-		assertTrue(reply.getStatus().equals(StatusType.PUT_SUCCESS) && client.getRing()!=null);
+		assertTrue( (reply.getStatus().equals(StatusType.PUT_SUCCESS) || reply.getStatus().equals(StatusType.PUT_UPDATE)) 
+				&& client.getRing()!=null);
 		
 	}
 	
