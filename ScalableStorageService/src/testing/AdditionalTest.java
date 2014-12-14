@@ -39,7 +39,6 @@ public class AdditionalTest extends TestCase {
 	public void setUp() {
 		ecs = new ECS("ecs.config");
 		ecs.initService(nServers,cacheSize,strategy);
-		ecs.start();
 	}
 
 	public void tearDown() {
@@ -48,6 +47,7 @@ public class AdditionalTest extends TestCase {
 	
 	@Test
 	public void testStartAllServers() {		//TODO MUST BE CHANGED
+		
 		assertTrue(ecs.start());
 
 	}
@@ -57,17 +57,23 @@ public class AdditionalTest extends TestCase {
 	@Test
 	public void testRemoveServer() {     // TODO THINK IT WORKS 
 		Exception ex=null;
+		KVMessage reply=null;
 		ecs.start();
 		ecs.removeNode();
 		//TODO put something from file ecs.config
-		ServerInfo dc= ecs.getInActiveServers().get(0);
+		ServerInfo dc= ecs.getActiveServers().get(0);
 		client=new KVStore(dc.getServerIP(), dc.getPort());
 		try {
 			client.connect();
 		} catch (Exception e) {
 			ex=e;
 		}
-		assertTrue(ex instanceof IOException);
+		try {
+			reply=client.get("invalidGet");
+		} catch (Exception e) {
+			ex=e;
+		}
+		assertTrue(reply.getStatus().equals(StatusType.GET_ERROR));
 		
 	}
 	
@@ -152,7 +158,7 @@ public class AdditionalTest extends TestCase {
 		}
 		try {
 			//sth that is not responsible for 1st server
-			ClientMessage newmsg=new ClientMessage("___","___",StatusType.PUT);
+			ClientMessage newmsg=new ClientMessage("test","lololol",StatusType.PUT);
 			client.getClientSocket().sendMessage(newmsg);
 
 			Message latestMsg = client.getClientSocket().recieveMesssage();	
@@ -162,11 +168,11 @@ public class AdditionalTest extends TestCase {
 		}
 		client.updateMetaData(answer.getMetadata());
 		try {
-			reply=client.put("____", "___");
+			reply=client.put("test", "updatedValue");
 		} catch (Exception e) {
 			ex=e;
 		}
-		assertTrue( (reply.getStatus().equals(StatusType.PUT_SUCCESS) || reply.getStatus().equals(StatusType.PUT_UPDATE)) 
+		assertTrue( (reply.getStatus().equals(StatusType.PUT_UPDATE)) 
 				&& client.getRing()!=null);
 		
 	}
