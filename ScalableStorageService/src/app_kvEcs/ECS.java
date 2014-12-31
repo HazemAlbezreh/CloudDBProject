@@ -82,9 +82,10 @@ public class ECS {
 	
 	
 	private void runFirstServer() {
-		this.getInActiveServers().get(0).runServerRemotly(path);
-		this.getActiveServers().add(this.getInActiveServers().get(0));
-		this.getInActiveServers().remove(0);
+		if (this.getInActiveServers().get(0).runServerRemotly(path)){
+			this.getActiveServers().add(this.getInActiveServers().get(0));
+			this.getInActiveServers().remove(0);
+		}
 	}
 
 	
@@ -97,9 +98,10 @@ public class ECS {
 				int randomIndex = random.nextInt(inActiveServers.size());// arrayList[i];
 				ServerInfo server = this.getInActiveServers().get(randomIndex);
 				System.out.println("server "+ i + " " +server.getPort());
-				server.runServerRemotly(path);
-				this.getInActiveServers().remove(randomIndex);
-				this.getActiveServers().add(server);
+				if (server.runServerRemotly(path)){
+					this.getInActiveServers().remove(randomIndex);
+					this.getActiveServers().add(server);
+				}
 			}
 			this.consistentHash = new ConsistentHash<ServerInfo>(
 					Md5HashFunction.getInstance(), activeServers);
@@ -269,9 +271,7 @@ public class ECS {
 		
 		for(Iterator<ServerInfo> i = this.getActiveServers().iterator(); i.hasNext();) {
 		       ServerInfo server = i.next();
-				EcsStore serverSocket = this.getServersConnection().get(server);
-				serverSocket.shutDown();
-				this.getInActiveServers().add(server);
+		       this.shutDownServer(server);
 		       i.remove();
 		 }
 	}
@@ -301,10 +301,11 @@ public class ECS {
 		int randomIndex = random.nextInt(this.getInActiveServers().size());// 0;
 		ServerInfo addedNode = this.getInActiveServers().get(randomIndex);
 		// send an SSH call to invoke the KVServer process.
-
-		addedNode.runServerRemotly(path);
-		this.getInActiveServers().remove(randomIndex);
-		this.getActiveServers().add(addedNode);
+		
+		if (addedNode.runServerRemotly(path)){	
+			this.getInActiveServers().remove(randomIndex);
+			this.getActiveServers().add(addedNode);
+		 }
 		// Determine the position of the new storage
 		// server within the ring by hashing its address
 		ServerInfo successor = CommonFunctions.getSuccessorNode(addedNode,
