@@ -231,7 +231,7 @@ public class ClientConnection implements Runnable {
 					case MOVE_DATA:
 						ServerInfo receipient = config.getServerInfo();
 						Range dataRange=config.getRange();
-						Map<String,String> dataSet=this.server.getKVCache().findValuesInRange(dataRange,this.hashFunction); //CALCULATE RANGE TO TRANSFER
+						Map<String,String> dataSet=this.server.getKVCache().findValuesInRange(dataRange,this.hashFunction,this.server.getKVCache().getDatasetName()); //CALCULATE RANGE TO TRANSFER
 						ServerMessage dataMap=new ServerMessage(dataSet);
 						try{
 							EcsStore ecsStore = new EcsStore(receipient.getServerIP(), receipient.getPort());

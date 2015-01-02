@@ -63,17 +63,16 @@ public class KVCache  {
 	}
 	
 	
-	public synchronized Map<String,String> findValuesInRange(Range range, HashFunction hashfunct){
+	public synchronized Map<String,String> findValuesInRange(Range range, HashFunction hashfunct,String fileName){
 		String line;
 		HashMap<String,String> data= new HashMap<String,String>();
 		boolean inRange;
 		int hashvalue = 0;
-		String fileName = "./"+serverName+"dataset.txt";
 		File file = new File(fileName);
 		if(file.exists())
 		{
 			try{	
-				BufferedReader br = new BufferedReader(new FileReader(fileName));
+				BufferedReader br = new BufferedReader(new FileReader("./"+serverName+ fileName +".txt"));
 				while ((line = br.readLine()) != null) {
 					String [] str = line.split(",");
 					hashvalue = hashfunct.hash(str[0]);
@@ -100,7 +99,7 @@ public class KVCache  {
 	
 	
 	public synchronized String processPutRequest(String key, String value, String fileName){
-		String updateResult = updateDatasetEntry(key, value);
+		String updateResult = updateDatasetEntry(key, value,fileName);
 		PrintWriter pr = null;
 		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
 			try {
@@ -180,7 +179,7 @@ public class KVCache  {
 	}
 	
 	
-	public synchronized String updateDatasetEntry(String key,String newValue){
+	public synchronized String updateDatasetEntry(String key,String newValue, String fileName){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String updateResult = "";
@@ -192,7 +191,7 @@ public class KVCache  {
 		}
 		
 		try{
-			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
+			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+fileName+".txt"));
 			String line = "";
 		//	boolean emptyFile= true;
 			while ((line = br.readLine()) != null) {
@@ -213,7 +212,7 @@ public class KVCache  {
 		
 		if(updateResult.equals("PUT_UPDATE")){
 			try{
-				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt"));
+				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+fileName+".txt"));
 				pr.print(sbld);
 				pr.close();
 				if(!cache.containsKey(key)){
