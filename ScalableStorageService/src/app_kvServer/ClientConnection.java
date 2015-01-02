@@ -111,7 +111,7 @@ public class ClientConnection implements Runnable {
 							if(value==null){		//delete key
 								ArrayList<String> l=new ArrayList<String>();
 								l.add(key);
-								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().deleteDatasetEntry(l));
+								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().deleteDatasetEntry(l,this.server.getKVCache().getDatasetName()));
 								if(replyStatus==StatusType.DELETE_ERROR){
 								//	logger.info("Delete is not successful");
 									reply=new ClientMessage(replyStatus);
@@ -122,7 +122,7 @@ public class ClientConnection implements Runnable {
 									clientSocket.sendMessage(reply);
 								}
 							}else{
-								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(key, value));
+								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(key, value, this.server.getKVCache().getDatasetName()));
 								if(replyStatus==StatusType.PUT_SUCCESS){ 		//PUT SUCCESS
 								//	logger.info("Put is successful");
 									reply=new ClientMessage(key,value,replyStatus);
@@ -152,7 +152,7 @@ public class ClientConnection implements Runnable {
 					switch(sm.getStatus()){
 					case DATA_TRANSFER:
 						Map<String,String> h =sm.getData();
-						String result=this.server.getKVCache().processMassPutRequest(h);
+						String result=this.server.getKVCache().processMassPutRequest(h,this.server.getKVCache().getDatasetName());
 						if(result.equals("PUT_ERROR")){
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
 							this.clientSocket.sendMessage(serverReply);
@@ -246,7 +246,7 @@ public class ClientConnection implements Runnable {
 								for(String keytemp :dataSet.keySet()){				
 									keys.add(keytemp);
 								}
-								this.server.getKVCache().deleteDatasetEntry(keys);									//DELETE KEYS THAT WERE TRANSFERED
+								this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getDatasetName());									//DELETE KEYS THAT WERE TRANSFERED
 						//		logger.info("Move data sent successfully ... Removing keys from cache");
 							}else{
 								throw new Exception("KVServer responded with " + recReply.getStatus().toString());

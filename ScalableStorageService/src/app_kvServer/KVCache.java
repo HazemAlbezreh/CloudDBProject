@@ -25,6 +25,8 @@ public class KVCache  {
 	private int cachesize;
 	private String strategy;
 	private String serverName;
+	private String datasetName;
+	private String replicaName;
 	/**
 	 * Start KV Server at given port
 	 * @param cacheSize specifies how many key-value pairs the server is allowed 
@@ -35,14 +37,31 @@ public class KVCache  {
 	 *           and "LFU".
 	 */
 	
-	public KVCache(String serverName, int cacheSize, String strategy) {
+	public KVCache(String serverName, int cacheSize, String strategy, String datasetName, String replicaName) {
 		this.cachesize = cacheSize;
 		cache = new LinkedHashMap<String,MapValue>(cachesize);
 		this.strategy = strategy;
 		this.serverName = serverName;
+		this.datasetName = datasetName;
+		this.replicaName = replicaName;
 	}
 	
-
+	public String getDatasetName(){
+		return datasetName;
+	}
+	
+	public void setDatasetName(String name){
+		datasetName = name;
+	}
+	
+	public String getReplicaName(){
+		return replicaName;
+	}
+	
+	public void setReplicaName(String name){
+		replicaName = name;
+	}
+	
 	
 	public synchronized Map<String,String> findValuesInRange(Range range, HashFunction hashfunct){
 		String line;
@@ -80,11 +99,12 @@ public class KVCache  {
 	}
 	
 	
-	public synchronized String processPutRequest(String key, String value){
+	public synchronized String processPutRequest(String key, String value, String fileName){
 		String updateResult = updateDatasetEntry(key, value);
+		PrintWriter pr = null;
 		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
 			try {
-				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt",true));
+					pr = new PrintWriter(new FileWriter("./"+serverName+ fileName +".txt",true));
 				pr.println(key + "," + value);
 				pr.close();
 				addCacheEntry(key, value);
@@ -102,14 +122,15 @@ public class KVCache  {
 	}
 	 
 		
-	public synchronized String processMassPutRequest(Map<String,String> values){
+	public synchronized String processMassPutRequest(Map<String,String> values,String fileName){
 		Set s = values.entrySet();
 		MapValue mp = null;
 		Iterator itr = s.iterator();
+		PrintWriter pr;
 		String key,value;
 		int cachCount = 0;
 			try {
-				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt",true));
+				pr = new PrintWriter(new FileWriter("./"+serverName+ fileName +".txt",true));
 				itr= s.iterator();
 				while(itr.hasNext()){
 					Map.Entry ent = (Map.Entry)itr.next();
@@ -140,7 +161,7 @@ public class KVCache  {
 		else{
 			String line;
 			try{
-				BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
+				BufferedReader br = new BufferedReader(new FileReader("./"+serverName+ datasetName +".txt"));
 				while ((line = br.readLine()) != null) {
 					String [] str = line.split(",");
 					if(str[0].equals(key)){
@@ -209,14 +230,16 @@ public class KVCache  {
 	}
 	
 
-	public synchronized String deleteEntry(String key){
+	public synchronized String deleteEntry(String key, String fileName){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String deleteResult = "";
+		BufferedReader br = null;
+		PrintWriter pr = null;
 		if(cache.containsKey(key))
 			cache.remove(key);
 		try{
-			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
+				br = new BufferedReader(new FileReader("./"+serverName+fileName+".txt"));
 			String line = "";
 			while ((line = br.readLine()) != null) {
 				String [] str = line.split(",");
@@ -234,7 +257,7 @@ public class KVCache  {
 		
 		if(deleteResult.equals("DELETE_SUCCESS")){
 			try{
-				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt"));
+				pr = new PrintWriter(new FileWriter("./"+serverName+fileName+".txt"));
 				pr.print(sbld);
 				pr.close();
 			} 
@@ -250,13 +273,15 @@ public class KVCache  {
 	}
 	
 	
-	public synchronized String deleteDatasetEntry(ArrayList<String> keys){
+	public synchronized String deleteDatasetEntry(ArrayList<String> keys,String fileName){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String deleteResult = "";
 		String line = "";
+		BufferedReader br = null;
+		PrintWriter pr = null;
 		try{
-			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+"dataset.txt"));
+			br = new BufferedReader(new FileReader("./"+serverName+fileName+".txt"));
 			for(String key:keys){
 				if(cache.containsKey(key))
 					cache.remove(key);
@@ -280,7 +305,7 @@ public class KVCache  {
 		
 		if(deleteResult.equals("DELETE_SUCCESS")){
 			try{
-				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt"));
+				pr = new PrintWriter(new FileWriter("./"+serverName+ fileName +".txt"));
 				pr.print(sbld);
 				pr.close();
 			} 
@@ -295,30 +320,6 @@ public class KVCache  {
 		return deleteResult;
 	}
 	
-	
-	
-	
-	
-/*	public String processPutRequest(String key, String value){
-		String updateResult = updateDatasetEntry(key, value);
-		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
-			try {
-				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+"dataset.txt",true));
-				pr.println(key + "," + value);
-				pr.close();
-				addCacheEntry(key, value);
-				return "PUT_SUCCESS";
-			} 
-			catch(IOException e) {
-				e.printStackTrace();
-				return "PUT_ERROR";
-			}
-		}
-		else{
-			//addCacheEntry(key, value);
-			return "PUT_UPDATE";
-		}
-	}*/
 	
 	public synchronized String checkGetHitOrMiss(String key){
 		String val = "";

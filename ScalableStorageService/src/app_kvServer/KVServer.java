@@ -41,17 +41,16 @@ public class KVServer extends Thread  {
 	
 	///////////////////////////////////////////////////////////////////////////////
 	private boolean running;
-	
 	private ServerStatus serverStatus;
 	private List<ClientConnection> activeThreads;
 	private SortedMap<Integer, ServerInfo> ring=null;
-	private Range range=null;;
+	private Range range=null;
 	
 	///////////////////////////////////////////////////////////////////////////////
 	
-	public KVServer(int port, int cacheSize, String strategy) {
+	public KVServer(int port, int cacheSize, String strategy, String datasetName, String replicaName) {
 		this.port= port;
-		this.kvCache = new KVCache(String.valueOf(port),cacheSize, strategy);
+		this.kvCache = new KVCache(String.valueOf(port),cacheSize, strategy, datasetName, replicaName);
 		this.activeThreads=new ArrayList<ClientConnection>();
 		this.serverStatus=ServerStatus.STOPPED;
 		this.ring=null;
@@ -126,7 +125,7 @@ public class KVServer extends Thread  {
 				int cacheSize= Integer.parseInt(args[1]);
 				String strategy= args[2];
 				new LogSetup("logs/server" + port + ".log", loglevel);
-				new KVServer(port,cacheSize,strategy); //.start();
+				new KVServer(port,cacheSize,strategy,"dataset","replica"); //.start();
 				break;
 			case 1:
 				int port2 = Integer.parseInt(args[0]);
@@ -175,7 +174,7 @@ public class KVServer extends Thread  {
 	}
 	
 	public synchronized boolean initKVServer(int cacheSize, String strategy,SortedMap<Integer,ServerInfo> data,Range range){
-		this.kvCache=new KVCache(String.valueOf(port), cacheSize, strategy);
+		this.kvCache=new KVCache(String.valueOf(port), cacheSize, strategy,"dataset","replica");
 		this.setMetadata(data);
 		this.setRange(range);
 		if(this.getMetadata()==null || this.getRange()==null || 
