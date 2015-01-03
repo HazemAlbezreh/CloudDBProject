@@ -17,14 +17,17 @@ public class ServerMessage implements Message{
 	
 	public enum StatusType{
 		DATA_TRANSFER,								//Move data across servers
-		DATA_TRANSFER_SUCCESS,
-		DATA_TRANSFER_FAILED,
+			DATA_TRANSFER_SUCCESS,
+			DATA_TRANSFER_FAILED,
+		INIT_REPLICA,
+		UPDATE_REPLICA,
 		FAILURE
 	}
 	
 	private Message.MessageType messageType=MessageType.SERVERMESSAGE;
 	private StatusType statusType;
 	private Map<String,String> data=null;
+	
 	
 	public ServerMessage(Map<String,String> d){
 		this.data=d;

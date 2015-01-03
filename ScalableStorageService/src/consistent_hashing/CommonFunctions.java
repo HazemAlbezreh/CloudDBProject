@@ -38,4 +38,6 @@ public final class CommonFunctions {
 	    }
 	    return ring.get(nodeHash);
 	  }
+	
+	//TO-DO this probably does not work in case of a key being equal to the value 
 }
