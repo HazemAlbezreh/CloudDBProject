@@ -12,6 +12,7 @@ import com.eclipsesource.json.JsonValue;
 
 import common.messages.ConfigMessage.StatusType;
 import config.ServerInfo;
+import consistent_hashing.Range;
 
 public class ServerMessage implements Message{
 	
@@ -28,6 +29,7 @@ public class ServerMessage implements Message{
 	private Message.MessageType messageType=MessageType.SERVERMESSAGE;
 	private StatusType statusType;
 	private Map<String,String> data=null;
+	private Range range=null;
 	
 	
 	public ServerMessage(Map<String,String> d){
@@ -43,6 +45,12 @@ public class ServerMessage implements Message{
 	public ServerMessage(ServerMessage.StatusType type){
 		this.statusType=type;
 	}
+	
+	public ServerMessage(ServerMessage.StatusType type,Range r){
+		this.statusType=type;
+		this.range=r;
+	}
+	
 	
 	public Map<String,String> getData(){
 		return this.data;
