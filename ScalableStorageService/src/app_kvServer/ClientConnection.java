@@ -167,6 +167,38 @@ public class ClientConnection implements Runnable {
 				//			logger.info("Mass Put is successful");
 						}
 						break;
+					case DELETEFROM_REPLICA:  //correct to support the range case
+						Map<String,String> data =sm.getData();
+						ArrayList<String> keys= new ArrayList<String>();
+						for(String keytemp :data.keySet()){				
+							keys.add(keytemp);
+						}
+						String delresult = this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getReplicaName());
+						if(delresult.equals("DELETE_ERROR")){
+							serverReply=new ServerMessage(ServerMessage.StatusType.FAILURE);
+							this.clientSocket.sendMessage(serverReply);
+							}
+						else{
+							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS);//correct the status
+							this.clientSocket.sendMessage(serverReply);
+				//			logger.info("Mass Put is successful");
+						}
+
+						break;
+						
+					case INIT_REPLICA:
+						Map<String,String> dta =sm.getData();
+						String initResult=this.server.getKVCache().processMassPutRequest(dta,this.server.getKVCache().getReplicaName());
+						if(initResult.equals("PUT_ERROR")){
+							serverReply=new ServerMessage(ServerMessage.StatusType.FAILURE);
+							this.clientSocket.sendMessage(serverReply);
+
+						}else{
+							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS); //correct the status
+							this.clientSocket.sendMessage(serverReply);
+						}
+						
+						break;
 					default :
 						serverReply=new ServerMessage(ServerMessage.StatusType.FAILURE);
 						clientSocket.sendMessage(serverReply);
@@ -332,8 +364,15 @@ public class ClientConnection implements Runnable {
 							//but the data out of range in the replica file so that the node becomes replica 1 for the new node
 								if(this.server.getMetadata().size() >3){
 									Range newRange = new Range(Md5HashFunction.getInstance().hash(oldPredecessor), this.server.getRange().getLow());
-									
-									
+									//to be fixed: message type
+									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
+									connection = new EcsStore(newSecondSuccessor.getServerIP(), newSecondSuccessor.getPort());
+									connection.connect();
+									socket = connection.getSocketWrapper();
+									socket.sendMessage(coordinatormsg);
+									response = (ServerMessage)socket.recieveMesssage();
+									if(response.getStatus()== ServerMessage.StatusType.FAILURE)
+										throw new Exception("KVServer responded with " + response.getStatus().toString());
 								}
 									
 							}
