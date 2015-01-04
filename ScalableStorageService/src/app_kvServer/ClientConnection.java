@@ -7,12 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 
 import org.apache.log4j.*;
 
 import common.messages.*;
 import common.messages.KVMessage.StatusType;
 import config.ServerInfo;
+import consistent_hashing.CommonFunctions;
+import consistent_hashing.ConsistentHash;
 import consistent_hashing.HashFunction;
 import consistent_hashing.Md5HashFunction;
 import consistent_hashing.Range;
@@ -224,7 +227,124 @@ public class ClientConnection implements Runnable {
 				//		logger.info("message sent : " + ecsReply.getStatus());
 						break;
 					case UPDATE_META_DATA:
-						this.server.update(config.getRing(), config.getRange());
+						SortedMap<Integer, ServerInfo> newRing = config.getRing();
+						if(this.server.getMetadata().size() < newRing.size()){    //in this case we have (new added node case)
+							int serverKey = this.server.getRange().getHigh();
+							ServerInfo currentServer = this.server.getMetadata().get(serverKey);
+							ServerInfo oldSuccessor = CommonFunctions.getSuccessorNode(currentServer, this.server.getMetadata());
+							ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(currentServer, newRing);
+							ServerInfo oldSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, this.server.getMetadata());
+							ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, newRing);
+							ServerInfo oldPredecessor = CommonFunctions.getPredecessorNode(currentServer, this.server.getMetadata());
+							ServerInfo newPredecessor = CommonFunctions.getPredecessorNode(currentServer, newRing);
+							this.server.update(config.getRing(), config.getRange());
+							Map<String,String> serverDatabase = null;
+							ServerMessage coordinatormsg = null;
+							EcsStore connection = null;
+							SocketWrapper socket = null;
+							ServerMessage response = null;
+							
+							if(!oldSuccessor.equals(newSuccessor)){//case number one
+								serverDatabase = this.server.getKVCache().findValuesInRange(this.server.getRange(), this.hashFunction, this.server.getKVCache().getDatasetName());
+								if( this.server.getMetadata().size() > 3){
+									try{
+										coordinatormsg = new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA, serverDatabase);
+										//connect to successor number three "it was before replica2" but on new ring it is not anymore and the data should be delete from this replica 
+										connection = new EcsStore(oldSecondSuccessor.getServerIP(), oldSecondSuccessor.getPort());
+										connection.connect();
+										socket = connection.getSocketWrapper();
+										socket.sendMessage(coordinatormsg);
+										response = (ServerMessage)socket.recieveMesssage();
+										if(response.getStatus()== ServerMessage.StatusType.FAILURE)
+											throw new Exception("KVServer responded with " + response.getStatus().toString());
+										//connect to the new added node and hand over the data to it to be replica 1
+										coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
+										connection = new EcsStore(newSuccessor.getServerIP(), newSuccessor.getPort());
+										connection.connect();
+										socket = connection.getSocketWrapper();
+										socket.sendMessage(coordinatormsg);
+										response = (ServerMessage)socket.recieveMesssage();
+										if(response.getStatus()== ServerMessage.StatusType.FAILURE)
+											throw new Exception("KVServer responded with " + response.getStatus().toString());
+										
+									}
+									catch(IOException e){
+										
+									}
+								}
+								else{
+									//connect to the new added node and hand over the data to it to be replica 1
+									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
+									connection = new EcsStore(newSuccessor.getServerIP(), newSuccessor.getPort());
+									connection.connect();
+									socket = connection.getSocketWrapper();
+									socket.sendMessage(coordinatormsg);
+									response = (ServerMessage)socket.recieveMesssage();
+									if(response.getStatus()== ServerMessage.StatusType.FAILURE)
+										throw new Exception("KVServer responded with " + response.getStatus().toString());
+								}
+							}
+							
+							// case number 2. in this the new node is added to be the second successor of the current node
+							else if(!oldSecondSuccessor.equals(newSecondSuccessor)){
+								serverDatabase = this.server.getKVCache().findValuesInRange(this.server.getRange(), this.hashFunction, this.server.getKVCache().getDatasetName());
+								if( this.server.getMetadata().size() > 3){
+									try{
+										coordinatormsg = new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA, serverDatabase);
+										//connect to successor number three "it was before replica2" but on new ring it is not anymore and the data should be delete from this replica 
+										connection = new EcsStore(oldSecondSuccessor.getServerIP(), oldSecondSuccessor.getPort());
+										connection.connect();
+										socket = connection.getSocketWrapper();
+										socket.sendMessage(coordinatormsg);
+										response = (ServerMessage)socket.recieveMesssage();
+										if(response.getStatus()== ServerMessage.StatusType.FAILURE)
+											throw new Exception("KVServer responded with " + response.getStatus().toString());
+										//connect to the new added node and hand over the data to it to be replica 2
+										coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
+										connection = new EcsStore(newSecondSuccessor.getServerIP(), newSecondSuccessor.getPort());
+										connection.connect();
+										socket = connection.getSocketWrapper();
+										socket.sendMessage(coordinatormsg);
+										response = (ServerMessage)socket.recieveMesssage();
+										if(response.getStatus()== ServerMessage.StatusType.FAILURE)
+											throw new Exception("KVServer responded with " + response.getStatus().toString());
+										
+									}
+									catch(IOException e){
+										
+									}
+								}
+								else{
+									//connect to the new added node and hand over the data to it to be replica 2
+									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
+									connection = new EcsStore(newSecondSuccessor.getServerIP(), newSecondSuccessor.getPort());
+									connection.connect();
+									socket = connection.getSocketWrapper();
+									socket.sendMessage(coordinatormsg);
+									response = (ServerMessage)socket.recieveMesssage();
+									if(response.getStatus()== ServerMessage.StatusType.FAILURE)
+										throw new Exception("KVServer responded with " + response.getStatus().toString());
+								}
+							}
+							
+							else if(!oldPredecessor.equals(newPredecessor)){
+							//in move data case we will not delete the data from the node after handing it to other node but we will 
+							//but the data out of range in the replica file so that the node becomes replica 1 for the new node
+								if(this.server.getMetadata().size() >3){
+									Range newRange = new Range(Md5HashFunction.getInstance().hash(oldPredecessor), this.server.getRange().getLow());
+									
+									
+								}
+									
+							}
+						}
+						
+						else{   //in this case we have deleted node case
+							
+							
+						}
+
+						
 						ecsReply=new ECSMessage(ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS);
 						clientSocket.sendMessage(ecsReply);
 						break;

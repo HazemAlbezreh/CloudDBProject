@@ -39,7 +39,6 @@ public class EcsStore implements EcsCommInterface {
 		this.port=port;
 		listeners = new HashSet<ClientSocketListener>();
 		logger.info("Connection established");
-		
 	}
 
 
