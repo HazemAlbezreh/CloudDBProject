@@ -21,6 +21,7 @@ public class ServerMessage implements Message{
 			DATA_TRANSFER_FAILED,
 		INIT_REPLICA,
 		UPDATE_REPLICA,
+		DELETEFROM_REPLICA,
 		FAILURE
 	}
 	
