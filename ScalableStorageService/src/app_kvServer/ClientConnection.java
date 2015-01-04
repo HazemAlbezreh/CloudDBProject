@@ -279,23 +279,26 @@ public class ClientConnection implements Runnable {
 				//		logger.info("message sent : " + ecsReply.getStatus());
 						break;
 					case UPDATE_META_DATA:
-						SortedMap<Integer, ServerInfo> newRing = config.getRing();
+						SortedMap<Integer, ServerInfo> oldRing = this.server.getMetadata();
 						int serverKey = this.server.getRange().getHigh();
-						ServerInfo currentServer = this.server.getMetadata().get(serverKey);
-						ServerInfo oldSuccessor = CommonFunctions.getSuccessorNode(currentServer, this.server.getMetadata());
-						ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(currentServer, newRing);
-						ServerInfo oldSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, this.server.getMetadata());
-						ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, newRing);
-						ServerInfo oldPredecessor = CommonFunctions.getPredecessorNode(currentServer, this.server.getMetadata());
-						ServerInfo newPredecessor = CommonFunctions.getPredecessorNode(currentServer, newRing);
 						this.server.update(config.getRing(), config.getRange());
+						ecsReply=new ECSMessage(ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS);
+						clientSocket.sendMessage(ecsReply);
+						ServerInfo currentServer = this.server.getMetadata().get(serverKey);
+						ServerInfo oldSuccessor = CommonFunctions.getSuccessorNode(currentServer, oldRing);
+						ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(currentServer, this.server.getMetadata());
+						ServerInfo oldSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, oldRing);
+						ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, this.server.getMetadata());
+						ServerInfo oldPredecessor = CommonFunctions.getPredecessorNode(currentServer, oldRing);
+						ServerInfo newPredecessor = CommonFunctions.getPredecessorNode(currentServer, this.server.getMetadata());
+						
 						Map<String,String> serverDatabase = null;
 						ServerMessage coordinatormsg = null;
 						EcsStore connection = null;
 						SocketWrapper socket = null;
 						ServerMessage response = null;
 
-						if(this.server.getMetadata().size() < newRing.size() && this.server.getMetadata().size() >0){    //in this case we have (new added node case)
+						if(this.server.getMetadata().size() > oldRing.size() && oldRing.size() >0){    //in this case we have (new added node case)
 							if(!oldSuccessor.equals(newSuccessor)){//case number one
 								serverDatabase = this.server.getKVCache().findValuesInRange(this.server.getRange(), this.hashFunction, this.server.getKVCache().getDatasetName());
 								if( this.server.getMetadata().size() > 3){
@@ -397,19 +400,14 @@ public class ClientConnection implements Runnable {
 							}
 						}
 						
-						else if(this.server.getMetadata().size() > newRing.size() && this.server.getMetadata().size() >1){   //in this case we have deleted node case
+						else if(this.server.getMetadata().size() < oldRing.size() && this.server.getMetadata().size() >2){   //in this case we have deleted node case
 							
 							
 							
 							
 						}
 							
-							
 						
-
-						
-						ecsReply=new ECSMessage(ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS);
-						clientSocket.sendMessage(ecsReply);
 						break;
 					case MOVE_DATA:
 						ServerInfo receipient = config.getServerInfo();
