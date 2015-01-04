@@ -280,22 +280,22 @@ public class ClientConnection implements Runnable {
 						break;
 					case UPDATE_META_DATA:
 						SortedMap<Integer, ServerInfo> newRing = config.getRing();
-						if(this.server.getMetadata().size() < newRing.size()){    //in this case we have (new added node case)
-							int serverKey = this.server.getRange().getHigh();
-							ServerInfo currentServer = this.server.getMetadata().get(serverKey);
-							ServerInfo oldSuccessor = CommonFunctions.getSuccessorNode(currentServer, this.server.getMetadata());
-							ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(currentServer, newRing);
-							ServerInfo oldSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, this.server.getMetadata());
-							ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, newRing);
-							ServerInfo oldPredecessor = CommonFunctions.getPredecessorNode(currentServer, this.server.getMetadata());
-							ServerInfo newPredecessor = CommonFunctions.getPredecessorNode(currentServer, newRing);
-							this.server.update(config.getRing(), config.getRange());
-							Map<String,String> serverDatabase = null;
-							ServerMessage coordinatormsg = null;
-							EcsStore connection = null;
-							SocketWrapper socket = null;
-							ServerMessage response = null;
-							
+						int serverKey = this.server.getRange().getHigh();
+						ServerInfo currentServer = this.server.getMetadata().get(serverKey);
+						ServerInfo oldSuccessor = CommonFunctions.getSuccessorNode(currentServer, this.server.getMetadata());
+						ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(currentServer, newRing);
+						ServerInfo oldSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, this.server.getMetadata());
+						ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, newRing);
+						ServerInfo oldPredecessor = CommonFunctions.getPredecessorNode(currentServer, this.server.getMetadata());
+						ServerInfo newPredecessor = CommonFunctions.getPredecessorNode(currentServer, newRing);
+						this.server.update(config.getRing(), config.getRange());
+						Map<String,String> serverDatabase = null;
+						ServerMessage coordinatormsg = null;
+						EcsStore connection = null;
+						SocketWrapper socket = null;
+						ServerMessage response = null;
+
+						if(this.server.getMetadata().size() < newRing.size() && this.server.getMetadata().size() >0){    //in this case we have (new added node case)
 							if(!oldSuccessor.equals(newSuccessor)){//case number one
 								serverDatabase = this.server.getKVCache().findValuesInRange(this.server.getRange(), this.hashFunction, this.server.getKVCache().getDatasetName());
 								if( this.server.getMetadata().size() > 3){
@@ -397,10 +397,15 @@ public class ClientConnection implements Runnable {
 							}
 						}
 						
-						else{   //in this case we have deleted node case
+						else if(this.server.getMetadata().size() > newRing.size() && this.server.getMetadata().size() >1){   //in this case we have deleted node case
+							
+							
 							
 							
 						}
+							
+							
+						
 
 						
 						ecsReply=new ECSMessage(ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS);
