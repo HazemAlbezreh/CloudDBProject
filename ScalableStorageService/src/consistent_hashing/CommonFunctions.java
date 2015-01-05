@@ -41,21 +41,9 @@ public final class CommonFunctions {
 	
 	
 	public static ServerInfo getSecondSuccessorNode(Object key,SortedMap<Integer,ServerInfo> ring) {
-	    if (ring.isEmpty()) {
-	      return null;
-	    }
-	    int hash = Md5HashFunction.getInstance().hash(key);
-	    int nodeHash;
-	    if (!ring.containsKey(hash)) {
-	      SortedMap<Integer, ServerInfo> tailMap = ring.tailMap(hash);
-	      tailMap = ring.tailMap(tailMap.firstKey()+1);
-	      nodeHash = tailMap.isEmpty() ? ring.firstKey() : tailMap.firstKey();
-	    }else {
-	    	SortedMap<Integer, ServerInfo> tailMap = ring.tailMap(hash+1);
-	    	tailMap = ring.tailMap(tailMap.firstKey()+1);
-	    	nodeHash = tailMap.isEmpty() ? ring.firstKey() : tailMap.firstKey();
-	    }
-	    return ring.get(nodeHash);
+		ServerInfo temp = getSuccessorNode(key,ring);
+		temp = getSuccessorNode(temp,ring);
+		return temp;
 	  }
 	
 	//TO-DO this probably does not work in case of a key being equal to the value 
