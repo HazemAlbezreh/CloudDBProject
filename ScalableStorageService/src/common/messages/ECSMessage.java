@@ -25,15 +25,26 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 	private Message.MessageType messageType=Message.MessageType.CONFIGMESSAGE;
 	private int cacheSize=-1;
 	private String strategy=null;
+	public enum MoveCaseType{
+			ADD_NODE,								//delete node or add node
+			DELETE_NODE,
+	}
+	private MoveCaseType moveStatus;
+	
+	
+	public MoveCaseType getMoveDatacase(){
+		return moveStatus;
+	}
 	
 	public ECSMessage(ConfigMessage.StatusType type){
 		this.setStatus(type);
 	}
 	
-	public ECSMessage(StatusType type,ServerInfo server,Range range){
+	public ECSMessage(StatusType type,ServerInfo server,Range range,MoveCaseType moveCase){
 		this.setStatus(type);
 		this.setRange(range);
 		this.setServerInfo(server);
+		this.moveStatus = moveCase;
 	}
 	
 	public ECSMessage(SortedMap<Integer, ServerInfo> ring,Range range) {

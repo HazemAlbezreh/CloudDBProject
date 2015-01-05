@@ -13,6 +13,7 @@ import client.ClientSocketListener.SocketStatus;
 import common.messages.ConfigMessage;
 import common.messages.ECSMessage;
 import common.messages.Message;
+import common.messages.ServerMessage;
 import common.messages.TextMessage;
 import config.ServerInfo;
 import consistent_hashing.Range;
@@ -187,10 +188,10 @@ public class EcsStore implements EcsCommInterface {
 
 
 	@Override
-	public ECSMessage moveData(Range range, ServerInfo targetServer) {
+	public ECSMessage moveData(Range range, ServerInfo targetServer,ECSMessage.MoveCaseType moveDataCase) {
 		ECSMessage reply;
 		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.MOVE_DATA,targetServer,range);
+		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.MOVE_DATA,targetServer,range,moveDataCase);
 		clientSocket.sendMessage(msg);
 		logger.info("Send ECS message (move data):\t '" + msg + "'");	
 		Message latestMsg = clientSocket.recieveMesssage();

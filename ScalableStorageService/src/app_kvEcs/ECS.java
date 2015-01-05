@@ -286,9 +286,9 @@ public class ECS {
 	}
 
 	public void serverMoveData(ServerInfo server, Range range,
-			ServerInfo addedNode) {
+			ServerInfo addedNode, ECSMessage.MoveCaseType moveDataCase) {
 		EcsStore serverSocket = this.getServersConnection().get(server);
-		serverSocket.moveData(range, addedNode);
+		serverSocket.moveData(range, addedNode,moveDataCase);
 	}
 	
 	
@@ -323,7 +323,7 @@ public class ECS {
 		this.lockWrite(successor);
 
 		// Invoke the transfer of the affected data items
-		this.serverMoveData(successor, this.getServerRange(addedNode), addedNode);
+		this.serverMoveData(successor, this.getServerRange(addedNode), addedNode,ECSMessage.MoveCaseType.ADD_NODE);
 		// Send a meta-data update to all storage servers
 		this.updateMetadata();
 		// Release the write lock on the successor node
@@ -351,7 +351,7 @@ public class ECS {
 		this.updateServerMetadata(successor);
 		// Invoke the transfer of the affected data items
 		// serverToRemove.moveData(range, successor)
-		this.serverMoveData(removedNode, this.getServerRange(successor), successor);
+		this.serverMoveData(removedNode, this.getServerRange(successor), successor,ECSMessage.MoveCaseType.DELETE_NODE);
 
 		this.getActiveServers().remove(randomIndex);
 		this.getInActiveServers().add(removedNode);

@@ -155,8 +155,18 @@ public class ClientConnection implements Runnable {
 					switch(sm.getStatus()){
 					case DATA_TRANSFER:
 						Map<String,String> h =sm.getData();
+						String caseType = sm.getMoveCase();
+						String result2 = "PUT_SUCCESS";
+						ArrayList<String> keys= new ArrayList<String>();
 						String result=this.server.getKVCache().processMassPutRequest(h,this.server.getKVCache().getDatasetName());
-						if(result.equals("PUT_ERROR")){
+						
+						if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString())){
+							for(String keytemp :h.keySet()){				
+								keys.add(keytemp);
+							}
+							result2 = this.server.getKVCache().deleteDatasetEntry(keys, server.getKVCache().getReplicaName());
+						}
+						if(result.equals("PUT_ERROR") || result2.equals("PUT_ERROR")){
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
 							this.clientSocket.sendMessage(serverReply);
 				//			logger.error("Mass put ended with PUT_ERROR");
@@ -171,7 +181,7 @@ public class ClientConnection implements Runnable {
 						Range rng = sm.getRange();
 						if(rng == null){
 							Map<String,String> data =sm.getData();
-							ArrayList<String> keys= new ArrayList<String>();
+							 keys= new ArrayList<String>();
 							for(String keytemp :data.keySet()){				
 								keys.add(keytemp);
 							}
@@ -188,7 +198,7 @@ public class ClientConnection implements Runnable {
 						}
 						else{
 								Map<String,String>mp =  this.server.getKVCache().findValuesInRange(rng, hashFunction, this.server.getKVCache().getReplicaName());
-								ArrayList<String> keys= new ArrayList<String>();
+							    keys= new ArrayList<String>();
 								for(String keytemp : mp.keySet()){				
 									keys.add(keytemp);
 								}
@@ -396,24 +406,52 @@ public class ClientConnection implements Runnable {
 									if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
 										throw new Exception("KVServer responded with " + response.getStatus().toString());
 								}
-									
 							}
 						}
 						
-						else if(this.server.getMetadata().size() < oldRing.size() && this.server.getMetadata().size() >2){   //in this case we have deleted node case
+						else if(this.server.getMetadata().size() < oldRing.size() && this.server.getMetadata().size() >=3){   //in this case we have deleted node case
+							//case 1 successor number 1,   //case 2 successor number 2
+							if(!oldSuccessor.equals(newSuccessor) || !oldSecondSuccessor.equals(newSecondSuccessor)){
+								try{
+									serverDatabase = this.server.getKVCache().findValuesInRange(this.server.getRange(), this.hashFunction, this.server.getKVCache().getDatasetName());
+									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
+									connection = new EcsStore(newSecondSuccessor.getServerIP(), newSecondSuccessor.getPort());
+									connection.connect();
+									socket = connection.getSocketWrapper();
+									socket.sendMessage(coordinatormsg);
+									response = (ServerMessage)socket.recieveMesssage();
+									if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+										throw new Exception("KVServer responded with " + response.getStatus().toString());	
+								}
+								catch(IOException e){
+									
+								}
+							}
 							
-							
-							
-							
-						}
-							
+							//case 2 predecessor number 1 processing
+							else if(!oldPredecessor.equals(newPredecessor)){
+								//in move data case we will not delete the data from the node after handing it to other node but we will 
+								//but the data out of range in the replica file so that the node becomes replica 1 for the new node
+									Range newRange = new Range(this.server.getRange().getLow(), Md5HashFunction.getInstance().hash(oldPredecessor));
+									serverDatabase = this.server.getKVCache().findValuesInRange(newRange, this.hashFunction, this.server.getKVCache().getDatasetName());
+									coordinatormsg = new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER, serverDatabase);
+									connection = new EcsStore(oldSecondSuccessor.getServerIP(), oldSecondSuccessor.getPort());
+									connection.connect();
+									socket = connection.getSocketWrapper();
+									socket.sendMessage(coordinatormsg);
+									response = (ServerMessage)socket.recieveMesssage();
+									if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+										throw new Exception("KVServer responded with " + response.getStatus().toString());
+								}
+							}
 						
 						break;
 					case MOVE_DATA:
 						ServerInfo receipient = config.getServerInfo();
 						Range dataRange=config.getRange();
+						String caseType = config.getMoveDatacase().toString();
 						Map<String,String> dataSet=this.server.getKVCache().findValuesInRange(dataRange,this.hashFunction,this.server.getKVCache().getDatasetName()); //CALCULATE RANGE TO TRANSFER
-						ServerMessage dataMap=new ServerMessage(dataSet);
+						ServerMessage dataMap=new ServerMessage(dataSet,config.getMoveDatacase());
 						try{
 							EcsStore ecsStore = new EcsStore(receipient.getServerIP(), receipient.getPort());
 							ecsStore.connect();
@@ -427,7 +465,12 @@ public class ClientConnection implements Runnable {
 								for(String keytemp :dataSet.keySet()){				
 									keys.add(keytemp);
 								}
-								this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getDatasetName());									//DELETE KEYS THAT WERE TRANSFERED
+								//DELETE KEYS THAT WERE TRANSFERED
+								this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getDatasetName());
+								//add the data which is out of range to be a Replica1 of the node.
+								if(caseType.equals(ECSMessage.MoveCaseType.ADD_NODE.toString()))
+									this.server.getKVCache().processMassPutRequest(dataSet, this.server.getKVCache().getReplicaName());
+									
 						//		logger.info("Move data sent successfully ... Removing keys from cache");
 							}else{
 								throw new Exception("KVServer responded with " + recReply.getStatus().toString());

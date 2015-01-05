@@ -34,7 +34,7 @@ public interface EcsCommInterface {
 	
 	public ECSMessage unLockWrite();
 	
-	public ECSMessage moveData(Range range,ServerInfo targetServer);
+	public ECSMessage moveData(Range range,ServerInfo targetServer,ECSMessage.MoveCaseType moveDataCase);
 	
 	public void shutDown();
 }

@@ -11,6 +11,7 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
 import common.messages.ConfigMessage.StatusType;
+import common.messages.ECSMessage.MoveCaseType;
 import config.ServerInfo;
 import consistent_hashing.Range;
 
@@ -33,11 +34,21 @@ public class ServerMessage implements Message{
 	private StatusType statusType;
 	private Map<String,String> data=null;
 	private Range range=null;
+	private ECSMessage.MoveCaseType movecase;
 	
+	public String getMoveCase(){
+		return movecase.toString();
+	}
 	
 	public ServerMessage(Map<String,String> d){
 		this.data=d;
 		this.statusType=ServerMessage.StatusType.DATA_TRANSFER;
+	}
+	
+	public ServerMessage(Map<String,String> d, ECSMessage.MoveCaseType caseType){
+		this.data=d;
+		this.statusType=ServerMessage.StatusType.DATA_TRANSFER;
+		this.movecase = caseType;
 	}
 	
 	public ServerMessage(ServerMessage.StatusType type,Map<String,String> d){
