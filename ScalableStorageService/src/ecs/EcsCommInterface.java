@@ -28,6 +28,10 @@ public interface EcsCommInterface {
 	
 	public ECSMessage start();
 	
+	public ECSMessage heartBeat();
+	
+	public ECSMessage recoverData(SortedMap<Integer, ServerInfo> ring,Range recoverRange);
+	
 	public ECSMessage stop();
 	
 	public ECSMessage lockWrite();

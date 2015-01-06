@@ -128,7 +128,19 @@ public class EcsStore implements EcsCommInterface {
 		return reply;
 	}
 
-
+	
+	@Override
+	public ECSMessage recoverData(SortedMap<Integer, ServerInfo> ring,Range recoverRange) {
+		ECSMessage reply;
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ring,recoverRange,ConfigMessage.StatusType.RECOVER_FAILD_NODE);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (recover data):\t '" + msg+ "'");	
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply=handleResponse(latestMsg);
+		return reply;
+	
+	}
 
 
 	@Override
@@ -142,7 +154,20 @@ public class EcsStore implements EcsCommInterface {
 		reply=handleResponse(latestMsg);
 		return reply;
 	}
-
+	
+	
+	
+	@Override
+	public ECSMessage heartBeat() {
+		ECSMessage reply;
+		//creating ECS message 
+		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.HEART_BEAT);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (heart_beat):\t '" + msg + "'");	
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply=handleResponse(latestMsg);
+		return reply;
+	}
 
 
 	@Override

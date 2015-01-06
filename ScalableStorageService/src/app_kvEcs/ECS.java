@@ -30,6 +30,8 @@ public class ECS {
 	private static ECS instance;
 	private static Logger logger = Logger.getLogger(ECS.class);
 	private static final String path=System.getProperty("user.dir");
+	private MonitoringThread monitoringThread;
+	public boolean monitoring;
 
 	public static ECS getInstance(String filePath) {
 		if (instance == null) {
@@ -40,6 +42,9 @@ public class ECS {
 
 	public ECS(String filePath) {
 		this.init(filePath);
+		this.monitoring =true;
+		this.monitoringThread = new MonitoringThread(this);
+		this.monitoringThread.start();
 	}
 
 	public List<ServerInfo> getActiveServers() {
@@ -172,7 +177,6 @@ public class ECS {
 		int preKey = this.consistentHash.getHashFunction().hash(predecessor);
 		return new Range(preKey, key);		
 	}
-
 	
 	
 	private boolean updateMetadata() {
@@ -227,6 +231,19 @@ public class ECS {
 				return false;
 		}
 		return stopAllSuccess;
+	}
+	
+	
+	public boolean heartBeatServer(ServerInfo server) {
+		boolean heartBeatSuccess = true;
+		EcsStore serverSocket = this.getServersConnection().get(server);
+		ECSMessage response = serverSocket.heartBeat();
+		if (response == null) {
+			return false;
+		} else if (response.getStatus() != ConfigMessage.StatusType.HEART_BEAT_ALIVE) {
+			return false;
+		}
+		return heartBeatSuccess;
 	}
 
 	private boolean stopServer(ServerInfo server) {
@@ -363,6 +380,47 @@ public class ECS {
 
 		// Shutdown the respective storage server.
 		this.shutDownServer(removedNode);
+
+		return true;
+	}
+	
+	
+	private boolean recoverFailedNodeData(ServerInfo successor,Range range){
+		boolean recoverDataSuccess = true;
+		EcsStore serverSocket = this.getServersConnection().get(successor);
+		ECSMessage response =serverSocket.recoverData(this.consistentHash.getMetaData(), range);
+		if (response == null) {
+			return false;
+		} else if (response.getStatus() != ConfigMessage.StatusType.RECOVER_FAILD_NODE_SUCCESS) {
+			return false;
+		}
+		return recoverDataSuccess;
+	}
+	
+	
+	public boolean removeFailedNode(ServerInfo server) {
+		if (this.getActiveServers().size() < 1)
+			return false;
+		
+		Range recoverRange = this.getServerRange(server);
+		
+		// Recalculate and update the meta-data of the storage service
+		this.consistentHash.remove(server);
+		
+		// Send meta-data update to the successor node (i.e., successor is now
+		// also responsible for the range of the server that is to be removed)
+		ServerInfo successor = CommonFunctions.getSuccessorNode(server,
+				this.consistentHash.getMetaData());
+		
+		this.recoverFailedNodeData(successor,recoverRange);
+	
+		this.getActiveServers().remove(server);
+		this.getInActiveServers().add(server);
+
+		// When all affected data has been transferred (i.e., the server that
+		// has to be removed sends back a notification to the ECS)
+		// Send a meta-data update to the remaining storage servers.
+		this.updateMetadata();
 
 		return true;
 	}

@@ -54,6 +54,13 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 	}
 	
 	
+	public ECSMessage(SortedMap<Integer, ServerInfo> ring,Range range,ConfigMessage.StatusType type) {
+		this(type);
+		this.setRing(ring);
+		this.setRange(range);
+	}
+	
+	
 	
 	public ECSMessage(StatusType type,ServerInfo server,Range range,SortedMap<Integer, ServerInfo> ring) {
 		this.setStatus(type);

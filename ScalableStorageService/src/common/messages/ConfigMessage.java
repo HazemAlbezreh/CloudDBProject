@@ -27,7 +27,13 @@ public interface ConfigMessage {
     	UPDATE_META_DATA,
     		UPDATE_META_DATA_SUCCESS,
     		UPDATE_META_DATA_FAILURE,
-        SHUT_DOWN    
+    	HEART_BEAT,
+    		HEART_BEAT_ALIVE,
+    	RECOVER_FAILD_NODE,
+    		RECOVER_FAILD_NODE_SUCCESS,
+    		RECOVER_FAILD_NODE_FAILURE,
+        SHUT_DOWN,
+        
     }
 
 	
