@@ -160,8 +160,9 @@ public class ECS {
 		boolean initSuccess = true;
 		EcsStore serverSocket = this.getServersConnection().get(server);
 		Range range= this.getServerRange(server);
+		Range rep=this.getServerReplicaRange(server);
 		ECSMessage response = serverSocket.initServer(this.consistentHash.getMetaData()
-				,range,cacheSize,strategy);
+				,range,rep,cacheSize,strategy);
 		if (response == null) {
 			return false;
 		} else if (response.getStatus() != ConfigMessage.StatusType.INIT_SUCCESS) {
@@ -178,6 +179,31 @@ public class ECS {
 		return new Range(preKey, key);		
 	}
 	
+	private Range getServerReplicaRange(ServerInfo server){
+		Range range=null;
+
+		int key = this.consistentHash.getHashFunction().hash(server);
+		
+		if(this.consistentHash.getMetaData().size()==2){
+			ServerInfo predecessor = CommonFunctions.getPredecessorNode(server,this.consistentHash.getMetaData());
+			int preKey = this.consistentHash.getHashFunction().hash(predecessor);
+			range= new Range(key,preKey);
+		}else if(this.consistentHash.getMetaData().size()>=3){
+			
+			ServerInfo predecessor = CommonFunctions.getPredecessorNode(server,this.consistentHash.getMetaData());
+			int preKey = this.consistentHash.getHashFunction().hash(predecessor);
+			
+			ServerInfo secondPredecessor = CommonFunctions.getPredecessorNode(predecessor,this.consistentHash.getMetaData());
+			int secondPreKey = this.consistentHash.getHashFunction().hash(secondPredecessor);
+		
+			ServerInfo thirdPredecessor = CommonFunctions.getPredecessorNode(secondPredecessor,this.consistentHash.getMetaData());
+			int thirdPreKey = this.consistentHash.getHashFunction().hash(thirdPredecessor);
+			
+			range=new Range(thirdPreKey,preKey);
+		} 
+		
+		return range;
+	}
 	
 	private boolean updateMetadata() {
 		boolean updateAllSuccess = true;
@@ -192,8 +218,9 @@ public class ECS {
 		boolean updateSuccess = true;
 		EcsStore serverSocket = this.getServersConnection().get(server);
 		Range range= this.getServerRange(server);
+		Range rep=this.getServerReplicaRange(server);
 		ECSMessage response = serverSocket.updateMetaData(this.consistentHash
-				.getMetaData(),range);
+				.getMetaData(),range,rep);
 		if (response == null) {
 			return false;
 		} else if (response.getStatus() != ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS) {
@@ -334,7 +361,10 @@ public class ECS {
 		this.connectToServer(addedNode);
 		EcsStore addedServerSocket = this.getServersConnection().get(addedNode);
 		Range addedServerRange=this.getServerRange(addedNode);
-		addedServerSocket.initServer(this.consistentHash.getMetaData(), addedServerRange, cacheSize, strategy);
+		
+		Range addedServerRepRange=this.getServerReplicaRange(addedNode);
+		
+		addedServerSocket.initServer(this.consistentHash.getMetaData(), addedServerRange,addedServerRepRange, cacheSize, strategy);
 		addedServerSocket.start();
 		// Set write lock (lockWrite()) on the successor node
 		this.lockWrite(successor);

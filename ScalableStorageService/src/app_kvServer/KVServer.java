@@ -16,6 +16,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import config.ServerInfo;
+import consistent_hashing.CommonFunctions;
 import consistent_hashing.Range;
 import app_kvServer.ServerStatus;
 
@@ -45,6 +46,12 @@ public class KVServer extends Thread  {
 	private List<ClientConnection> activeThreads;
 	private SortedMap<Integer, ServerInfo> ring=null;
 	private Range range=null;
+	
+	///////////////////////////////////////////////////////////////////////////////
+
+	List<ServerInfo> replicas= new ArrayList<ServerInfo>(2);
+	private Range repRange=null;
+	UpdateTimer timer=null;
 	
 	///////////////////////////////////////////////////////////////////////////////
 	
@@ -173,10 +180,14 @@ public class KVServer extends Thread  {
 		this.ring=data;
 	}
 	
-	public synchronized boolean initKVServer(int cacheSize, String strategy,SortedMap<Integer,ServerInfo> data,Range range){
+	public synchronized boolean initKVServer(int cacheSize, String strategy,SortedMap<Integer,ServerInfo> data,Range range,Range rep){
 		this.kvCache=new KVCache(String.valueOf(port), cacheSize, strategy,"dataset","replica");
 		this.setMetadata(data);
 		this.setRange(range);
+		this.setReplicaRange(rep);
+		this.setReplicas( this.findReplicas(data, range) );
+		this.timer=new UpdateTimer(this,60);
+		
 		if(this.getMetadata()==null || this.getRange()==null || 
 				this.getKVCache()==null || this.getStatus()!=ServerStatus.INIT){
 			return false;
@@ -209,16 +220,20 @@ public class KVServer extends Thread  {
 		return true;
 	}
 	
-	public synchronized void update (SortedMap<Integer,ServerInfo> data,Range r){
+	public synchronized void update (SortedMap<Integer,ServerInfo> data,Range r,Range rep){
 		this.setMetadata(data);
 		this.setRange(r);
+		this.setReplicas( this.findReplicas(data, r) );
+		this.setReplicaRange(rep);
+		
 	}
 	
 	public synchronized void shutDown(){
 		logger.info("Initiating Shutdown of server");
 		this.setStatus(ServerStatus.SHUTDOWNED);
 		try {
-			serverSocket.close();			
+			serverSocket.close();		
+			this.timer.cancelTimer();
 			for(Iterator<ClientConnection> i = this.activeThreads.iterator(); i.hasNext();) {
 				ClientConnection clientThread=i.next();
 				try{
@@ -236,7 +251,7 @@ public class KVServer extends Thread  {
 
 	public synchronized boolean startServer(){
 		if(this.getMetadata()==null || this.getRange()==null || 
-				this.getKVCache()==null || this.getStatus()!=ServerStatus.STOPPED){
+				this.getKVCache()==null || (this.getStatus()!=ServerStatus.STOPPED && this.getStatus()!=ServerStatus.STARTED) ){
 			return false;
 		}
 		this.setStatus(ServerStatus.STARTED);
@@ -265,4 +280,46 @@ public class KVServer extends Thread  {
 		}
 	}
 	
+	public synchronized List<ServerInfo> getReplicas(){
+		return this.replicas;
+	}
+	
+	public synchronized void setReplicas(List<ServerInfo> re){
+		this.replicas=re;
+	}
+	
+	synchronized List<ServerInfo> findReplicas(SortedMap<Integer,ServerInfo> data,Range r){
+		int serverKey = r.getHigh();
+		List<ServerInfo> li=new ArrayList<ServerInfo>(2);
+
+		if(data.size()==2){
+			ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(serverKey, data);
+			li.add(newSuccessor);
+			
+		}else if(data.size()>=3){
+			ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(serverKey, data);
+			ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(serverKey, data);
+			
+			li.add(newSuccessor);
+			li.add(newSecondSuccessor);
+		}
+		
+		return li;
+	}
+	
+	public synchronized void setReplicaRange(Range r){
+		this.repRange=r;
+	}
+	
+	public synchronized Range getReplicaRange(){
+		return this.repRange;
+	}
+	
+	public synchronized boolean inReplicaRange(int i) {
+		return this.repRange.isWithin(i);
+	}
+
+	public synchronized void addToTimer(String key,String value){
+		this.timer.addData(key, value);
+	}
 }

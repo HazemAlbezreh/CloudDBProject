@@ -117,6 +117,8 @@ public class ServerInfo implements  java.io.Serializable {
 		//TODO SSh 
 		String script = "ssh -n " + this.getServerIP() + " nohup java -jar " + path + 
 		"/ms3-server.jar " + this.getPort();
+//		String script= "java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address="+(this.getPort()+100)+" -jar ms3-server.jar "+this.getPort();
+
 		//String script = "java -jar "+ path + "/ms3-server.jar " + this.getPort();
 		Runtime runtime = Runtime.getRuntime();
 

@@ -151,6 +151,33 @@ public class KVCache  {
 	}
 	
 	
+	public synchronized String processGetRequest(String key,String fileName){
+		//check the cache first
+		String response = checkGetHitOrMiss(key);
+		if(response != null )
+			return response;
+		//if not found in cache search in the file
+		else{
+			String line;
+			try{
+				BufferedReader br = new BufferedReader(new FileReader("./"+serverName+ fileName +".txt"));
+				while ((line = br.readLine()) != null) {
+					String [] str = line.split(",");
+					if(str[0].equals(key)){
+						br.close();
+						addCacheEntry(str[0], str[1]);
+						return str[1];
+					}
+				}
+				br.close();
+				return null;
+			}
+			catch(Exception e){
+				return null;
+			}
+		}
+	}
+	
 	public synchronized String processGetRequest(String key){
 		//check the cache first
 		String response = checkGetHitOrMiss(key);
@@ -177,7 +204,6 @@ public class KVCache  {
 			}
 		}
 	}
-	
 	
 	public synchronized String updateDatasetEntry(String key,String newValue, String fileName){
 		StringBuilder sbld = new StringBuilder();
