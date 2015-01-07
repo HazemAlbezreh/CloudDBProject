@@ -311,7 +311,7 @@ public class ClientConnection implements Runnable {
 						if(this.server.getMetadata().size() > oldRing.size() && oldRing.size() >0){    //in this case we have (new added node case)
 							if(!oldSuccessor.equals(newSuccessor)){//case number one
 								serverDatabase = this.server.getKVCache().findValuesInRange(this.server.getRange(), this.hashFunction, this.server.getKVCache().getDatasetName());
-								if( this.server.getMetadata().size() > 3){
+								if( this.server.getMetadata().size() > 3){ //if we have 4 nodes and so on.
 									try{
 										coordinatormsg = new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA, serverDatabase);
 										//connect to successor number three "it was before replica2" but on new ring it is not anymore and the data should be delete from this replica 
@@ -336,7 +336,7 @@ public class ClientConnection implements Runnable {
 									catch(IOException e){
 										
 									}
-								}
+								}// if the ring size = 2 or 3
 								else{
 									//connect to the new added node and hand over the data to it to be replica 1
 									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
@@ -353,7 +353,7 @@ public class ClientConnection implements Runnable {
 							// case number 2. in this the new node is added to be the second successor of the current node
 							else if(!oldSecondSuccessor.equals(newSecondSuccessor)){
 								serverDatabase = this.server.getKVCache().findValuesInRange(this.server.getRange(), this.hashFunction, this.server.getKVCache().getDatasetName());
-								if( this.server.getMetadata().size() > 3){
+								if( this.server.getMetadata().size() > 3){  // we have more than three nodes.
 									try{
 										coordinatormsg = new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA, serverDatabase);
 										//connect to successor number three "it was before replica2" but on new ring it is not anymore and the data should be delete from this replica 
@@ -378,7 +378,8 @@ public class ClientConnection implements Runnable {
 									catch(IOException e){
 										
 									}
-								}
+								}  
+								//in this case we have 3 nodes only
 								else{
 									//connect to the new added node and hand over the data to it to be replica 2
 									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
@@ -394,7 +395,7 @@ public class ClientConnection implements Runnable {
 							
 							else if(!oldPredecessor.equals(newPredecessor)){
 							//in move data case we will not delete the data from the node after handing it to other node but we will 
-							//but the data out of range in the replica file so that the node becomes replica 1 for the new node
+							//put the data out of range in the replica file of the node so that the node becomes replica 1 for the new node.
 								if(this.server.getMetadata().size() >3){
 									Range newRange = new Range(Md5HashFunction.getInstance().hash(oldPredecessor), this.server.getRange().getLow());
 									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, newRange);
@@ -408,8 +409,8 @@ public class ClientConnection implements Runnable {
 								}
 							}
 						}
-						
-						else if(this.server.getMetadata().size() < oldRing.size() && this.server.getMetadata().size() >=3){   //in this case we have deleted node case
+						//in this case we have deleted node case
+						else if(this.server.getMetadata().size() < oldRing.size() && this.server.getMetadata().size() >=3){
 							//case 1 successor number 1,   //case 2 successor number 2
 							if(!oldSuccessor.equals(newSuccessor) || !oldSecondSuccessor.equals(newSecondSuccessor)){
 								try{
@@ -467,7 +468,7 @@ public class ClientConnection implements Runnable {
 								}
 								//DELETE KEYS THAT WERE TRANSFERED
 								this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getDatasetName());
-								//add the data which is out of range to be a Replica1 of the node.
+								//Mahmoud -- add the data which is out of range to be a Replica1 of the node.
 								if(caseType.equals(ECSMessage.MoveCaseType.ADD_NODE.toString()))
 									this.server.getKVCache().processMassPutRequest(dataSet, this.server.getKVCache().getReplicaName());
 									
