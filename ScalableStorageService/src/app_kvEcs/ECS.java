@@ -30,6 +30,8 @@ public class ECS {
 	private static ECS instance;
 	private static Logger logger = Logger.getLogger(ECS.class);
 	private static final String path=System.getProperty("user.dir");
+	private MonitoringThread monitoringThread;
+	public boolean monitoring;
 
 	public static ECS getInstance(String filePath) {
 		if (instance == null) {
@@ -40,6 +42,9 @@ public class ECS {
 
 	public ECS(String filePath) {
 		this.init(filePath);
+		this.monitoring =true;
+		this.monitoringThread = new MonitoringThread(this);
+		this.monitoringThread.start();
 	}
 
 	public List<ServerInfo> getActiveServers() {
@@ -155,8 +160,9 @@ public class ECS {
 		boolean initSuccess = true;
 		EcsStore serverSocket = this.getServersConnection().get(server);
 		Range range= this.getServerRange(server);
+		Range rep=this.getServerReplicaRange(server);
 		ECSMessage response = serverSocket.initServer(this.consistentHash.getMetaData()
-				,range,cacheSize,strategy);
+				,range,rep,cacheSize,strategy);
 		if (response == null) {
 			return false;
 		} else if (response.getStatus() != ConfigMessage.StatusType.INIT_SUCCESS) {
@@ -172,8 +178,32 @@ public class ECS {
 		int preKey = this.consistentHash.getHashFunction().hash(predecessor);
 		return new Range(preKey, key);		
 	}
-
 	
+	private Range getServerReplicaRange(ServerInfo server){
+		Range range=null;
+
+		int key = this.consistentHash.getHashFunction().hash(server);
+		
+		if(this.consistentHash.getMetaData().size()==2){
+			ServerInfo predecessor = CommonFunctions.getPredecessorNode(server,this.consistentHash.getMetaData());
+			int preKey = this.consistentHash.getHashFunction().hash(predecessor);
+			range= new Range(key,preKey);
+		}else if(this.consistentHash.getMetaData().size()>=3){
+			
+			ServerInfo predecessor = CommonFunctions.getPredecessorNode(server,this.consistentHash.getMetaData());
+			int preKey = this.consistentHash.getHashFunction().hash(predecessor);
+			
+			ServerInfo secondPredecessor = CommonFunctions.getPredecessorNode(predecessor,this.consistentHash.getMetaData());
+			int secondPreKey = this.consistentHash.getHashFunction().hash(secondPredecessor);
+		
+			ServerInfo thirdPredecessor = CommonFunctions.getPredecessorNode(secondPredecessor,this.consistentHash.getMetaData());
+			int thirdPreKey = this.consistentHash.getHashFunction().hash(thirdPredecessor);
+			
+			range=new Range(thirdPreKey,preKey);
+		} 
+		
+		return range;
+	}
 	
 	private boolean updateMetadata() {
 		boolean updateAllSuccess = true;
@@ -188,8 +218,9 @@ public class ECS {
 		boolean updateSuccess = true;
 		EcsStore serverSocket = this.getServersConnection().get(server);
 		Range range= this.getServerRange(server);
+		Range rep=this.getServerReplicaRange(server);
 		ECSMessage response = serverSocket.updateMetaData(this.consistentHash
-				.getMetaData(),range);
+				.getMetaData(),range,rep);
 		if (response == null) {
 			return false;
 		} else if (response.getStatus() != ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS) {
@@ -227,6 +258,19 @@ public class ECS {
 				return false;
 		}
 		return stopAllSuccess;
+	}
+	
+	
+	public boolean heartBeatServer(ServerInfo server) {
+		boolean heartBeatSuccess = true;
+		EcsStore serverSocket = this.getServersConnection().get(server);
+		ECSMessage response = serverSocket.heartBeat();
+		if (response == null) {
+			return false;
+		} else if (response.getStatus() != ConfigMessage.StatusType.HEART_BEAT_ALIVE) {
+			return false;
+		}
+		return heartBeatSuccess;
 	}
 
 	private boolean stopServer(ServerInfo server) {
@@ -317,7 +361,10 @@ public class ECS {
 		this.connectToServer(addedNode);
 		EcsStore addedServerSocket = this.getServersConnection().get(addedNode);
 		Range addedServerRange=this.getServerRange(addedNode);
-		addedServerSocket.initServer(this.consistentHash.getMetaData(), addedServerRange, cacheSize, strategy);
+		
+		Range addedServerRepRange=this.getServerReplicaRange(addedNode);
+		
+		addedServerSocket.initServer(this.consistentHash.getMetaData(), addedServerRange,addedServerRepRange, cacheSize, strategy);
 		addedServerSocket.start();
 		// Set write lock (lockWrite()) on the successor node
 		this.lockWrite(successor);
@@ -363,6 +410,47 @@ public class ECS {
 
 		// Shutdown the respective storage server.
 		this.shutDownServer(removedNode);
+
+		return true;
+	}
+	
+	
+	private boolean recoverFailedNodeData(ServerInfo successor,Range range){
+		boolean recoverDataSuccess = true;
+		EcsStore serverSocket = this.getServersConnection().get(successor);
+		ECSMessage response =serverSocket.recoverData(this.consistentHash.getMetaData(), range);
+		if (response == null) {
+			return false;
+		} else if (response.getStatus() != ConfigMessage.StatusType.RECOVER_FAILD_NODE_SUCCESS) {
+			return false;
+		}
+		return recoverDataSuccess;
+	}
+	
+	
+	public boolean removeFailedNode(ServerInfo server) {
+		if (this.getActiveServers().size() < 1)
+			return false;
+		
+		Range recoverRange = this.getServerRange(server);
+		
+		// Recalculate and update the meta-data of the storage service
+		this.consistentHash.remove(server);
+		
+		// Send meta-data update to the successor node (i.e., successor is now
+		// also responsible for the range of the server that is to be removed)
+		ServerInfo successor = CommonFunctions.getSuccessorNode(server,
+				this.consistentHash.getMetaData());
+		
+		this.recoverFailedNodeData(successor,recoverRange);
+	
+		this.getActiveServers().remove(server);
+		this.getInActiveServers().add(server);
+
+		// When all affected data has been transferred (i.e., the server that
+		// has to be removed sends back a notification to the ECS)
+		// Send a meta-data update to the remaining storage servers.
+		this.updateMetadata();
 
 		return true;
 	}

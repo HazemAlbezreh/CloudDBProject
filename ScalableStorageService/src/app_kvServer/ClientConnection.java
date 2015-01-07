@@ -81,16 +81,24 @@ public class ClientConnection implements Runnable {
 					ClientMessage reply=null;
 					String value=null,key=null;
 					KVMessage.StatusType replyStatus=null;
-	
+					String searchSet=null;
 					
 					switch(cm.getStatus()){
 					case GET:
 						key = cm.getKey();
-						if(!this.server.inRange(this.hashFunction.hash(key))){		//NOT IN RANGE
-							reply= new ClientMessage(this.server.getMetadata());
-							this.clientSocket.sendMessage(reply);
+						if( !this.server.inRange(this.hashFunction.hash(key)) && !this.server.inReplicaRange(this.hashFunction.hash(key)) ){		//NOT IN RANGE
+								reply= new ClientMessage(this.server.getMetadata());
+								this.clientSocket.sendMessage(reply);
+								break;
 						}
-						value = this.server.getKVCache().processGetRequest(cm.getKey());
+						
+						if( this.server.inRange(this.hashFunction.hash(key)) ){						//DECIDE WHAT DATASET TO SEARCH
+							searchSet=this.server.getKVCache().getDatasetName();
+						}else if( this.server.inReplicaRange(this.hashFunction.hash(key)) ){
+							searchSet=this.server.getKVCache().getReplicaName();
+						}
+						
+						value = this.server.getKVCache().processGetRequest(cm.getKey(),searchSet);
 						if(value == null){										
 							replyStatus=KVMessage.StatusType.GET_ERROR;
 						}else{
@@ -121,6 +129,8 @@ public class ClientConnection implements Runnable {
 									clientSocket.sendMessage(reply);
 								}else{
 								//	logger.info("Delete is successful");
+									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
+									
 									reply=new ClientMessage(key,replyStatus);
 									clientSocket.sendMessage(reply);
 								}
@@ -128,6 +138,9 @@ public class ClientConnection implements Runnable {
 								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(key, value, this.server.getKVCache().getDatasetName()));
 								if(replyStatus==StatusType.PUT_SUCCESS){ 		//PUT SUCCESS
 								//	logger.info("Put is successful");
+									
+									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
+									
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
 								}else if(replyStatus==StatusType.PUT_ERROR){	//PUT ERROR
@@ -136,6 +149,9 @@ public class ClientConnection implements Runnable {
 									clientSocket.sendMessage(reply);
 								}else{											//PUT UPDATE
 								//	logger.info("Put update is successful");
+									
+									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
+									
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
 								}
@@ -164,9 +180,9 @@ public class ClientConnection implements Runnable {
 							for(String keytemp :h.keySet()){				
 								keys.add(keytemp);
 							}
-							result2 = this.server.getKVCache().deleteDatasetEntry(keys, server.getKVCache().getReplicaName());
+							result2 = this.server.getKVCache().deleteDatasetEntry(keys, server.getKVCache().getReplicaName()); //TODO ERROR PROBABLY HERE
 						}
-						if(result.equals("PUT_ERROR") || result2.equals("PUT_ERROR")){
+						if(result.equals("PUT_ERROR") || result2.equals("DELETE_ERROR")){
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
 							this.clientSocket.sendMessage(serverReply);
 				//			logger.error("Mass put ended with PUT_ERROR");
@@ -229,12 +245,22 @@ public class ClientConnection implements Runnable {
 						}
 						
 						break;
+						
+					case UPDATE_REPLICA:	//TODO
+						Map<String,String> upData =sm.getData();
+						for(Map.Entry<String, String> entry : upData.entrySet()){
+							this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getDatasetName());
+						}
+						break;
+						
 					default :
 						serverReply=new ServerMessage(ServerMessage.StatusType.REPLICA_FAILURE);
 						clientSocket.sendMessage(serverReply);
 						break;
 					}
 					break;
+					
+					
 				case CONFIGMESSAGE:
 					ECSMessage config = (ECSMessage)message;
 					ECSMessage ecsReply=null;
@@ -242,7 +268,7 @@ public class ClientConnection implements Runnable {
 					
 					switch(config.getStatus()){
 					case INIT:
-						result=this.server.initKVServer(config.getCacheSize(), config.getCacheStrategy(), config.getRing(),config.getRange());
+						result=this.server.initKVServer(config.getCacheSize(), config.getCacheStrategy(), config.getRing(),config.getRange(),config.getReplicaRange());
 						if(result){
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.INIT_SUCCESS);
 						}else{
@@ -288,13 +314,20 @@ public class ClientConnection implements Runnable {
 						clientSocket.sendMessage(ecsReply);
 				//		logger.info("message sent : " + ecsReply.getStatus());
 						break;
+					case HEART_BEAT:
+						ecsReply=new ECSMessage(ConfigMessage.StatusType.HEART_BEAT_ALIVE);
+						clientSocket.sendMessage(ecsReply);
+						break;
+						
 					case UPDATE_META_DATA:
 						SortedMap<Integer, ServerInfo> oldRing = this.server.getMetadata();
 						int serverKey = this.server.getRange().getHigh();
-						this.server.update(config.getRing(), config.getRange());
+						this.server.update(config.getRing(), config.getRange(),config.getReplicaRange());
 						ecsReply=new ECSMessage(ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS);
 						clientSocket.sendMessage(ecsReply);
+						
 						ServerInfo currentServer = this.server.getMetadata().get(serverKey);
+						
 						ServerInfo oldSuccessor = CommonFunctions.getSuccessorNode(currentServer, oldRing);
 						ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(currentServer, this.server.getMetadata());
 						ServerInfo oldSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, oldRing);
@@ -486,6 +519,30 @@ public class ClientConnection implements Runnable {
 					case SHUT_DOWN:
 						this.server.shutDown();
 						break;
+						
+					case RECOVER_FAILD_NODE:
+						Range absorbRange=config.getRange();
+						Map<String,String> absorbData=this.server.getKVCache().findValuesInRange(absorbRange,this.hashFunction,this.server.getKVCache().getReplicaName()); 
+						String insertResult=this.server.getKVCache().processMassPutRequest(absorbData,this.server.getKVCache().getDatasetName());
+						
+						ArrayList<String> keysAdded= new ArrayList<String>();						//CREATE A LIST OF THE KEYS IN THE SENT MAP
+						for(String keytemp :absorbData.keySet()){				
+							keysAdded.add(keytemp);
+						}
+						
+						String deleteResult=this.server.getKVCache().deleteDatasetEntry(keysAdded, server.getKVCache().getReplicaName());
+						
+						if(insertResult.equals("PUT_ERROR") || deleteResult.equals("DELETE_ERROR")){
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.RECOVER_FAILD_NODE_FAILURE);
+							this.clientSocket.sendMessage(ecsReply);
+				//			logger.error("Recover put ended with PUT_ERROR");
+						}else{
+							ecsReply=new ECSMessage(ConfigMessage.StatusType.RECOVER_FAILD_NODE_SUCCESS);
+							this.clientSocket.sendMessage(ecsReply);
+				//			logger.info("Recover Put is successful");
+						}
+						break;
+						
 					default:
 				//		logger.debug("Let's Hope this does not get printed or I forgot a message type");
 						break;

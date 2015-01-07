@@ -34,7 +34,8 @@ public class ServerMessage implements Message{
 	private StatusType statusType;
 	private Map<String,String> data=null;
 	private Range range=null;
-	private ECSMessage.MoveCaseType movecase;
+	
+	private ECSMessage.MoveCaseType movecase=null;
 	
 	public String getMoveCase(){
 		return movecase.toString();
@@ -64,6 +65,14 @@ public class ServerMessage implements Message{
 		this.statusType=type;
 		this.range=r;
 	}
+	/////////////////////////////////////////////
+	public ServerMessage(ServerMessage.StatusType type,Map<String,String> d, ECSMessage.MoveCaseType move){
+		this.data=d;
+		this.statusType=type;
+		this.movecase=move;
+	}
+	
+	/////////////////////////////////////////////
 	
 	public Range getRange(){
 		return range;
@@ -91,6 +100,12 @@ public class ServerMessage implements Message{
 		jo.add("messageType", this.messageType.toString());
 		jo.add("statusType", this.statusType.toString());
 		
+		if(this.movecase!=null){
+			jo.add("moveType", this.movecase.toString());			
+		}else{
+			jo.add("moveType", nullie);
+		}
+		
 		if(this.data != null){
 			JsonArray ja= new JsonArray();
 			for(Map.Entry<String, String> entry : data.entrySet()){
@@ -111,6 +126,7 @@ public class ServerMessage implements Message{
 	public static ServerMessage parseFromString(String source) throws MessageParseException {
 		
 		ServerMessage.StatusType nStatus;
+		ECSMessage.MoveCaseType nMove=null;
 		Map<String,String> nData=null;
 		
 		try{
@@ -120,6 +136,13 @@ public class ServerMessage implements Message{
 			JsonObject jo=JsonObject.readFrom(source);
 			
 			nStatus=StatusType.valueOf( jo.get("statusType").asString() );
+			
+			if(jo.get("moveType").isNull()){
+				nMove=null;
+			}else{
+				nMove=MoveCaseType.valueOf( jo.get("moveType").asString() );
+			}
+			
 			if(jo.get("data").isNull()){
 				nData=new HashMap<String,String>();
 			}else{
@@ -132,7 +155,7 @@ public class ServerMessage implements Message{
 					nData.put(key,value);
 				}
 			}
-			return new ServerMessage(nStatus,nData);
+			return new ServerMessage(nStatus,nData,nMove);
 		}
 		catch(Exception e){
 			throw new MessageParseException("ServerMessage : " +e.getMessage());

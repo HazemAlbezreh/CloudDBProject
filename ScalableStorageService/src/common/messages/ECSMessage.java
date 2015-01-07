@@ -19,6 +19,7 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 	 */
 	private static final long serialVersionUID = 2046485733689892863L;
 	private Range range=null;
+	private Range replica=null;
 	private ServerInfo server=null;
 	private ConfigMessage.StatusType statusType ;
 	private SortedMap<Integer, ServerInfo> ring=null;
@@ -29,7 +30,7 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 			ADD_NODE,								//delete node or add node
 			DELETE_NODE,
 	}
-	private MoveCaseType moveStatus;
+	private MoveCaseType moveStatus=null;
 	
 	
 	public MoveCaseType getMoveDatacase(){
@@ -49,6 +50,13 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 	
 	public ECSMessage(SortedMap<Integer, ServerInfo> ring,Range range) {
 		this(ConfigMessage.StatusType.UPDATE_META_DATA);
+		this.setRing(ring);
+		this.setRange(range);
+	}
+	
+	
+	public ECSMessage(SortedMap<Integer, ServerInfo> ring,Range range,ConfigMessage.StatusType type) {
+		this(type);
 		this.setRing(ring);
 		this.setRange(range);
 	}
@@ -78,6 +86,46 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 		this.cacheSize=cs;
 		this.strategy=strat;
 	}
+/////////////////////////////////////////////////////////////////////////
+	
+	public ECSMessage(StatusType type,ServerInfo server,Range range,Range rep,SortedMap<Integer, ServerInfo> ring,String strat,int cs,MoveCaseType move){
+		this.setStatus(type);
+		this.setRange(range);		
+		this.setRing(ring);
+		this.replica=rep;
+		this.cacheSize=cs;
+		this.strategy=strat;
+		this.server=server;
+		this.moveStatus=move;
+	}
+	
+	public ECSMessage(StatusType type,Range range,Range rep,SortedMap<Integer, ServerInfo> ring,String strat,int cs) {
+		this.setStatus(type);
+		this.setRange(range);		
+		this.setRing(ring);
+		this.replica=rep;
+		this.cacheSize=cs;
+		this.strategy=strat;
+	}
+	
+	public ECSMessage(StatusType type,ServerInfo server,Range range,Range rep,SortedMap<Integer, ServerInfo> ring) {
+		this.setStatus(type);
+		this.setRange(range);
+		this.setServerInfo(server);		
+		this.setRing(ring);
+		this.replica=rep;
+	}
+	
+	public ECSMessage(SortedMap<Integer, ServerInfo> ring,Range range,Range rep) {
+		this(ConfigMessage.StatusType.UPDATE_META_DATA);
+		this.setRing(ring);
+		this.setRange(range);
+		this.replica=rep;
+	}
+	
+	
+/////////////////////////////////////////////////////////////////////////
+
 	
 	@Override
 	public SortedMap<Integer,ServerInfo> getRing() {
@@ -130,6 +178,10 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 	public void setRing(SortedMap<Integer, ServerInfo> ring) {
 		this.ring = ring;
 	}
+	
+	public Range getReplicaRange(){
+		return this.replica;
+	}
 
 	@Override
 	public MessageType getMessageType() {
@@ -152,6 +204,15 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 			jo.add("range", nullie);
 		}
 		
+		if(this.replica != null){
+			JsonObject temp= new JsonObject();
+			temp.add("high",this.replica.getHigh()).add("low", this.replica.getLow());
+			jo.add("replica", temp);
+		}else{
+			jo.add("replica", nullie);
+		}
+		
+		
 		if(this.server != null){
 			JsonObject temp= new JsonObject();
 			temp.add("address", this.server.getServerIP()).add("port", this.server.getPort());
@@ -164,6 +225,12 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 			jo.add("strategy", this.strategy);
 		}else{
 			jo.add("strategy", nullie);
+		}
+		
+		if(this.moveStatus!=null){
+			jo.add("moveType", this.moveStatus.toString());			
+		}else{
+			jo.add("moveType", nullie);
 		}
 		
 		jo.add("cache", this.cacheSize);
@@ -195,11 +262,12 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 	
 	public static ECSMessage parseFromString(String source) throws MessageParseException{
 		Range nRange;
+		Range nRep;
 		ServerInfo nServer;
 		ConfigMessage.StatusType nStatus;
 		SortedMap<Integer, ServerInfo> data;
 		String nStrategy=null;
-		
+		MoveCaseType nMove=null;
 		
 		try{
 			if(source==null || source.isEmpty()){
@@ -209,11 +277,24 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 			
 			nStatus=StatusType.valueOf( jo.get("statusType").asString() );
 			
+			if(jo.get("moveType").isNull()){
+				nMove=null;
+			}else{
+				nMove=MoveCaseType.valueOf( jo.get("moveType").asString() );
+			}
+			
 			if(jo.get("range").isNull()){
 				nRange=null;
 			}else{
 				JsonObject jo2=jo.get("range").asObject();
 				nRange=new Range(jo2.get("low").asInt(),jo2.get("high").asInt());
+			}
+			
+			if(jo.get("replica").isNull()){
+				nRep=null;
+			}else{
+				JsonObject jo2=jo.get("replica").asObject();
+				nRep=new Range(jo2.get("low").asInt(),jo2.get("high").asInt());
 			}
 			
 			if(jo.get("server").isNull()){
@@ -245,7 +326,7 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 					data.put(hash, new ServerInfo(ad,port));
 				}
 			}
-			return new ECSMessage(nStatus,nServer,nRange,data,nStrategy,nCache);
+			return new ECSMessage(nStatus,nServer,nRange,nRep,data,nStrategy,nCache,nMove);
 					
 		}catch(Exception e){
 			throw new MessageParseException("ECSMessage : " +e.getMessage());
