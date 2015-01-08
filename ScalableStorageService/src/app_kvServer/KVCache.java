@@ -313,15 +313,12 @@ public class KVCache  {
 			}
 				while ((line = br.readLine()) != null) {
 					String [] str = line.split(",");
-					for(String key:keys){
-						if(str[0].equals(key)){
-							deleteResult = "DELETE_SUCCESS";
-							keys.remove(key);
-							break;
-						}
+						if(keys.contains(str[0])){
+								deleteResult = "DELETE_SUCCESS";
+								keys.remove(str[0]);
+							}
 						else
 							sbld.append(line + newline);
-					}
 				}
 		}
 		catch(IOException e){
