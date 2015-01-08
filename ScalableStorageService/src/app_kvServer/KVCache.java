@@ -298,6 +298,18 @@ public class KVCache  {
 	}
 	
 	
+	public synchronized void deleteAllData(String fileName){
+		PrintWriter pr = null;
+		try{
+			pr = new PrintWriter(new FileWriter("./"+serverName+ fileName));
+			pr.print("");
+			pr.close();
+		}
+		catch(IOException e){
+			
+		}
+	}
+	
 	public synchronized String deleteDatasetEntry(ArrayList<String> keys,String fileName){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");

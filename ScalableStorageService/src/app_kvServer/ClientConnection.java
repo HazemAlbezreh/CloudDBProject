@@ -537,6 +537,9 @@ public class ClientConnection implements Runnable {
 								}
 								//DELETE KEYS THAT WERE TRANSFERED
 								this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getDatasetName());
+								//if we are in case of delete node then we need also to free the replica of this deleted node
+								if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString()))
+									this.server.getKVCache().deleteAllData(this.server.getKVCache().getReplicaName());
 								//Mahmoud -- add the data which is out of range to be a Replica1 of the node.
 								if(caseType.equals(ECSMessage.MoveCaseType.ADD_NODE.toString()))
 									this.server.getKVCache().processMassPutRequest(dataSet, this.server.getKVCache().getReplicaName());
