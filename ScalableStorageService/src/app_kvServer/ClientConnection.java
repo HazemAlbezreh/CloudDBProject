@@ -331,8 +331,8 @@ public class ClientConnection implements Runnable {
 						ServerInfo oldSuccessor = CommonFunctions.getSuccessorNode(currentServer, oldRing);
 						ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(currentServer, this.server.getMetadata());
 						ServerInfo oldSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, oldRing);
-						ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, this.server.getMetadata());
 						ServerInfo oldPredecessor = CommonFunctions.getPredecessorNode(currentServer, oldRing);
+						ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, this.server.getMetadata());
 						ServerInfo newPredecessor = CommonFunctions.getPredecessorNode(currentServer, this.server.getMetadata());
 						
 						Map<String,String> serverDatabase = null;
@@ -353,8 +353,11 @@ public class ClientConnection implements Runnable {
 										socket = connection.getSocketWrapper();
 										socket.sendMessage(coordinatormsg);
 										response = (ServerMessage)socket.recieveMesssage();
-										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE){
+											socket.disconnect();
 											throw new Exception("KVServer responded with " + response.getStatus().toString());
+										}
+										socket.disconnect();
 										//connect to the new added node and hand over the data to it to be replica 1
 										coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
 										connection = new EcsStore(newSuccessor.getServerIP(), newSuccessor.getPort());
@@ -362,9 +365,9 @@ public class ClientConnection implements Runnable {
 										socket = connection.getSocketWrapper();
 										socket.sendMessage(coordinatormsg);
 										response = (ServerMessage)socket.recieveMesssage();
+										socket.disconnect();
 										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
 											throw new Exception("KVServer responded with " + response.getStatus().toString());
-										
 									}
 									catch(IOException e){
 										
@@ -372,14 +375,21 @@ public class ClientConnection implements Runnable {
 								}// if the ring size = 2 or 3
 								else{
 									//connect to the new added node and hand over the data to it to be replica 1
-									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
-									connection = new EcsStore(newSuccessor.getServerIP(), newSuccessor.getPort());
-									connection.connect();
-									socket = connection.getSocketWrapper();
-									socket.sendMessage(coordinatormsg);
-									response = (ServerMessage)socket.recieveMesssage();
-									if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
-										throw new Exception("KVServer responded with " + response.getStatus().toString());
+										try
+										{
+											coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
+											connection = new EcsStore(newSuccessor.getServerIP(), newSuccessor.getPort());
+											connection.connect();
+											socket = connection.getSocketWrapper();
+											socket.sendMessage(coordinatormsg);
+											response = (ServerMessage)socket.recieveMesssage();
+											socket.disconnect();
+											if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+												throw new Exception("KVServer responded with " + response.getStatus().toString());
+										}
+										catch(IOException e){
+											
+										}
 								}
 							}
 							
@@ -395,8 +405,11 @@ public class ClientConnection implements Runnable {
 										socket = connection.getSocketWrapper();
 										socket.sendMessage(coordinatormsg);
 										response = (ServerMessage)socket.recieveMesssage();
-										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE){
+											socket.disconnect();
 											throw new Exception("KVServer responded with " + response.getStatus().toString());
+										}
+										socket.disconnect();
 										//connect to the new added node and hand over the data to it to be replica 2
 										coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
 										connection = new EcsStore(newSecondSuccessor.getServerIP(), newSecondSuccessor.getPort());
@@ -404,9 +417,9 @@ public class ClientConnection implements Runnable {
 										socket = connection.getSocketWrapper();
 										socket.sendMessage(coordinatormsg);
 										response = (ServerMessage)socket.recieveMesssage();
+										socket.disconnect();
 										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
 											throw new Exception("KVServer responded with " + response.getStatus().toString());
-										
 									}
 									catch(IOException e){
 										
@@ -415,30 +428,45 @@ public class ClientConnection implements Runnable {
 								//in this case we have 3 nodes only
 								else{
 									//connect to the new added node and hand over the data to it to be replica 2
-									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
-									connection = new EcsStore(newSecondSuccessor.getServerIP(), newSecondSuccessor.getPort());
-									connection.connect();
-									socket = connection.getSocketWrapper();
-									socket.sendMessage(coordinatormsg);
-									response = (ServerMessage)socket.recieveMesssage();
-									if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
-										throw new Exception("KVServer responded with " + response.getStatus().toString());
+										try
+										{
+											coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, serverDatabase);
+											connection = new EcsStore(newSecondSuccessor.getServerIP(), newSecondSuccessor.getPort());
+											connection.connect();
+											socket = connection.getSocketWrapper();
+											socket.sendMessage(coordinatormsg);
+											response = (ServerMessage)socket.recieveMesssage();
+											socket.disconnect();
+											if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+												throw new Exception("KVServer responded with " + response.getStatus().toString());
+										}
+										catch(IOException e){
+											
+										}
 								}
 							}
 							
 							else if(!oldPredecessor.equals(newPredecessor)){
 							//in move data case we will not delete the data from the node after handing it to other node but we will 
 							//put the data out of range in the replica file of the node so that the node becomes replica 1 for the new node.
-								if(this.server.getMetadata().size() >3){
-									Range newRange = new Range(Md5HashFunction.getInstance().hash(oldPredecessor), this.server.getRange().getLow());
-									coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, newRange);
-									connection = new EcsStore(newSecondSuccessor.getServerIP(), newSecondSuccessor.getPort());
-									connection.connect();
-									socket = connection.getSocketWrapper();
-									socket.sendMessage(coordinatormsg);
-									response = (ServerMessage)socket.recieveMesssage();
-									if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
-										throw new Exception("KVServer responded with " + response.getStatus().toString());
+								try
+								{
+									if(this.server.getMetadata().size() >3){
+										Range newRange = new Range(Md5HashFunction.getInstance().hash(oldPredecessor), this.server.getRange().getLow());
+										coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA, newRange);
+										connection = new EcsStore(newSecondSuccessor.getServerIP(), newSecondSuccessor.getPort());
+										connection.connect();
+										socket = connection.getSocketWrapper();
+										socket.sendMessage(coordinatormsg);
+										response = (ServerMessage)socket.recieveMesssage();
+										socket.disconnect();
+										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+											throw new Exception("KVServer responded with " + response.getStatus().toString());
+									}
+								}
+
+								catch(IOException e){
+									
 								}
 							}
 						}
@@ -454,6 +482,7 @@ public class ClientConnection implements Runnable {
 									socket = connection.getSocketWrapper();
 									socket.sendMessage(coordinatormsg);
 									response = (ServerMessage)socket.recieveMesssage();
+									socket.disconnect();
 									if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
 										throw new Exception("KVServer responded with " + response.getStatus().toString());	
 								}
@@ -466,16 +495,23 @@ public class ClientConnection implements Runnable {
 							else if(!oldPredecessor.equals(newPredecessor)){
 								//in move data case we will not delete the data from the node after handing it to other node but we will 
 								//but the data out of range in the replica file so that the node becomes replica 1 for the new node
-									Range newRange = new Range(this.server.getRange().getLow(), Md5HashFunction.getInstance().hash(oldPredecessor));
-									serverDatabase = this.server.getKVCache().findValuesInRange(newRange, this.hashFunction, this.server.getKVCache().getDatasetName());
-									coordinatormsg = new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER, serverDatabase);
-									connection = new EcsStore(oldSecondSuccessor.getServerIP(), oldSecondSuccessor.getPort());
-									connection.connect();
-									socket = connection.getSocketWrapper();
-									socket.sendMessage(coordinatormsg);
-									response = (ServerMessage)socket.recieveMesssage();
-									if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
-										throw new Exception("KVServer responded with " + response.getStatus().toString());
+									try{	
+										Range newRange = new Range(this.server.getRange().getLow(), Md5HashFunction.getInstance().hash(oldPredecessor));
+										serverDatabase = this.server.getKVCache().findValuesInRange(newRange, this.hashFunction, this.server.getKVCache().getDatasetName());
+										coordinatormsg = new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER, serverDatabase);
+										connection = new EcsStore(oldSecondSuccessor.getServerIP(), oldSecondSuccessor.getPort());
+										connection.connect();
+										socket = connection.getSocketWrapper();
+										socket.sendMessage(coordinatormsg);
+										response = (ServerMessage)socket.recieveMesssage();
+										socket.disconnect();
+										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+											throw new Exception("KVServer responded with " + response.getStatus().toString());
+									}
+	
+									catch(IOException e){
+										
+									}
 								}
 							}
 						
