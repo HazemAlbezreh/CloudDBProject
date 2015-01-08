@@ -301,7 +301,7 @@ public class KVCache  {
 	public synchronized void deleteAllData(String fileName){
 		PrintWriter pr = null;
 		try{
-			pr = new PrintWriter(new FileWriter("./"+serverName+ fileName));
+			pr = new PrintWriter(new FileWriter("./"+serverName+ fileName+".txt"));
 			pr.print("");
 			pr.close();
 		}
