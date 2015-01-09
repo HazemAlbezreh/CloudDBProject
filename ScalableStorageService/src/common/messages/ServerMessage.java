@@ -37,8 +37,8 @@ public class ServerMessage implements Message{
 	
 	private ECSMessage.MoveCaseType movecase=null;
 	
-	public String getMoveCase(){
-		return movecase.toString();
+	public ECSMessage.MoveCaseType getMoveCase(){
+		return movecase;
 	}
 	
 	public ServerMessage(Map<String,String> d){

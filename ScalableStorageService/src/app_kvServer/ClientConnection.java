@@ -150,7 +150,7 @@ public class ClientConnection implements Runnable {
 								}else{											//PUT UPDATE
 								//	logger.info("Put update is successful");
 									
-									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
+//									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
 									
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
@@ -171,7 +171,7 @@ public class ClientConnection implements Runnable {
 					switch(sm.getStatus()){
 					case DATA_TRANSFER:
 						Map<String,String> h =sm.getData();
-						String caseType = sm.getMoveCase();
+						ECSMessage.MoveCaseType caseType = sm.getMoveCase();
 						String result2 = "PUT_SUCCESS";
 						ArrayList<String> keys= new ArrayList<String>();
 						String result=this.server.getKVCache().processMassPutRequest(h,this.server.getKVCache().getDatasetName());
@@ -180,8 +180,9 @@ public class ClientConnection implements Runnable {
 							for(String keytemp :h.keySet()){				
 								keys.add(keytemp);
 							}
-							result2 = this.server.getKVCache().deleteDatasetEntry(keys, server.getKVCache().getReplicaName()); //TODO ERROR PROBABLY HERE
+							result2 = this.server.getKVCache().deleteDatasetEntry(keys, server.getKVCache().getReplicaName()); 
 						}
+						
 						if(result.equals("PUT_ERROR") || result2.equals("DELETE_ERROR")){
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
 							this.clientSocket.sendMessage(serverReply);
@@ -490,7 +491,7 @@ public class ClientConnection implements Runnable {
 									
 								}
 							}
-							
+							/*
 							//case 2 predecessor number 1 processing
 							else if(!oldPredecessor.equals(newPredecessor)){
 								//in move data case we will not delete the data from the node after handing it to other node but we will 
@@ -513,6 +514,7 @@ public class ClientConnection implements Runnable {
 										
 									}
 								}
+							*/
 							}
 						
 						break;
@@ -540,9 +542,32 @@ public class ClientConnection implements Runnable {
 								//if we are in case of delete node then we need also to free the replica of this deleted node
 								if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString()))
 									this.server.getKVCache().deleteAllData(this.server.getKVCache().getReplicaName());
-								//Mahmoud -- add the data which is out of range to be a Replica1 of the node.
+								// -- add the data which is out of range to be a Replica1 of the node.
 								if(caseType.equals(ECSMessage.MoveCaseType.ADD_NODE.toString()))
 									this.server.getKVCache().processMassPutRequest(dataSet, this.server.getKVCache().getReplicaName());
+								else if( this.server.getMetadata().size() >=3 && caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString())){
+									
+									//case 2 predecessor number 1 processing
+									
+										//in move data case we will not delete the data from the node after handing it to other node but we will 
+										//but the data out of range in the replica file so that the node becomes replica 1 for the new node
+										ServerInfo SecondSuccessor = CommonFunctions.getSecondSuccessorNode(receipient, this.server.getMetadata());	
+										try{
+												coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA,dataSet);
+												connection = new EcsStore(SecondSuccessor.getServerIP(), SecondSuccessor.getPort());
+												connection.connect();
+												socket = connection.getSocketWrapper();
+												socket.sendMessage(coordinatormsg);
+												response = (ServerMessage)socket.recieveMesssage();
+												socket.disconnect();
+												if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+													throw new Exception("KVServer responded with " + response.getStatus().toString());
+											}
+			
+											catch(IOException e){
+												
+											}
+										}
 									
 						//		logger.info("Move data sent successfully ... Removing keys from cache");
 							}else{
