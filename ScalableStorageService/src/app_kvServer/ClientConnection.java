@@ -176,7 +176,7 @@ public class ClientConnection implements Runnable {
 						ArrayList<String> keys= new ArrayList<String>();
 						String result=this.server.getKVCache().processMassPutRequest(h,this.server.getKVCache().getDatasetName());
 						
-						if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString())){
+						if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE)){
 							for(String keytemp :h.keySet()){				
 								keys.add(keytemp);
 							}
@@ -446,7 +446,7 @@ public class ClientConnection implements Runnable {
 										}
 								}
 							}
-							
+							/*
 							else if(!oldPredecessor.equals(newPredecessor)){
 							//in move data case we will not delete the data from the node after handing it to other node but we will 
 							//put the data out of range in the replica file of the node so that the node becomes replica 1 for the new node.
@@ -469,7 +469,7 @@ public class ClientConnection implements Runnable {
 								catch(IOException e){
 									
 								}
-							}
+							}*/
 						}
 						//in this case we have deleted node case
 						else if(this.server.getMetadata().size() < oldRing.size() && this.server.getMetadata().size() >=3){
@@ -541,10 +541,34 @@ public class ClientConnection implements Runnable {
 								this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getDatasetName());
 								//if we are in case of delete node then we need also to free the replica of this deleted node
 								if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString()))
-									this.server.getKVCache().deleteAllData(this.server.getKVCache().getReplicaName());
+									this.server.getKVCache().deleteAllData(this.server.getKVCache().getReplicaName()); //TODO later check condition write or not
 								// -- add the data which is out of range to be a Replica1 of the node.
-								if(caseType.equals(ECSMessage.MoveCaseType.ADD_NODE.toString()))
+								if(caseType.equals(ECSMessage.MoveCaseType.ADD_NODE.toString())){
 									this.server.getKVCache().processMassPutRequest(dataSet, this.server.getKVCache().getReplicaName());
+									if(this.server.getMetadata().size() >=3){
+									int svrKey = this.server.getRange().getHigh();
+									ServerInfo currServer = this.server.getMetadata().get(svrKey);
+									ServerInfo SecondSuccessor = CommonFunctions.getSecondSuccessorNode(currServer, this.server.getMetadata());
+									try
+									{
+										
+											coordinatormsg = new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA,dataSet);
+											connection = new EcsStore(SecondSuccessor.getServerIP(), SecondSuccessor.getPort());
+											connection.connect();
+											socket = connection.getSocketWrapper();
+											socket.sendMessage(coordinatormsg);
+											response = (ServerMessage)socket.recieveMesssage();
+											socket.disconnect();
+											if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+												throw new Exception("when delete from replica KVServer responded with " + response.getStatus().toString());
+										
+									}
+
+									catch(IOException e){
+										
+									}
+								}
+								}
 								else if( this.server.getMetadata().size() >=3 && caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString())){
 									
 									//case 2 predecessor number 1 processing
