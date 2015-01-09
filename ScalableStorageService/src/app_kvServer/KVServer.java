@@ -49,7 +49,7 @@ public class KVServer extends Thread  {
 	
 	///////////////////////////////////////////////////////////////////////////////
 
-	List<ServerInfo> replicas= new ArrayList<ServerInfo>(2);
+	List<ServerInfo> replicas= new ArrayList<ServerInfo>();
 	private Range repRange=null;
 	UpdateTimer timer=null;
 	
@@ -186,7 +186,7 @@ public class KVServer extends Thread  {
 		this.setRange(range);
 		this.setReplicaRange(rep);
 		this.setReplicas( this.findReplicas(data, range) );
-		this.timer=new UpdateTimer(this,60);
+		this.timer=new UpdateTimer(this,10);
 		
 		if(this.getMetadata()==null || this.getRange()==null || 
 				this.getKVCache()==null || this.getStatus()!=ServerStatus.INIT){
@@ -290,15 +290,17 @@ public class KVServer extends Thread  {
 	
 	synchronized List<ServerInfo> findReplicas(SortedMap<Integer,ServerInfo> data,Range r){
 		int serverKey = r.getHigh();
-		List<ServerInfo> li=new ArrayList<ServerInfo>(2);
+		ServerInfo currentServer = data.get(serverKey);
+
+		List<ServerInfo> li=new ArrayList<ServerInfo>();
 
 		if(data.size()==2){
-			ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(serverKey, data);
+			ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(currentServer, data);
 			li.add(newSuccessor);
 			
 		}else if(data.size()>=3){
-			ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(serverKey, data);
-			ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(serverKey, data);
+			ServerInfo newSuccessor = CommonFunctions.getSuccessorNode(currentServer, data);
+			ServerInfo newSecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, data);
 			
 			li.add(newSuccessor);
 			li.add(newSecondSuccessor);
