@@ -150,7 +150,7 @@ public class ClientConnection implements Runnable {
 								}else{											//PUT UPDATE
 								//	logger.info("Put update is successful");
 									
-//									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
+									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
 									
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
@@ -250,7 +250,7 @@ public class ClientConnection implements Runnable {
 					case UPDATE_REPLICA:	//TODO
 						Map<String,String> upData =sm.getData();
 						for(Map.Entry<String, String> entry : upData.entrySet()){
-							this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getDatasetName());
+							this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getReplicaName());
 						}
 						break;
 						

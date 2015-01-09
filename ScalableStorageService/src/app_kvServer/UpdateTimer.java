@@ -29,12 +29,13 @@ public class UpdateTimer {
   class UpdateTask extends TimerTask {
 	    public void run() {
 	      System.out.println("Time's up! : Sending Updates to replicas");
+	      Map<String,String> map=getMap();
 	      for(ServerInfo si : server.getReplicas() ){
 	    	  try{
 				EcsStore ecsStore = new EcsStore(si.getServerIP(), si.getPort());
 				ecsStore.connect();
 				SocketWrapper target = ecsStore.getSocketWrapper();
-				ServerMessage dataMap=new ServerMessage(ServerMessage.StatusType.UPDATE_REPLICA,getMap());
+				ServerMessage dataMap=new ServerMessage(ServerMessage.StatusType.UPDATE_REPLICA,map);
 				target.sendMessage(dataMap);
 				target.disconnect();
 	    	  }catch(Exception e){
