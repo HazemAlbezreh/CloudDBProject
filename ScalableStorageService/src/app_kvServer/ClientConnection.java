@@ -150,7 +150,7 @@ public class ClientConnection implements Runnable {
 								}else{											//PUT UPDATE
 								//	logger.info("Put update is successful");
 									
-									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
+//									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
 									
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
@@ -250,13 +250,7 @@ public class ClientConnection implements Runnable {
 					case UPDATE_REPLICA:	//TODO
 						Map<String,String> upData =sm.getData();
 						for(Map.Entry<String, String> entry : upData.entrySet()){
-							if((String)entry.getValue()==null){		//delete key
-								ArrayList<String> list=new ArrayList<String>();
-								list.add((String)entry.getKey());
-								this.server.getKVCache().deleteDatasetEntry(list,this.server.getKVCache().getReplicaName());
-							}else{
-								this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getReplicaName());
-							}
+							this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getDatasetName());
 						}
 						break;
 						
@@ -616,7 +610,7 @@ public class ClientConnection implements Runnable {
 						
 					case RECOVER_FAILD_NODE:
 						Range absorbRange=config.getRange();
-						Map<String,String> absorbData=this.server.getKVCache().findValuesInRange(absorbRange,this.hashFunction,this.server.getKVCache().getReplicaName()); 
+						Map<String,String> absorbData=this.server.getKVCache().findValuesInRange(absorbRange,this.hashFunction,this.server.getKVCache().getReplicaName());
 						String insertResult=this.server.getKVCache().processMassPutRequest(absorbData,this.server.getKVCache().getDatasetName());
 						
 						ArrayList<String> keysAdded= new ArrayList<String>();						//CREATE A LIST OF THE KEYS IN THE SENT MAP
@@ -630,7 +624,32 @@ public class ClientConnection implements Runnable {
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.RECOVER_FAILD_NODE_FAILURE);
 							this.clientSocket.sendMessage(ecsReply);
 				//			logger.error("Recover put ended with PUT_ERROR");
-						}else{
+						}else{							
+							
+							if( this.server.getMetadata().size() >=4){
+									//in move data case we will not delete the data from the node after handing it to other node but we will 
+									//but the data out of range in the replica file so that the node becomes replica 1 for the new node
+								 serverKey = this.server.getRange().getHigh();
+								 currentServer = this.server.getMetadata().get(serverKey);
+								 ServerInfo SecondSuccessor = CommonFunctions.getSecondSuccessorNode(currentServer, this.server.getMetadata());	
+									try{
+											coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA,absorbData);
+											connection = new EcsStore(SecondSuccessor.getServerIP(), SecondSuccessor.getPort());
+											connection.connect();
+											socket = connection.getSocketWrapper();
+											socket.sendMessage(coordinatormsg);
+											response = (ServerMessage)socket.recieveMesssage();
+											socket.disconnect();
+											if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+												throw new Exception("KVServer responded with " + response.getStatus().toString());
+										}
+		
+										catch(IOException e){
+											
+										}
+									}
+							
+							
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.RECOVER_FAILD_NODE_SUCCESS);
 							this.clientSocket.sendMessage(ecsReply);
 				//			logger.info("Recover Put is successful");
