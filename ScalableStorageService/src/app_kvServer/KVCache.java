@@ -46,19 +46,19 @@ public class KVCache  {
 		this.replicaName = replicaName;
 	}
 	
-	public String getDatasetName(){
+	public synchronized String getDatasetName(){
 		return datasetName;
 	}
 	
-	public void setDatasetName(String name){
+	public synchronized void setDatasetName(String name){
 		datasetName = name;
 	}
 	
-	public String getReplicaName(){
+	public synchronized String getReplicaName(){
 		return replicaName;
 	}
 	
-	public void setReplicaName(String name){
+	public synchronized void setReplicaName(String name){
 		replicaName = name;
 	}
 	
@@ -230,10 +230,12 @@ public class KVCache  {
 				else
 					sbld.append(line + newline);
 			}
+			br.close();
 	//		if (emptyFile)
 		}
 		catch(IOException e){
 			e.printStackTrace();
+			
 		}
 		
 		if(updateResult.equals("PUT_UPDATE")){
