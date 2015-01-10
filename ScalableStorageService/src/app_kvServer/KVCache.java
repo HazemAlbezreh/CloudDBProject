@@ -275,6 +275,7 @@ public class KVCache  {
 				else
 					sbld.append(line + newline);
 			}
+			br.close();
 		}
 		catch(IOException e){
 			e.printStackTrace();
@@ -332,6 +333,7 @@ public class KVCache  {
 						else
 							sbld.append(line + newline);
 				}
+				br.close();
 		}
 		catch(IOException e){
 			e.printStackTrace();
