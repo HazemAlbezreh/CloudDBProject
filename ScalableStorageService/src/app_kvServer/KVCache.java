@@ -44,6 +44,12 @@ public class KVCache  {
 		this.serverName = serverName;
 		this.datasetName = datasetName;
 		this.replicaName = replicaName;
+		File data = new File("./" + serverName + datasetName + ".txt");
+		File replica = new File("./" + serverName + replicaName + ".txt");
+		if(data.exists() && !data.isDirectory())
+			data.delete();		
+		if(replica.exists() && !replica.isDirectory())
+			replica.delete();		
 	}
 	
 	public synchronized String getDatasetName(){
