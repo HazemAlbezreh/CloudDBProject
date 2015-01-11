@@ -186,7 +186,7 @@ public class KVServer extends Thread  {
 		this.setRange(range);
 		this.setReplicaRange(rep);
 		this.setReplicas( this.findReplicas(data, range) );
-		this.timer=new UpdateTimer(this,10);
+	//	this.timer=new UpdateTimer(this,10);
 		
 		if(this.getMetadata()==null || this.getRange()==null || 
 				this.getKVCache()==null || this.getStatus()!=ServerStatus.INIT){

@@ -19,8 +19,7 @@ import config.ServerInfo;
 import consistent_hashing.Range;
 
 public class EcsStore implements EcsCommInterface {
-	
-	
+
 	private Logger logger = Logger.getRootLogger();
 	private Set<ClientSocketListener> listeners;
 	private boolean running;
@@ -29,43 +28,44 @@ public class EcsStore implements EcsCommInterface {
 
 	private String address;
 	private int port;
+
 	/**
 	 * Initialize KVStore with address and port of KVServer
-	 * @param address the address of the KVServer
-	 * @param port the port of the KVServer
+	 * 
+	 * @param address
+	 *            the address of the KVServer
+	 * @param port
+	 *            the port of the KVServer
 	 */
 
-	public EcsStore(String address, int port)  {
-		this.address=address;
-		this.port=port;
+	public EcsStore(String address, int port) {
+		this.address = address;
+		this.port = port;
 		listeners = new HashSet<ClientSocketListener>();
 		logger.info("Connection established");
 	}
 
-
-
 	@Override
 	public void connect() throws IOException {
 		try {
-			//connects to the socket of server
+			// connects to the socket of server
 			clientSocket = new SocketWrapper();
 			clientSocket.connect(this.address, this.port);
 			setRunning(true);
-			
-			//waits until it receives the answer from server
+
+			// waits until it receives the answer from server
 			TextMessage latestMsg = clientSocket.receiveTextMessage();
-			for(ClientSocketListener listener : listeners) {
+			for (ClientSocketListener listener : listeners) {
 				listener.handleNewMessage(latestMsg);
 			}
 		} catch (IOException ioe) {
-			//if there was an error connecting
-			if(isRunning()) {
+			// if there was an error connecting
+			if (isRunning()) {
 				logger.error("Connection lost!");
 				try {
 					tearDownConnection();
-					for(ClientSocketListener listener : listeners) {
-						listener.handleStatus(
-								SocketStatus.CONNECTION_LOST);
+					for (ClientSocketListener listener : listeners) {
+						listener.handleStatus(SocketStatus.CONNECTION_LOST);
 					}
 				} catch (IOException e) {
 					logger.error("Unable to close connection!");
@@ -82,16 +82,15 @@ public class EcsStore implements EcsCommInterface {
 		logger.info("try to close connection ...");
 
 		try {
-			
+
 			tearDownConnection();
-			for(ClientSocketListener listener : listeners) {
+			for (ClientSocketListener listener : listeners) {
 				listener.handleStatus(SocketStatus.DISCONNECTED);
 			}
 		} catch (IOException ioe) {
 			logger.error("Unable to close connection!");
 		}
 	}
-
 
 	private void tearDownConnection() throws IOException {
 		setRunning(false);
@@ -102,166 +101,163 @@ public class EcsStore implements EcsCommInterface {
 			logger.info("connection closed!");
 		}
 	}
-	
+
 	@Override
-	public ECSMessage initServer(SortedMap<Integer, ServerInfo> ring,Range range,Range rep,int cacheSize, String strategy){
+	public synchronized ECSMessage initServer(
+			SortedMap<Integer, ServerInfo> ring, Range range, Range rep,
+			int cacheSize, String strategy) {
 		ECSMessage reply;
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.INIT,range,rep,ring,strategy,cacheSize);
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.INIT, range,
+				rep, ring, strategy, cacheSize);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (update meta data):\t '" + msg+ "'");	
+		logger.info("Send ECS message (update meta data):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
-		reply=handleResponse(latestMsg);
-		return reply;
-	}
-	
-	@Override
-	public ECSMessage updateMetaData(SortedMap<Integer, ServerInfo> ring,Range range,Range rep) {
-		
-		ECSMessage reply;
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ring,range,rep);
-		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (update meta data):\t '" + msg+ "'");	
-		Message latestMsg = clientSocket.recieveMesssage();
-		reply=handleResponse(latestMsg);
+		reply = handleResponse(latestMsg);
 		return reply;
 	}
 
-	
 	@Override
-	public ECSMessage recoverData(SortedMap<Integer, ServerInfo> ring,Range recoverRange) {
-		ECSMessage reply;
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ring,recoverRange,ConfigMessage.StatusType.RECOVER_FAILD_NODE);
-		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (recover data):\t '" + msg+ "'");	
-		Message latestMsg = clientSocket.recieveMesssage();
-		reply=handleResponse(latestMsg);
-		return reply;
-	
-	}
+	public synchronized ECSMessage updateMetaData(
+			SortedMap<Integer, ServerInfo> ring, Range range, Range rep) {
 
-
-	@Override
-	public ECSMessage start() {
 		ECSMessage reply;
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.START);
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ring, range, rep);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (start):\t '" + msg + "'");	
+		logger.info("Send ECS message (update meta data):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
-		reply=handleResponse(latestMsg);
-		return reply;
-	}
-	
-	
-	
-	@Override
-	public ECSMessage heartBeat() {
-		ECSMessage reply;
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.HEART_BEAT);
-		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (heart_beat):\t '" + msg + "'");	
-		Message latestMsg = clientSocket.recieveMesssage();
-		reply=handleResponse(latestMsg);
+		reply = handleResponse(latestMsg);
 		return reply;
 	}
 
+	@Override
+	public synchronized ECSMessage recoverData(
+			SortedMap<Integer, ServerInfo> ring, Range recoverRange) {
+		ECSMessage reply;
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ring, recoverRange,
+				ConfigMessage.StatusType.RECOVER_FAILD_NODE);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (recover data):\t '" + msg + "'");
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply = handleResponse(latestMsg);
+		return reply;
+
+	}
 
 	@Override
-	public ECSMessage stop() {
+	public synchronized ECSMessage start() {
 		ECSMessage reply;
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.STOP);
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.START);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (stop):\t '" + msg + "'");	
+		logger.info("Send ECS message (start):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
-		reply=handleResponse(latestMsg);
+		reply = handleResponse(latestMsg);
 		return reply;
 	}
 
-
-
 	@Override
-	public ECSMessage lockWrite() {
+	public synchronized ECSMessage heartBeat() {
 		ECSMessage reply;
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.LOCK_WRITE);
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.HEART_BEAT);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (lock write):\t '" + msg + "'");	
+		logger.info("Send ECS message (heart_beat):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
-		reply=handleResponse(latestMsg);
+		reply = handleResponse(latestMsg);
 		return reply;
 	}
 
-
-
 	@Override
-	public ECSMessage unLockWrite() {
+	public synchronized ECSMessage stop() {
 		ECSMessage reply;
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE);
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.STOP);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (unlock write):\t '" + msg + "'");	
+		logger.info("Send ECS message (stop):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
-		reply=handleResponse(latestMsg);
+		reply = handleResponse(latestMsg);
 		return reply;
 	}
 
-
-
 	@Override
-	public ECSMessage moveData(Range range, ServerInfo targetServer,ECSMessage.MoveCaseType moveDataCase) {
+	public synchronized ECSMessage lockWrite() {
 		ECSMessage reply;
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.MOVE_DATA,targetServer,range,moveDataCase);
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.LOCK_WRITE);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (move data):\t '" + msg + "'");	
+		logger.info("Send ECS message (lock write):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
-		reply=handleResponse(latestMsg);
+		reply = handleResponse(latestMsg);
 		return reply;
 	}
 
+	@Override
+	public synchronized ECSMessage unLockWrite() {
+		ECSMessage reply;
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (unlock write):\t '" + msg + "'");
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply = handleResponse(latestMsg);
+		return reply;
+	}
 
+	@Override
+	public synchronized ECSMessage moveData(Range range,
+			ServerInfo targetServer, ECSMessage.MoveCaseType moveDataCase) {
+		ECSMessage reply;
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.MOVE_DATA,
+				targetServer, range, moveDataCase);
+		clientSocket.sendMessage(msg);
+		logger.info("Send ECS message (move data):\t '" + msg + "'");
+		Message latestMsg = clientSocket.recieveMesssage();
+		reply = handleResponse(latestMsg);
+		return reply;
+	}
 
 	@Override
 	public void shutDown() {
-		//creating ECS message 
-		ECSMessage msg =new ECSMessage(ConfigMessage.StatusType.SHUT_DOWN);
+		// creating ECS message
+		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.SHUT_DOWN);
 		clientSocket.sendMessage(msg);
 		logger.info("Send ECS message (unlock write):\t '" + msg + "'");
 	}
-	
+
 	public void setRunning(boolean run) {
 		running = run;
 	}
 
-	public void addListener(ClientSocketListener listener){
+	public void addListener(ClientSocketListener listener) {
 		listeners.add(listener);
 	}
+
 	public boolean isRunning() {
 		return running;
 	}
 
-	public SocketWrapper getSocketWrapper(){
+	public SocketWrapper getSocketWrapper() {
 		return this.clientSocket;
 	}
-	
-	
-public ECSMessage handleResponse(Message latestMsg) {
-		
-	ECSMessage reply=null;
-		switch (latestMsg.getMessageType()){
+
+	public synchronized ECSMessage handleResponse(Message latestMsg) {
+
+		ECSMessage reply = null;
+		if (latestMsg == null)
+			return reply;
+		switch (latestMsg.getMessageType()) {
 		case CONFIGMESSAGE:
-			reply=(ECSMessage)latestMsg;
+			reply = (ECSMessage) latestMsg;
 			break;
 		default:
-			logger.debug("Invalid Message type received" + latestMsg.getJson());	
+			logger.debug("Invalid Message type received" + latestMsg.getJson());
 			break;
 		}
 		return reply;
 	}
-	
+
 }

@@ -39,3 +39,17 @@ java.net.ConnectException: Connection refused
 2014-12-14 17:33:38,874 INFO  [main] root: Going to put this pair of tuples < hj , hjk >
 2014-12-14 17:33:38,875 INFO  [main] root: Send message:	 'put hj hjk'
 2014-12-14 17:33:38,877 INFO  [main] root: Received message SERVER_STOPPED
+2015-01-10 21:02:26,625 INFO  [main] root: Connection established
+2015-01-10 21:03:26,009 INFO  [main] root: Going to put this pair of tuples < k , lol >
+2015-01-10 21:03:26,020 INFO  [main] root: Send message:	 'put k lol'
+2015-01-10 21:03:26,027 INFO  [main] root: Received message PUT_SUCCESS
+2015-01-10 21:07:07,786 INFO  [main] root: Going to fetch value of key k
+2015-01-10 21:07:07,787 INFO  [main] root: Send message:	 'get k'
+2015-01-10 21:08:10,116 INFO  [main] root: Going to put this pair of tuples < 2323 , sadsas >
+2015-01-10 21:08:10,117 INFO  [main] root: Send message:	 'put 2323 sadsas'
+2015-01-10 21:08:10,133 INFO  [main] root: try to close connection ...
+2015-01-10 21:08:10,133 INFO  [main] root: tearing down the connection ...
+2015-01-10 21:08:10,133 INFO  [main] root: connection closed!
+2015-01-10 21:08:10,136 INFO  [main] root: Send message:	 'put 2323 sadsas'
+2015-01-10 21:08:10,138 INFO  [main] root: Received message PUT_SUCCESS
+2015-01-10 21:08:10,139 INFO  [main] root: Received message SERVER_NOT_RESPONSIBLE

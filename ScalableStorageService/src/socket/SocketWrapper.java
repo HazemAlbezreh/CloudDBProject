@@ -65,7 +65,7 @@ public class SocketWrapper {
 			try {
 				getSocket().close(); // Step 4.
 			//	logger.info("Client Disconnected ");
-				setSocket(null);
+//				setSocket(null);
 				return true;
 			} catch (IOException ioEx) {
 
@@ -228,6 +228,8 @@ public class SocketWrapper {
 			disconnect();
 		} catch (MessageParseException e){
 		//	logger.debug("Unknown Message Format received : "+e.getMessage());	
+			message=null;
+		} catch (Exception ex){
 			message=null;
 		}
 		return message;

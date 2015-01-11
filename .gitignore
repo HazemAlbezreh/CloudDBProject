@@ -7,3 +7,10 @@ KVServer/*.class
 KVServer/*.jar
 KVServer/*.war
 KVServer/*.ear
+*.log
+*.log
+*.jar
+*.log
+ScalableStorageService/SERVER_MANIFEST.MF
+ScalableStorageService/logs/server50009.log
+ScalableStorageService/logs/server50009.log

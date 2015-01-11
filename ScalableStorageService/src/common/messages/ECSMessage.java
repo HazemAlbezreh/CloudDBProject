@@ -332,4 +332,9 @@ public class ECSMessage implements ConfigMessage,Message,Serializable{
 			throw new MessageParseException("ECSMessage : " +e.getMessage());
 		}	
 	}
+	
+	public static void main(String[] args) {
+		ECSMessage msg= new ECSMessage(ConfigMessage.StatusType.HEART_BEAT_ALIVE);
+		System.out.println(msg.getJson());
+	}
 }

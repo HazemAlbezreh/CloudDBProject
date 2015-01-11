@@ -151,7 +151,10 @@ public class ServerMessage implements Message{
 				for(JsonValue ob : nested){
 					JsonObject temp=ob.asObject();
 					String key=temp.get("key").asString();
-					String value=temp.get("value").asString();
+					String value=null;
+					if( !temp.get("value").isNull() ){
+						value=temp.get("value").asString();
+					}
 					nData.put(key,value);
 				}
 			}
@@ -164,12 +167,18 @@ public class ServerMessage implements Message{
 	
 	
 	public static void main(String args[]){
-		ServerMessage sm=new ServerMessage(new TreeMap<String,String>());
+		TreeMap<String,String> lol=new TreeMap<String,String>();
+		lol.put("2", null);
+		ServerMessage sm=new ServerMessage(lol);
 		System.out.println(sm.getJson());
 		try{
 		ServerMessage sm2=(ServerMessage)MessageFactory.parse(sm.getJson());
 		String s="";
-		}catch(Exception e){System.out.println(e.getMessage());}
+		System.out.println(sm2.getJson());
+
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	
