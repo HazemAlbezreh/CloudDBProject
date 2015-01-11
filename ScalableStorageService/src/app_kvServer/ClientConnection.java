@@ -222,7 +222,7 @@ public class ClientConnection implements Runnable {
 						}
 						else{
 								Map<String,String>mp =  this.server.getKVCache().findValuesInRange(rng, hashFunction, this.server.getKVCache().getReplicaName());
-							    if(mp.size()>1){
+							    if(mp.size()>0){
 									keys= new ArrayList<String>();
 									for(String keytemp : mp.keySet()){				
 										keys.add(keytemp);

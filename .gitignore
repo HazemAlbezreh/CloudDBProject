@@ -14,3 +14,5 @@ KVServer/*.ear
 ScalableStorageService/SERVER_MANIFEST.MF
 ScalableStorageService/logs/server50009.log
 ScalableStorageService/logs/server50009.log
+*.txt
+*.MF

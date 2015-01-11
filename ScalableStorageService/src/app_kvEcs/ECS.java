@@ -319,10 +319,14 @@ public class ECS {
 		// for (ServerInfo server : this.getActiveServers())
 		// shutDownServer(server);
 
+		
+		
 		for (Iterator<ServerInfo> i = this.getActiveServers().iterator(); i
 				.hasNext();) {
 			ServerInfo server = i.next();
-			this.shutDownServer(server);
+			EcsStore serverSocket = this.getServersConnection().get(server);
+			serverSocket.shutDown();
+			this.getInActiveServers().add(server);
 			i.remove();
 		}
 	}
