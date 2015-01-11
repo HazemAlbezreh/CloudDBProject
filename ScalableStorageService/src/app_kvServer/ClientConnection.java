@@ -198,52 +198,70 @@ public class ClientConnection implements Runnable {
 						Range rng = sm.getRange();
 						if(rng == null){
 							Map<String,String> data =sm.getData();
-							 keys= new ArrayList<String>();
-							for(String keytemp :data.keySet()){				
-								keys.add(keytemp);
-							}
-							String delresult = this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getReplicaName());
-							if(delresult.equals("DELETE_ERROR")){
-								serverReply=new ServerMessage(ServerMessage.StatusType.REPLICA_FAILURE);
-								this.clientSocket.sendMessage(serverReply);
+							if(data.size()>0){
+								 keys= new ArrayList<String>();
+								for(String keytemp :data.keySet()){				
+									keys.add(keytemp);
 								}
+								String delresult = this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getReplicaName());
+								if(delresult.equals("DELETE_ERROR")){
+									serverReply=new ServerMessage(ServerMessage.StatusType.REPLICA_FAILURE);
+									this.clientSocket.sendMessage(serverReply);
+									}
+								else{
+									serverReply=new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA_SUCCESS);//correct the status
+									this.clientSocket.sendMessage(serverReply);
+						//			logger.info("Mass Put is successful");
+								}
+							}
 							else{
 								serverReply=new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA_SUCCESS);//correct the status
 								this.clientSocket.sendMessage(serverReply);
-					//			logger.info("Mass Put is successful");
 							}
+								
 						}
 						else{
 								Map<String,String>mp =  this.server.getKVCache().findValuesInRange(rng, hashFunction, this.server.getKVCache().getReplicaName());
-							    keys= new ArrayList<String>();
-								for(String keytemp : mp.keySet()){				
-									keys.add(keytemp);
-								}
-								String res = this.server.getKVCache().deleteDatasetEntry(keys, this.server.getKVCache().getReplicaName());
-								if(res.equals("DELETE_ERROR")){
-									serverReply=new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA_FAILED); //correct statuses 
-									this.clientSocket.sendMessage(serverReply);
-									throw new Exception("Delete speceific range of data from serve failed!");
-								}
-								else{
-									serverReply=new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA_SUCCESS); //correct statuses 
-									this.clientSocket.sendMessage(serverReply);
-								}
+							    if(mp.size()>1){
+									keys= new ArrayList<String>();
+									for(String keytemp : mp.keySet()){				
+										keys.add(keytemp);
+									}
+									String res = this.server.getKVCache().deleteDatasetEntry(keys, this.server.getKVCache().getReplicaName());
+									if(res.equals("DELETE_ERROR")){
+										serverReply=new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA_FAILED); //correct statuses 
+										this.clientSocket.sendMessage(serverReply);
+										throw new Exception("Delete speceific range of data from serve failed!");
+									}
+									else{
+										serverReply=new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA_SUCCESS); //correct statuses 
+										this.clientSocket.sendMessage(serverReply);
+									}
+							    }
+							    else{
+							    serverReply=new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA_SUCCESS);//correct the status
+								this.clientSocket.sendMessage(serverReply);
+							    }
 						}
 						
 						break;
 					case INIT_REPLICA:
-						Map<String,String> dta =sm.getData();
-						String initResult=this.server.getKVCache().processMassPutRequest(dta,this.server.getKVCache().getReplicaName());
-						if(initResult.equals("PUT_ERROR")){
-							serverReply=new ServerMessage(ServerMessage.StatusType.REPLICA_FAILURE);
-							this.clientSocket.sendMessage(serverReply);
-
+					Map<String,String> dta =sm.getData();
+					if(dta.size()>0){
+							String initResult=this.server.getKVCache().processMassPutRequest(dta,this.server.getKVCache().getReplicaName());
+							if(initResult.equals("PUT_ERROR")){
+								serverReply=new ServerMessage(ServerMessage.StatusType.REPLICA_FAILURE);
+								this.clientSocket.sendMessage(serverReply);
+							}
+							else{
+								serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS); //correct the status
+								this.clientSocket.sendMessage(serverReply);
+							}
 						}
-						else{
-							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS); //correct the status
-							this.clientSocket.sendMessage(serverReply);
-						}
+					else{
+						serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS); //correct the status
+						this.clientSocket.sendMessage(serverReply);
+					}
 						
 						break;
 						
@@ -370,7 +388,7 @@ public class ClientConnection implements Runnable {
 										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
 											throw new Exception("KVServer responded with " + response.getStatus().toString());
 									}
-									catch(IOException e){
+									catch(Exception e){
 										
 									}
 								}// if the ring size = 2 or 3
@@ -388,7 +406,7 @@ public class ClientConnection implements Runnable {
 											if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
 												throw new Exception("KVServer responded with " + response.getStatus().toString());
 										}
-										catch(IOException e){
+										catch(Exception e){
 											
 										}
 								}
@@ -422,7 +440,7 @@ public class ClientConnection implements Runnable {
 										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
 											throw new Exception("KVServer responded with " + response.getStatus().toString());
 									}
-									catch(IOException e){
+									catch(Exception e){
 										
 									}
 								}  
@@ -441,7 +459,7 @@ public class ClientConnection implements Runnable {
 											if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
 												throw new Exception("KVServer responded with " + response.getStatus().toString());
 										}
-										catch(IOException e){
+										catch(Exception e){
 											
 										}
 								}
@@ -487,7 +505,7 @@ public class ClientConnection implements Runnable {
 									if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
 										throw new Exception("KVServer responded with " + response.getStatus().toString());	
 								}
-								catch(IOException e){
+								catch(Exception e){
 									
 								}
 							}
@@ -539,60 +557,7 @@ public class ClientConnection implements Runnable {
 								}
 								//DELETE KEYS THAT WERE TRANSFERED
 								this.server.getKVCache().deleteDatasetEntry(keys,this.server.getKVCache().getDatasetName());
-								//if we are in case of delete node then we need also to free the replica of this deleted node
-								if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString()))
-									this.server.getKVCache().deleteAllData(this.server.getKVCache().getReplicaName()); //TODO later check condition write or not
-								// -- add the data which is out of range to be a Replica1 of the node.
-								if(caseType.equals(ECSMessage.MoveCaseType.ADD_NODE.toString())){
-									this.server.getKVCache().processMassPutRequest(dataSet, this.server.getKVCache().getReplicaName());
-									if(this.server.getMetadata().size() >=3){
-									int svrKey = this.server.getRange().getHigh();
-									ServerInfo currServer = this.server.getMetadata().get(svrKey);
-									ServerInfo SecondSuccessor = CommonFunctions.getSecondSuccessorNode(currServer, this.server.getMetadata());
-									try
-									{
-										
-											coordinatormsg = new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA,dataSet);
-											connection = new EcsStore(SecondSuccessor.getServerIP(), SecondSuccessor.getPort());
-											connection.connect();
-											socket = connection.getSocketWrapper();
-											socket.sendMessage(coordinatormsg);
-											response = (ServerMessage)socket.recieveMesssage();
-											socket.disconnect();
-											if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
-												throw new Exception("when delete from replica KVServer responded with " + response.getStatus().toString());
-										
-									}
-
-									catch(IOException e){
-										
-									}
-								}
-								}
-								else if( this.server.getMetadata().size() >=3 && caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString())){
-									
-									//case 2 predecessor number 1 processing
-									
-										//in move data case we will not delete the data from the node after handing it to other node but we will 
-										//but the data out of range in the replica file so that the node becomes replica 1 for the new node
-										ServerInfo SecondSuccessor = CommonFunctions.getSecondSuccessorNode(receipient, this.server.getMetadata());	
-										try{
-												coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA,dataSet);
-												connection = new EcsStore(SecondSuccessor.getServerIP(), SecondSuccessor.getPort());
-												connection.connect();
-												socket = connection.getSocketWrapper();
-												socket.sendMessage(coordinatormsg);
-												response = (ServerMessage)socket.recieveMesssage();
-												socket.disconnect();
-												if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
-													throw new Exception("KVServer responded with " + response.getStatus().toString());
-											}
-			
-											catch(IOException e){
-												
-											}
-										}
-									
+	//									
 						//		logger.info("Move data sent successfully ... Removing keys from cache");
 							}else{
 								throw new Exception("KVServer responded with " + recReply.getStatus().toString());
@@ -603,6 +568,61 @@ public class ClientConnection implements Runnable {
 							clientSocket.sendMessage(ecsReply);
 						//	logger.error("Data transfer to KVServer failed with IOException "+e.getMessage());
 						}
+						
+						
+						//1 if we are in case of delete node then we need also to free the replica of this deleted node
+						if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString()))
+							this.server.getKVCache().deleteAllData(this.server.getKVCache().getReplicaName()); //TODO later check condition write or not
+						// -- add the data which is out of range to be a Replica1 of the node.
+						if(caseType.equals(ECSMessage.MoveCaseType.ADD_NODE.toString())){
+							this.server.getKVCache().processMassPutRequest(dataSet, this.server.getKVCache().getReplicaName());
+							if(this.server.getMetadata().size() >=3){
+								int svrKey = this.server.getRange().getHigh();
+								ServerInfo currServer = this.server.getMetadata().get(svrKey);
+								ServerInfo SecondSuccessor = CommonFunctions.getSecondSuccessorNode(currServer, this.server.getMetadata());
+								try
+								{
+										coordinatormsg = new ServerMessage(ServerMessage.StatusType.DELETEFROM_REPLICA,dataSet);
+										connection = new EcsStore(SecondSuccessor.getServerIP(), SecondSuccessor.getPort());
+										connection.connect();
+										socket = connection.getSocketWrapper();
+										socket.sendMessage(coordinatormsg);
+										response = (ServerMessage)socket.recieveMesssage();
+										socket.disconnect();
+										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+											throw new Exception("when delete from replica KVServer responded with " + response.getStatus().toString());
+									
+								}
+
+								catch(Exception e){
+									
+								}
+							}
+						}
+						else if( this.server.getMetadata().size() >=3 && caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE.toString())){
+							
+							//case 2 predecessor number 1 processing
+							
+								//in move data case we will not delete the data from the node after handing it to other node but we will 
+								//but the data out of range in the replica file so that the node becomes replica 1 for the new node
+								ServerInfo SecondSuccessor = CommonFunctions.getSecondSuccessorNode(receipient, this.server.getMetadata());	
+								try{
+										coordinatormsg = new ServerMessage(ServerMessage.StatusType.INIT_REPLICA,dataSet);
+										connection = new EcsStore(SecondSuccessor.getServerIP(), SecondSuccessor.getPort());
+										connection.connect();
+										socket = connection.getSocketWrapper();
+										socket.sendMessage(coordinatormsg);
+										response = (ServerMessage)socket.recieveMesssage();
+										socket.disconnect();
+										if(response.getStatus()== ServerMessage.StatusType.REPLICA_FAILURE)
+											throw new Exception("KVServer responded with " + response.getStatus().toString());
+									}
+	
+									catch(Exception e){
+										
+									}
+								}
+						
 						break;
 					case SHUT_DOWN:
 						this.server.shutDown();
