@@ -39,18 +39,19 @@ public class KVCache  {
 	
 	public KVCache(String serverName, int cacheSize, String strategy, String datasetName, String replicaName) {
 		counter++;
-		this.cachesize = cacheSize;
-		cache = new LinkedHashMap<String,MapValue>(cachesize);
-		this.strategy = strategy;
-		this.serverName = serverName;
-		this.datasetName = datasetName;
-		this.replicaName = replicaName;
-		File data = new File("./" + serverName + datasetName + ".txt");
+		this.cachesize = cacheSize; 
+		cache = new LinkedHashMap<String,MapValue>(cachesize); 
+		this.strategy = strategy; 
+		this.serverName = serverName; 
+		this.datasetName = datasetName; 
+		this.replicaName = replicaName; 
+		File data = new File("./" + serverName + datasetName + ".txt"); 
 		File replica = new File("./" + serverName + replicaName + ".txt");
 		if(data.exists() && !data.isDirectory() ){
 			data.delete();
+			
 			try{
-				data.createNewFile();
+				data.createNewFile(); 
 			}
 			catch(IOException e){
 				
@@ -113,7 +114,7 @@ public class KVCache  {
 					file.createNewFile();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 		return data;
@@ -132,7 +133,7 @@ public class KVCache  {
 				return "PUT_SUCCESS";
 			} 
 			catch(IOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 				return "PUT_ERROR";
 			}
 		}
@@ -166,7 +167,7 @@ public class KVCache  {
 				pr.close();
 			}
 			catch(IOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 				return "PUT_ERROR";
 			}
 		 return "PUT_SUCCESS";
@@ -256,7 +257,7 @@ public class KVCache  {
 	//		if (emptyFile)
 		}
 		catch(IOException e){
-			e.printStackTrace();
+		//	e.printStackTrace();
 			
 		}
 		
@@ -270,7 +271,7 @@ public class KVCache  {
 				addCacheEntry(key,newValue);}
 			}
 			catch (IOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		else
@@ -302,7 +303,7 @@ public class KVCache  {
 			br.close();
 		}
 		catch(IOException e){
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		if(deleteResult.equals("DELETE_SUCCESS")){
@@ -312,7 +313,7 @@ public class KVCache  {
 				pr.close();
 			} 
 			catch (IOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			
 			}
 		}
@@ -360,7 +361,7 @@ public class KVCache  {
 				br.close();
 		}
 		catch(IOException e){
-			e.printStackTrace();
+		//	e.printStackTrace();
 		}
 		
 		if(deleteResult.equals("DELETE_SUCCESS")){
@@ -370,7 +371,7 @@ public class KVCache  {
 				pr.close();
 			} 
 			catch (IOException e) {
-				e.printStackTrace();
+			//	e.printStackTrace();
 			
 			}
 		}
