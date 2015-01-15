@@ -171,28 +171,37 @@ public class ClientConnection implements Runnable {
 					switch(sm.getStatus()){
 					case DATA_TRANSFER:
 						Map<String,String> h =sm.getData();
-						ECSMessage.MoveCaseType caseType = sm.getMoveCase();
-						String result2 = "PUT_SUCCESS";
 						ArrayList<String> keys= new ArrayList<String>();
-						String result=this.server.getKVCache().processMassPutRequest(h,this.server.getKVCache().getDatasetName());
-						
-						if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE)){
-							for(String keytemp :h.keySet()){				
-								keys.add(keytemp);
-							}
-							result2 = this.server.getKVCache().deleteDatasetEntry(keys, server.getKVCache().getReplicaName()); 
+						if(h.size()>0){
+								ECSMessage.MoveCaseType caseType = sm.getMoveCase();
+								String result2 = "PUT_SUCCESS";
+								
+								String result=this.server.getKVCache().processMassPutRequest(h,this.server.getKVCache().getDatasetName());
+								
+								if(caseType.equals(ECSMessage.MoveCaseType.DELETE_NODE)){
+									for(String keytemp :h.keySet()){				
+										keys.add(keytemp);
+									}
+									result2 = this.server.getKVCache().deleteDatasetEntry(keys, server.getKVCache().getReplicaName()); 
+								}
+								
+								if(result.equals("PUT_ERROR") || result2.equals("DELETE_ERROR")){
+									serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
+									this.clientSocket.sendMessage(serverReply);
+						//			logger.error("Mass put ended with PUT_ERROR");
+		
+								}else{
+									serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS);
+									this.clientSocket.sendMessage(serverReply);
+						//			logger.info("Mass Put is successful");
+								}
 						}
-						
-						if(result.equals("PUT_ERROR") || result2.equals("DELETE_ERROR")){
-							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
-							this.clientSocket.sendMessage(serverReply);
-				//			logger.error("Mass put ended with PUT_ERROR");
-
-						}else{
+						else{
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS);
 							this.clientSocket.sendMessage(serverReply);
 				//			logger.info("Mass Put is successful");
 						}
+						
 						break;
 					case DELETEFROM_REPLICA:  
 						Range rng = sm.getRange();
@@ -566,6 +575,7 @@ public class ClientConnection implements Runnable {
 						}catch(Exception e){
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.MOVE_DATA_FAILURE);
 							clientSocket.sendMessage(ecsReply);
+							return;
 						//	logger.error("Data transfer to KVServer failed with IOException "+e.getMessage());
 						}
 						
