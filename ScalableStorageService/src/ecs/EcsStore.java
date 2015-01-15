@@ -20,7 +20,7 @@ import consistent_hashing.Range;
 
 public class EcsStore implements EcsCommInterface {
 
-	private Logger logger = Logger.getRootLogger();
+	//private Logger logger = Logger.getRootLogger();
 	private Set<ClientSocketListener> listeners;
 	private boolean running;
 
@@ -42,7 +42,7 @@ public class EcsStore implements EcsCommInterface {
 		this.address = address;
 		this.port = port;
 		listeners = new HashSet<ClientSocketListener>();
-		logger.info("Connection established");
+//		logger.info("Connection established");
 	}
 
 	@Override
@@ -61,14 +61,14 @@ public class EcsStore implements EcsCommInterface {
 		} catch (IOException ioe) {
 			// if there was an error connecting
 			if (isRunning()) {
-				logger.error("Connection lost!");
+		//		logger.error("Connection lost!");
 				try {
 					tearDownConnection();
 					for (ClientSocketListener listener : listeners) {
 						listener.handleStatus(SocketStatus.CONNECTION_LOST);
 					}
 				} catch (IOException e) {
-					logger.error("Unable to close connection!");
+			//		logger.error("Unable to close connection!");
 					throw ioe;
 				}
 			}
@@ -79,7 +79,7 @@ public class EcsStore implements EcsCommInterface {
 
 	@Override
 	public synchronized void disconnect() {
-		logger.info("try to close connection ...");
+//		logger.info("try to close connection ...");
 
 		try {
 
@@ -88,17 +88,17 @@ public class EcsStore implements EcsCommInterface {
 				listener.handleStatus(SocketStatus.DISCONNECTED);
 			}
 		} catch (IOException ioe) {
-			logger.error("Unable to close connection!");
+		//	logger.error("Unable to close connection!");
 		}
 	}
 
 	private void tearDownConnection() throws IOException {
 		setRunning(false);
-		logger.info("tearing down the connection ...");
+	//	logger.info("tearing down the connection ...");
 		if (clientSocket != null) {
 			clientSocket.disconnect();
 			clientSocket = null;
-			logger.info("connection closed!");
+		//	logger.info("connection closed!");
 		}
 	}
 
@@ -111,7 +111,7 @@ public class EcsStore implements EcsCommInterface {
 		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.INIT, range,
 				rep, ring, strategy, cacheSize);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (update meta data):\t '" + msg + "'");
+	//	logger.info("Send ECS message (update meta data):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
 		reply = handleResponse(latestMsg);
 		return reply;
@@ -125,7 +125,7 @@ public class EcsStore implements EcsCommInterface {
 		// creating ECS message
 		ECSMessage msg = new ECSMessage(ring, range, rep);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (update meta data):\t '" + msg + "'");
+	//	logger.info("Send ECS message (update meta data):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
 		reply = handleResponse(latestMsg);
 		return reply;
@@ -139,7 +139,7 @@ public class EcsStore implements EcsCommInterface {
 		ECSMessage msg = new ECSMessage(ring, recoverRange,
 				ConfigMessage.StatusType.RECOVER_FAILD_NODE);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (recover data):\t '" + msg + "'");
+	//	logger.info("Send ECS message (recover data):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
 		reply = handleResponse(latestMsg);
 		return reply;
@@ -152,7 +152,7 @@ public class EcsStore implements EcsCommInterface {
 		// creating ECS message
 		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.START);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (start):\t '" + msg + "'");
+	//	logger.info("Send ECS message (start):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
 		reply = handleResponse(latestMsg);
 		return reply;
@@ -164,7 +164,7 @@ public class EcsStore implements EcsCommInterface {
 		// creating ECS message
 		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.HEART_BEAT);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (heart_beat):\t '" + msg + "'");
+	//	logger.info("Send ECS message (heart_beat):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
 		reply = handleResponse(latestMsg);
 		return reply;
@@ -176,7 +176,7 @@ public class EcsStore implements EcsCommInterface {
 		// creating ECS message
 		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.STOP);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (stop):\t '" + msg + "'");
+	//	logger.info("Send ECS message (stop):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
 		reply = handleResponse(latestMsg);
 		return reply;
@@ -188,7 +188,7 @@ public class EcsStore implements EcsCommInterface {
 		// creating ECS message
 		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.LOCK_WRITE);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (lock write):\t '" + msg + "'");
+	//	logger.info("Send ECS message (lock write):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
 		reply = handleResponse(latestMsg);
 		return reply;
@@ -200,7 +200,7 @@ public class EcsStore implements EcsCommInterface {
 		// creating ECS message
 		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (unlock write):\t '" + msg + "'");
+		//logger.info("Send ECS message (unlock write):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
 		reply = handleResponse(latestMsg);
 		return reply;
@@ -214,7 +214,7 @@ public class EcsStore implements EcsCommInterface {
 		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.MOVE_DATA,
 				targetServer, range, moveDataCase);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (move data):\t '" + msg + "'");
+	//	logger.info("Send ECS message (move data):\t '" + msg + "'");
 		Message latestMsg = clientSocket.recieveMesssage();
 		reply = handleResponse(latestMsg);
 		return reply;
@@ -225,7 +225,7 @@ public class EcsStore implements EcsCommInterface {
 		// creating ECS message
 		ECSMessage msg = new ECSMessage(ConfigMessage.StatusType.SHUT_DOWN);
 		clientSocket.sendMessage(msg);
-		logger.info("Send ECS message (unlock write):\t '" + msg + "'");
+	//	logger.info("Send ECS message (unlock write):\t '" + msg + "'");
 	}
 
 	public void setRunning(boolean run) {
@@ -254,7 +254,7 @@ public class EcsStore implements EcsCommInterface {
 			reply = (ECSMessage) latestMsg;
 			break;
 		default:
-			logger.debug("Invalid Message type received" + latestMsg.getJson());
+	//		logger.debug("Invalid Message type received" + latestMsg.getJson());
 			break;
 		}
 		return reply;

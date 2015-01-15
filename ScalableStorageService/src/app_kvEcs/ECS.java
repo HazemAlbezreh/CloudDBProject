@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+
 import common.messages.ConfigMessage;
 import common.messages.ECSMessage;
 import config.*;
@@ -97,11 +98,11 @@ public class ECS {
 			runFirstServer();
 			Random random = new Random();
 			for (int i = 0; i < numberOfNodes - 1; i++) {
-				int randomIndex = random.nextInt(inActiveServers.size());// arrayList[i];
-				ServerInfo server = this.getInActiveServers().get(randomIndex);
+				//int randomIndex = random.nextInt(inActiveServers.size());// arrayList[i];
+				ServerInfo server = this.getInActiveServers().get(i);
 				System.out.println("server " + i + " " + server.getPort());
 				if (server.runServerRemotly(path)) {
-					this.getInActiveServers().remove(randomIndex);
+					this.getInActiveServers().remove(i);
 					this.getActiveServers().add(server);
 				}
 			}
@@ -352,6 +353,8 @@ public class ECS {
 		Random random = new Random();
 		int randomIndex = random.nextInt(this.getInActiveServers().size());// 0;
 		ServerInfo addedNode = this.getInActiveServers().get(randomIndex);
+//		ServerInfo addedNode = this.getInActiveServers().get(0);
+		System.out.println("added node" + addedNode);
 		// send an SSH call to invoke the KVServer process.
 
 		if (addedNode.runServerRemotly(path)) {
@@ -388,7 +391,6 @@ public class ECS {
 			this.getActiveServers().add(addedNode);
 		}
 		return true;
-
 	}
 
 	public boolean removeNode() {
@@ -398,6 +400,8 @@ public class ECS {
 		Random random = new Random();
 		int randomIndex = random.nextInt(this.getActiveServers().size());
 		ServerInfo removedNode = this.getActiveServers().get(randomIndex);
+//		ServerInfo removedNode = this.getActiveServers().get(0);
+		System.out.println("removed node" + removedNode);
 		// Recalculate and update the meta-data of the storage service
 		this.consistentHash.remove(removedNode);
 		// Set the write lock on the server that has to be deleted.
@@ -475,20 +479,21 @@ public class ECS {
 
 
 		application.start();
-		System.out.println("Second node added");
+		System.out.println("Second node is being added");
 		application.addNode(10, "FIFO");
 
-		System.out.println("Third node added");
+		System.out.println("Third node is being added");
 		// application.removeNode();
 		application.addNode(10, "FIFO");
 		
-		System.out.println("Fourth node added");
+		System.out.println("Fourth node is being added");
 		application.addNode(10, "FIFO");
 		
 
 		// application.removeNode();
-
+		System.out.println("Fifth node is being added");
 		application.addNode(10, "FIFO");
+		System.out.println("Sixth node is being added");
 		application.addNode(10, "FIFO");
 
 		application.removeNode();
@@ -496,6 +501,17 @@ public class ECS {
 
 		application.addNode(10, "FIFO");
 		application.removeNode();
+		for(int i=0;i < 100; i++){
+			System.out.println(i);
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				
+			}
+			application.addNode(10, "FIFO");
+			application.removeNode();
+		}
 
 		for (Map.Entry<Integer, ServerInfo> entry : application.consistentHash
 				.getMetaData().entrySet()) {

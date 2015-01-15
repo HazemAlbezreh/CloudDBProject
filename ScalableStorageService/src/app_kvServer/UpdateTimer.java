@@ -16,7 +16,7 @@ public class UpdateTimer {
 	Timer timer;
 	Map<String,String> data=null;
 	KVServer server=null;
-	private static Logger logger = Logger.getRootLogger();
+	//private static Logger logger = Logger.getRootLogger();
 
 
   public UpdateTimer(KVServer server,int seconds) {

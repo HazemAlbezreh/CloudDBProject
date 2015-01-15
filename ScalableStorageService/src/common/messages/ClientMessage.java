@@ -1,8 +1,6 @@
 package common.messages;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -10,11 +8,8 @@ import java.util.TreeMap;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
-
-import common.messages.KVMessage.StatusType;
 import common.messages.Message;
 import config.*;
-
 public class ClientMessage implements KVMessage,Message,Serializable{
 
 	private static final long serialVersionUID = -1466134465550783953L;
