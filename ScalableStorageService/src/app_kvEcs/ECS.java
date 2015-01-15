@@ -1,7 +1,6 @@
 package app_kvEcs;
 
-import java.io.Console;
-import java.io.File;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +10,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-
-import com.eclipsesource.json.JsonObject;
-
 import common.messages.ConfigMessage;
 import common.messages.ECSMessage;
 import config.*;
@@ -28,7 +24,7 @@ public class ECS {
 	private ConsistentHash<ServerInfo> consistentHash;
 	private HashMap<ServerInfo, EcsStore> serversConnection;
 	private static ECS instance;
-	private static Logger logger = Logger.getLogger(ECS.class);
+//	private static Logger logger = Logger.getLogger(ECS.class);
 	private static final String path = System.getProperty("user.dir");
 	private MonitoringThread monitoringThread;
 	public boolean monitoring;
@@ -118,8 +114,8 @@ public class ECS {
 			return result;
 
 		} else {
-			logger.error("Number entered is too big! Maximum allowed: "
-					+ this.activeServers.size());
+//			logger.error("Number entered is too big! Maximum allowed: "
+//					+ this.activeServers.size());
 			return false;
 		}
 	}
@@ -140,7 +136,7 @@ public class ECS {
 			serverSocket.connect();
 			this.getServersConnection().put(server, serverSocket);
 		} catch (Exception e) {
-			logger.error("Couldn't connect to server: " + server);
+//			logger.error("Couldn't connect to server: " + server);
 			return false;
 		}
 		return true;
@@ -327,6 +323,7 @@ public class ECS {
 			EcsStore serverSocket = this.getServersConnection().get(server);
 			serverSocket.shutDown();
 			this.getInActiveServers().add(server);
+			this.getServersConnection().remove(server);
 			i.remove();
 		}
 	}
@@ -338,6 +335,7 @@ public class ECS {
 			this.getInActiveServers().add(server);
 		if (this.getActiveServers().contains(server))
 			this.getActiveServers().remove(server);
+		this.getServersConnection().remove(server);
 	}
 
 	public void serverMoveData(ServerInfo server, Range range,
@@ -416,7 +414,7 @@ public class ECS {
 
 		this.getActiveServers().remove(removedNode);
 		this.getInActiveServers().add(removedNode);
-		this.getServersConnection().remove(removedNode);
+		
 
 		// When all affected data has been transferred (i.e., the server that
 		// has to be removed sends back a notification to the ECS)
