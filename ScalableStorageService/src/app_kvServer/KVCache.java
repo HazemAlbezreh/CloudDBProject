@@ -38,6 +38,7 @@ public class KVCache  {
 	 */
 	
 	public KVCache(String serverName, int cacheSize, String strategy, String datasetName, String replicaName) {
+		counter++;
 		this.cachesize = cacheSize;
 		cache = new LinkedHashMap<String,MapValue>(cachesize);
 		this.strategy = strategy;
@@ -46,11 +47,13 @@ public class KVCache  {
 		this.replicaName = replicaName;
 		File data = new File("./" + serverName + datasetName + ".txt");
 		File replica = new File("./" + serverName + replicaName + ".txt");
-		if(data.exists() && !data.isDirectory())
+		if(data.exists() && !data.isDirectory() && counter !=1)
 			data.delete();		
 		if(replica.exists() && !replica.isDirectory())
-			replica.delete();		
+			replica.delete();
 	}
+	
+	static int counter = 0;
 	
 	public synchronized String getDatasetName(){
 		return datasetName;
