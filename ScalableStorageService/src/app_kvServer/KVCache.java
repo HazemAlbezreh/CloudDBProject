@@ -47,10 +47,23 @@ public class KVCache  {
 		this.replicaName = replicaName;
 		File data = new File("./" + serverName + datasetName + ".txt");
 		File replica = new File("./" + serverName + replicaName + ".txt");
-		if(data.exists() && !data.isDirectory() && counter !=1)
-			data.delete();		
+		if(data.exists() && !data.isDirectory() && counter !=1){
+			data.delete();
+			try{
+				data.createNewFile();
+			}
+			catch(IOException e){
+				
+			}
+		}
 		if(replica.exists() && !replica.isDirectory())
 			replica.delete();
+			try{
+				replica.createNewFile();
+			}
+			catch(IOException e){
+				
+			}
 	}
 	
 	static int counter = 0;
