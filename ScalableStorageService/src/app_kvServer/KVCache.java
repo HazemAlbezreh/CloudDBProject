@@ -44,12 +44,12 @@ public class KVCache  {
 		this.strategy = strategy; 
 		this.serverName = serverName; 
 		this.datasetName = datasetName; 
-		this.replicaName = replicaName; 
+		this.replicaName = replicaName;
 		File data = new File("./" + serverName + datasetName + ".txt"); 
 		File replica = new File("./" + serverName + replicaName + ".txt");
-		if(data.exists() && !data.isDirectory() ){
+		if(data.exists() && !data.isDirectory() && counter !=1 )
 			data.delete();
-			
+		else{
 			try{
 				data.createNewFile(); 
 			}
@@ -57,13 +57,16 @@ public class KVCache  {
 				
 			}
 		}
+		
 		if(replica.exists() && !replica.isDirectory())
 			replica.delete();
-			try{
-				replica.createNewFile();
-			}
-			catch(IOException e){
-				
+		else{
+				try{
+					replica.createNewFile();
+				}
+				catch(IOException e){
+					
+				}
 			}
 	}
 	
