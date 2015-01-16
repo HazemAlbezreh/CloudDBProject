@@ -277,7 +277,14 @@ public class ClientConnection implements Runnable {
 					case UPDATE_REPLICA:	//TODO
 						Map<String,String> upData =sm.getData();
 						for(Map.Entry<String, String> entry : upData.entrySet()){
-							this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getDatasetName());
+							this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getReplicaName());
+							if((String)entry.getValue()==null){		//delete key
+								ArrayList<String> list=new ArrayList<String>();
+								list.add((String)entry.getKey());
+								this.server.getKVCache().deleteDatasetEntry(list,this.server.getKVCache().getReplicaName());
+							}else{
+								this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getReplicaName());
+							}
 						}
 						break;
 						
