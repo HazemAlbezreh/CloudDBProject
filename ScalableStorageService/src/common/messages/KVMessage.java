@@ -22,8 +22,12 @@ public interface KVMessage {
 
 		SERVER_STOPPED,         /* Server is stopped, no requests are processed */
     	SERVER_WRITE_LOCK,      /* Server locked for out, only get possible */
-    	SERVER_NOT_RESPONSIBLE  /* Request not successful, server not responsible for key */
+    	SERVER_NOT_RESPONSIBLE,  /* Request not successful, server not responsible for key */
 
+    	SUBSCRIBE,
+    	SUBSCRIBE_SUCCESS,
+    	SUBSCRIBE_ERROR,
+    	SUBSCRIBE_UPDATE
 	}
 
 	
