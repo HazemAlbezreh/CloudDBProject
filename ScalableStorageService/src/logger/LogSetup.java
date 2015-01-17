@@ -35,8 +35,8 @@ public class LogSetup {
 		PatternLayout layout = new PatternLayout( "%d{ISO8601} %-5p [%t] %c: %m%n" );
 		FileAppender fileAppender = new FileAppender( layout, logdir, true );		
 	    
-	    ConsoleAppender consoleAppender = new ConsoleAppender(layout);
-		logger.addAppender(consoleAppender);
+//	    ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+//		logger.addAppender(consoleAppender);
 		logger.addAppender(fileAppender);
 		logger.setLevel(level);
 	}

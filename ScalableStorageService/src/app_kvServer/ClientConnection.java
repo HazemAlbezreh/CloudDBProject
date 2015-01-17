@@ -158,6 +158,31 @@ public class ClientConnection implements Runnable {
 							}
 						}
 						break;
+					case SUBSCRIBE:
+						key = cm.getKey();
+						if( !this.server.inRange(this.hashFunction.hash(key)) ){		//NOT IN RANGE
+								reply= new ClientMessage(this.server.getMetadata());
+								this.clientSocket.sendMessage(reply);
+								break;
+						}
+						String clientIP = this.clientSocket.getSocket().getInetAddress().getHostAddress();
+						int clientPort=cm.getPort();
+						
+						
+						//////////////
+						
+						reply=new ClientMessage(KVMessage.StatusType.SUBSCRIBE_SUCCESS);
+						clientSocket.sendMessage(reply);
+						
+						//////////////
+						
+						
+						break;
+						
+					case UNSUBSCRIBE:
+						reply=new ClientMessage(KVMessage.StatusType.UNSUBSCRIBE_SUCCESS);
+						clientSocket.sendMessage(reply);
+						break;
 					default:
 						reply=new ClientMessage("error","Wrong KVMessage Status received",KVMessage.StatusType.FAILURE);
 						clientSocket.sendMessage(reply);
@@ -728,4 +753,7 @@ public class ClientConnection implements Runnable {
 	private synchronized boolean isRunning(){
 		return running;
 	}
+	
+	
+	
 }
