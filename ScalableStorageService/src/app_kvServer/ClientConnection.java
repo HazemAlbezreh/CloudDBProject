@@ -129,7 +129,7 @@ public class ClientConnection implements Runnable {
 									clientSocket.sendMessage(reply);
 								}else{
 								//	logger.info("Delete is successful");
-									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
+//									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
 									
 									reply=new ClientMessage(key,replyStatus);
 									clientSocket.sendMessage(reply);
@@ -139,7 +139,7 @@ public class ClientConnection implements Runnable {
 								if(replyStatus==StatusType.PUT_SUCCESS){ 		//PUT SUCCESS
 								//	logger.info("Put is successful");
 									
-									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
+	//								this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
 									
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
