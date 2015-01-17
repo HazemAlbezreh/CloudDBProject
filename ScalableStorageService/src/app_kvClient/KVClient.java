@@ -3,12 +3,17 @@ package app_kvClient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
 
 import logger.LogSetup;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import app_kvServer.ClientConnection;
+import app_kvServer.ServerStatus;
 
 import common.messages.TextMessage;
 
@@ -28,6 +33,27 @@ public class KVClient {
 	private int serverPort;
 	private KVStore client = null;
 
+	public static int port;
+	private ServerSocket serverSocket=null;
+	private boolean running;
+
+
+	public KVClient(int port) {
+		this.port= port;	
+	}
+
+	private boolean initialize() {
+		try {
+			this.serverSocket = new ServerSocket(port);
+			this.running=true;
+			return true;
+
+		} catch (IOException e) {
+			this.running=false;
+			return false;
+		}
+	}
+
 
 	/**
 	 * kvClientrun reads the user command line and calls handleCommand to recognize the type 
@@ -43,13 +69,14 @@ public class KVClient {
 				String cmdLine = stdin.readLine();
 				this.handleCommand(cmdLine);
 			} catch (IOException e) {
+				this.running=false;
 				stop = true;
 				printError("CLI does not respond - Application terminated ");
 			}
 		}
 	}
 
-	
+
 	/**
 	 * handleCommand is responsible for recognising the type of command  
 	 * 
@@ -63,11 +90,27 @@ public class KVClient {
 
 		if(tokens[0].equals("quit")) {	
 			stop = true;
+			this.running=false;
 			disconnect();
-			
+
 			System.out.println(PROMPT + "Application exit!");
 
-		} else if (tokens[0].equals("connect")){
+		}else if (tokens[0].equals("subscribe")){
+			if(tokens.length==2){
+				subscribe(tokens[1]);
+			}else {
+				printError("Invalid number of parameters!");
+			}
+		
+		}else if (tokens[0].equals("unsubscribe")){
+			if(tokens.length==2){
+				unsubscribe(tokens[1]);
+			}else {
+				printError("Invalid number of parameters!");
+			}
+		
+		}
+		else if (tokens[0].equals("connect")){
 			if(tokens.length == 3) {
 				try{
 					serverAddress = tokens[1];
@@ -125,7 +168,7 @@ public class KVClient {
 					logger.warn("You must be connected to a server first!", ne);
 
 				}
-				
+
 			}
 			else {
 				printError("Invalid number of parameters!");
@@ -158,7 +201,41 @@ public class KVClient {
 		}
 	}
 
-	
+
+	private void unsubscribe(String key) {
+		if (key.equals("null")){
+			printError("Please type another key !");
+		}
+		else{
+			logger.info("Going to subscribe to a specified key "+key);
+			try {
+				client.unsubscribe(key);
+			} catch (Exception e) {
+				printError("There was a connection error!");
+				logger.info("Connection error!!");
+
+			}
+		}
+		
+	}
+
+	private void subscribe(String key) {
+		if (key.equals("null")){
+			printError("Please type another key !");
+		}
+		else{
+			logger.info("Going to subscribe to a specified key "+key);
+			try {
+				client.subscribe(key);
+			} catch (Exception e) {
+				printError("There was a connection error!");
+				logger.info("Connection error!!");
+
+			}
+		}
+		
+	}
+
 	/** Uses get function from KVStore class
 	 *  
 	 * @param key
@@ -166,11 +243,11 @@ public class KVClient {
 	 */
 	private void getTuples(String key) throws Exception {
 		logger.info("Going to fetch value of key "+key);
-		 client.get(key);
+		client.get(key);
 
 	}
-	
-	
+
+
 	/** Uses put function from KVStore class
 	 *  
 	 * @param key,value
@@ -179,7 +256,7 @@ public class KVClient {
 	private void putTuples(String key, String value) throws Exception {
 		logger.info("Going to put this pair of tuples < "+key+" , "+value+" >");
 		client.put(key, value);
-		
+
 	}
 
 	/** Initiates the connection with the server
@@ -194,7 +271,7 @@ public class KVClient {
 		KVStore.handleTextMessage(latestMsg);
 	}
 
-	
+
 	/** disconnects from the server
 	 *  
 	 */
@@ -214,13 +291,40 @@ public class KVClient {
 	public static void main(String[] args) throws Exception {
 		try {
 			new LogSetup("logs/client.log", Level.ALL);
-			KVClient app = new KVClient();
+			int port = Integer.parseInt(args[0]);
+			KVClient app = new KVClient(port);
+			if(!app.initialize()){
+				System.out.println("Error! Try another port!");
+				System.exit(1);
+			}
+
+			app.listenForSubs();
 			app.kvClientrun();
+
 		} catch (IOException e) {
 			System.out.println("Error! Unable to initialize logger!");
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+
+	private void listenForSubs() {
+		if (this.serverSocket != null) {
+			
+				try {
+					Subscription subscribe = new Subscription(serverSocket);
+					new Thread(subscribe).start();
+				} catch (IOException e) {
+					if(isRunning()){
+					}else{
+					}					
+				}
+			
+		}		
+	}
+
+	private synchronized boolean isRunning() {
+		return this.running;
 	}
 
 	private void printHelp() {
@@ -237,6 +341,10 @@ public class KVClient {
 		sb.append("\t\t gets the value stored from tuple <key,value> stored on server \n");
 		sb.append(PROMPT).append("disconnect");
 		sb.append("\t\t\t disconnects from the server \n");
+		sb.append(PROMPT).append("subscribe <key>");
+		sb.append("\t\t\t subscribes on this key and gets notifications \n");
+		sb.append(PROMPT).append("unsubscribe <key>");
+		sb.append("\t\t\t unsubscribes on this key \n");
 		sb.append(PROMPT).append("logLevel");
 		sb.append("\t\t\t changes the logLevel \n");
 		sb.append(PROMPT).append("\t\t\t\t ");
@@ -285,8 +393,8 @@ public class KVClient {
 		System.out.println(PROMPT + "Error! " +  error);
 	}
 
-	
-	
+
+
 
 
 

@@ -7,6 +7,8 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
+import app_kvClient.KVClient;
+
 
 import socket.SocketWrapper;
 
@@ -119,6 +121,67 @@ public class KVStore implements KVCommInterface {
 		}
 	}
 
+	public KVMessage subscribe(String key) throws Exception {
+		ClientMessage reply;
+		ClientMessage newmsg=new ClientMessage(StatusType.SUBSCRIBE,key,KVClient.port);
+		if (ring==null){
+			clientSocket.sendMessage(newmsg);
+
+			Message latestMsg = clientSocket.recieveMesssage();
+			reply=handleReceivedSubMsg(latestMsg,key);
+			return reply;
+		}
+		else{
+			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
+			if (si.getServerIP()!=this.address || si.getPort()!=this.port){
+				//disconnects from the running server
+				disconnect();
+				//and connects to the new one
+				this.address=si.getServerIP();
+				this.port= si.getPort();
+				connect();
+			}
+			clientSocket.sendMessage(newmsg);
+			Message latestMsg = clientSocket.recieveMesssage();
+			reply=handleReceivedSubMsg(latestMsg,key);
+			return reply;
+
+		}
+	}
+	
+	
+	public KVMessage unsubscribe(String key) throws Exception{
+		ClientMessage reply;
+		ClientMessage newmsg=new ClientMessage(StatusType.UNSUBSCRIBE,key,KVClient.port);
+		if (ring==null){
+			clientSocket.sendMessage(newmsg);
+
+			Message latestMsg = clientSocket.recieveMesssage();
+			reply=handleReceivedSubMsg(latestMsg,key);
+			return reply;
+		}
+		else{
+			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
+			if (si.getServerIP()!=this.address || si.getPort()!=this.port){
+				//disconnects from the running server
+				disconnect();
+				//and connects to the new one
+				this.address=si.getServerIP();
+				this.port= si.getPort();
+				connect();
+			}
+			clientSocket.sendMessage(newmsg);
+			Message latestMsg = clientSocket.recieveMesssage();
+			reply=handleReceivedSubMsg(latestMsg,key);
+			return reply;
+
+		}
+		
+	}
+	
+	
+
+
 	@Override
 	public KVMessage put(String key, String value) throws Exception {
 		ClientMessage reply;
@@ -162,6 +225,40 @@ public class KVStore implements KVCommInterface {
 
 	}
 	
+	
+	private ClientMessage handleReceivedSubMsg(Message latestMsg, String key) throws Exception{
+		ClientMessage reply=null;
+		switch (latestMsg.getMessageType()){
+		case KVMESSAGE:
+			reply=(ClientMessage)latestMsg;
+			switch (reply.getStatus()) {
+			case SERVER_NOT_RESPONSIBLE:
+				updateMetaData(reply.getMetadata());
+				subscribe(key);
+				logger.info("Received message SERVER_NOT_RESPONSIBLE");	
+				break;
+			case SUBSCRIBE_SUCCESS:
+				System.out.println("Subscription was successful!");
+				break;
+			
+			case SUBSCRIBE_ERROR:
+				System.out.println("There was an error subscribing for this key!Try again...");
+				break;
+			case UNSUBSCRIBE_SUCCESS:
+				System.out.println("Unsubscription was successful!");
+				break;
+			case UNSUBSCRIBE_ERROR:
+				System.out.println("Unsubscription was NOT successful!Maybe you are not subscribed to this key!");
+				break;
+			default:
+				logger.debug("Invalid Message Status received" + latestMsg.getJson());	
+			}
+		default:
+			logger.debug("Invalid Message type received" + latestMsg.getJson());	
+			break;
+		}
+		return reply;
+	}
 	
 	public ClientMessage handleReceivedPutMsg(Message latestMsg,String key,String value) throws Exception{
 		ClientMessage reply=null;
@@ -335,6 +432,11 @@ public class KVStore implements KVCommInterface {
 		return ring;
 	}
 
+
+	
+
+
+	
 
 
 
