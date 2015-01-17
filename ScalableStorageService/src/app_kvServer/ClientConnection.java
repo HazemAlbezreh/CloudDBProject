@@ -175,7 +175,12 @@ public class ClientConnection implements Runnable {
 						clientSocket.sendMessage(reply);
 						
 						//////////////
-						
+						List<ServerInfo> li=new ArrayList<ServerInfo>();
+						li.add(new ServerInfo(clientIP, clientPort));
+						li.add(new ServerInfo(clientIP, clientPort));
+						SubscribeThread st=new SubscribeThread(li, key, null);
+						st.run();
+						//////////////
 						
 						break;
 						
