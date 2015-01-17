@@ -20,7 +20,9 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 	private String key=null;
 	private StatusType statusType ;	
 	private SortedMap<Integer, ServerInfo> metadata=null;
-
+	
+	private int port=-1;
+	private int rights=-1;
 	
 	public ClientMessage(String key,String value,KVMessage.StatusType type) {
 		this.setKey(key);
@@ -42,6 +44,19 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		this.setKey(key);
 		this.setStatus(type);
 		this.value=null;
+	}
+	
+	public ClientMessage(KVMessage.StatusType type,String key,int p){
+		this.statusType=type;
+		this.key=key;
+		this.port=p;
+	}
+	
+	public ClientMessage(KVMessage.StatusType type,String key,String value,int p){
+		this.statusType=type;
+		this.key=key;
+		this.port=p;
+		this.value=value;
 	}
 	
 	@Override
@@ -81,6 +96,10 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		return this.metadata;
 	}
 	
+	public int getPort(){
+		return this.port;
+	}
+	
 	@Override
 	public String getJson() {
 		String result;
@@ -89,6 +108,7 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		jo.add("statusType", this.statusType.toString());
 		jo.add("key", this.key);
 		jo.add("value", this.value);
+		jo.add("port", this.port);
 		if(this.metadata != null){
 			JsonArray ja= new JsonArray();
 			for(Map.Entry<Integer, ServerInfo> entry : metadata.entrySet()){
@@ -108,6 +128,7 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		String nKey;
 		String nValue;
 		StatusType nStatus;
+		int nPort;
 		SortedMap<Integer, ServerInfo> data;
 		
 		try{
@@ -131,6 +152,9 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 			else{
 				nValue=jo.get("value").asString();
 			}
+			
+			nPort=jo.get("port").asInt();
+			
 			if(nStatus == KVMessage.StatusType.SERVER_NOT_RESPONSIBLE){
 				data=new TreeMap<Integer, ServerInfo> ();
 				JsonArray nested=jo.get("metadata").asArray();
@@ -143,7 +167,7 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 				}
 				return new ClientMessage(data);
 			}
-			return new ClientMessage(nKey,nValue,nStatus);
+			return new ClientMessage(nStatus,nKey,nValue,nPort);
 					
 		}catch(Exception e){
 			throw new MessageParseException("ClientMessage : " +e.getMessage());
@@ -167,14 +191,17 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 	}
 	
 	public static void main(String args[]){
-		ClientMessage cm = new ClientMessage(null, null);
-		System.out.println(cm.test());
+		ClientMessage cm = new ClientMessage("kostas","angelo",StatusType.SUBSCRIBE);
+		System.out.println(cm.getJson());
 		try{
-			ClientMessage lol=parseFromString(cm.test());
-			for(Map.Entry<Integer, ServerInfo> entry : lol.getMetadata().entrySet()){
-				System.out.println(entry.getValue().getServerIP()+" "+entry.getValue().getPort()+" "+entry.getKey());
-			}
-				}catch(Exception e){e.printStackTrace();}
+			ClientMessage lol=parseFromString(cm.getJson());
+			System.out.println(lol.getJson());
+	//			for(Map.Entry<Integer, ServerInfo> entry : lol.getMetadata().entrySet()){
+	//				System.out.println(entry.getValue().getServerIP()+" "+entry.getValue().getPort()+" "+entry.getKey());
+	//			}
+			}catch(Exception e){
+					e.printStackTrace();
+				}
 		
 	}
 
