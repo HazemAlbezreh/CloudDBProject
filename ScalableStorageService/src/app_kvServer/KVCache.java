@@ -39,7 +39,7 @@ public class KVCache  {
 	
 	public KVCache(String serverName, int cacheSize, String strategy, String datasetName, String replicaName) {
 		counter++;
-		this.cachesize = cacheSize; 
+		this.cachesize = cacheSize;
 		cache = new LinkedHashMap<String,MapValue>(cachesize); 
 		this.strategy = strategy; 
 		this.serverName = serverName; 
@@ -118,7 +118,10 @@ public class KVCache  {
 					hashvalue = hashfunct.hash(str[0]);
 					inRange=range.isWithin(hashvalue);
 					if(inRange){
-						data.put(str[0], str[1]);
+						if(str.length>2)
+							data.put(str[0], str[1]+","+str[2]);
+						else
+							data.put(str[0], str[1]+",");
 					}
 				}
 				br.close();
@@ -130,25 +133,24 @@ public class KVCache  {
 				try{
 					file.createNewFile();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
+					
 				}
 			}
 		return data;
 	}
 	
 	
-	public synchronized String processPutRequest(String key, String value, String fileName){
-		String updateResult = updateDatasetEntry(key, value,fileName);
+	public synchronized String processPutRequest(String key, String value, ArrayList<String> subscriptions ,String fileName){
+		String updateResult = updateDatasetEntry(key, value,subscriptions,fileName);
 		PrintWriter pr = null;
 		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
 			try {
 					pr = new PrintWriter(new FileWriter("./"+serverName+ fileName +".txt",true));
-				pr.println(key + "," + value);
-				pr.close();
-				addCacheEntry(key, value);
-				return "PUT_SUCCESS";
-			} 
+					pr.println(key + "," + value + ",");
+					pr.close();
+					addCacheEntry(key, value);
+					return "PUT_SUCCESS";
+			}
 			catch(IOException e) {
 				//e.printStackTrace();
 				return "PUT_ERROR";
@@ -183,7 +185,7 @@ public class KVCache  {
 				}
 				pr.close();
 			}
-			catch(IOException e) {
+			catch(Exception e) {
 				//e.printStackTrace();
 				return "PUT_ERROR";
 			}
@@ -217,7 +219,9 @@ public class KVCache  {
 			}
 		}
 	}
+
 	
+	/*
 	public synchronized String processGetRequest(String key){
 		//check the cache first
 		String response = checkGetHitOrMiss(key);
@@ -244,17 +248,25 @@ public class KVCache  {
 			}
 		}
 	}
+	*/
 	
-	public synchronized String updateDatasetEntry(String key,String newValue, String fileName){
+	
+	public synchronized ArrayList<String> parseClientsAdresses(String input){
+		ArrayList<String> parsedList = new ArrayList<String>();
+		String []str = null;
+		if(!input.isEmpty()){
+			str = input.split("-");
+			for(int i =0 ;i<str.length;i++){
+				parsedList.add(str[i]);
+			}
+		}
+		return parsedList;
+	}
+	
+	public synchronized String updateDatasetEntry(String key,String newValue, ArrayList<String> subscriptions, String fileName){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String updateResult = "";
-		if(cache.containsKey(key)){
-			MapValue entry = cache.get(key);
-			entry.setValue(newValue);
-			cache.put(key, entry);
-				updateCache(key);
-		}
 		
 		try{
 			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+fileName+".txt"));
@@ -265,7 +277,12 @@ public class KVCache  {
 				String [] str = line.split(",");
 				if(str[0].equals(key)){
 					updateResult = "PUT_UPDATE";
-					sbld.append(str[0] + "," + newValue + newline);
+					if(str.length>2){
+						sbld.append(str[0] + "," + newValue + "," + str[2] + newline);
+						subscriptions = parseClientsAdresses(str[2]);
+					}
+					else
+						sbld.append(str[0] + "," + newValue + "," + newline);
 				}
 				else
 					sbld.append(line + newline);
@@ -284,8 +301,8 @@ public class KVCache  {
 				pr.print(sbld);
 				pr.close();
 				if(!cache.containsKey(key)){
-
-				addCacheEntry(key,newValue);}
+					addCacheEntry(key,newValue);
+				}
 			}
 			catch (IOException e) {
 				//e.printStackTrace();
@@ -297,7 +314,7 @@ public class KVCache  {
 	}
 	
 
-	public synchronized String deleteEntry(String key, String fileName){
+	public synchronized String deleteEntry(String key, String fileName, ArrayList<String> subscriptions){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String deleteResult = "";
@@ -312,6 +329,8 @@ public class KVCache  {
 				String [] str = line.split(",");
 				if(str[0].equals(key)){
 					deleteResult = "DELETE_SUCCESS";
+					if(str.length>2)
+						subscriptions = parseClientsAdresses(str[2]);
 					continue;
 				}
 				else
@@ -328,10 +347,9 @@ public class KVCache  {
 				pr = new PrintWriter(new FileWriter("./"+serverName+fileName+".txt"));
 				pr.print(sbld);
 				pr.close();
-			} 
+			}
 			catch (IOException e) {
-				//e.printStackTrace();
-			
+				
 			}
 		}
 		else
@@ -398,6 +416,149 @@ public class KVCache  {
 		return deleteResult;
 	}
 	
+	
+	public synchronized String formatArrayList(ArrayList<String> lst){
+		String result = "";
+		for(int i=0 ; i<lst.size() ; i++){
+			if(i+1 ==lst.size())
+				result += lst.get(i);
+			else
+				result += lst.get(i)+"-";
+		}
+		return result;
+	}
+	
+	//Subscribe Code.
+	
+	public synchronized String subscribe(String key, String ip, String port,String fileName){
+			StringBuilder sbld = new StringBuilder();
+			String newline = System.getProperty("line.separator");
+			String updateResult = "";
+			String value = null;
+			try{
+				BufferedReader br = new BufferedReader(new FileReader("./"+serverName+fileName+".txt"));
+				String line = "";
+			//	boolean emptyFile= true;
+				while ((line = br.readLine()) != null) {
+					//emptyFile=false;
+					String [] str = line.split(",");
+					
+					if(str[0].equals(key)){
+						if(str.length>2){
+							if(str[2].contains(ip+":"+port)){
+								updateResult = "IP_ADDRESS_ALREADY_EXIST";
+								value = str[1];
+								break;
+							}
+							else{
+								updateResult = "SUBSCRIBTION_SUCCESS";
+								value = str[1];
+								sbld.append(str[0] + "," + str[1] + "," + str[2] + "-" + ip + ":" + port + newline);
+							}
+						}
+						else{
+							updateResult = "SUBSCRIBTION_SUCCESS";
+							value = str[1];
+							sbld.append(str[0] + "," + str[1] + "," + ip + ":"+port + newline);
+						}
+					}
+					else
+						sbld.append(line + newline);
+				}
+				br.close();
+		//		if (emptyFile)
+			}
+			catch(IOException e){
+				updateResult = "ERROR_HAPPEND";
+			//	e.printStackTrace();
+				
+			}
+			if(updateResult.equals("SUBSCRIBTION_SUCCESS")){
+				try{
+					PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+fileName+".txt"));
+					pr.print(sbld);
+					pr.close();
+					if(!cache.containsKey(key)){
+						addCacheEntry(key,value);
+					}
+				}
+				catch (IOException e) {
+					updateResult = "ERROR_HAPPEND";
+					//e.printStackTrace();
+				}
+			}
+			else if(!updateResult.equals("IP_ADDRESS_ALREADY_EXIST"))
+				updateResult = "KEY_NOT_FOUND";
+			
+			return updateResult;
+	}
+	
+	
+	public synchronized String unSubscribe(String key, String ip, String port,String fileName){
+		StringBuilder sbld = new StringBuilder();
+		String newline = System.getProperty("line.separator");
+		String updateResult = "";
+		String value = null;
+		try{
+			BufferedReader br = new BufferedReader(new FileReader("./"+serverName+fileName+".txt"));
+			String line = "";
+		//	boolean emptyFile= true;
+			while ((line = br.readLine()) != null){
+				//emptyFile=false;
+				String [] str = line.split(",");
+				if(str[0].equals(key)){
+					if(str.length>2){
+						ArrayList<String>temp = parseClientsAdresses(str[2]);
+						if(str[2].contains(ip+":"+port)){
+							updateResult = "UNSUBSCRIBTION_SUCCESS";
+							temp.remove(ip+":"+port);
+							String addresses = formatArrayList(temp);
+							sbld.append(str[0] + "," + str[1] + "," + addresses + newline);
+						}
+						else{
+							updateResult = "IP_ADDRESS_NOT_EXIST";
+							break;
+						}
+					}
+					else{
+						updateResult = "IP_ADDRESS_NOT_EXIST";
+						break;
+					}
+				}
+				else
+					sbld.append(line + newline);
+			}
+			br.close();
+	//		if (emptyFile)
+		}
+		catch(IOException e){
+			updateResult = "ERROR_HAPPEND";
+		//	e.printStackTrace();
+			
+		}
+		if(updateResult.equals("UNSUBSCRIBTION_SUCCESS")){
+			try{
+				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+fileName+".txt"));
+				pr.print(sbld);
+				pr.close();
+				if(!cache.containsKey(key)){
+					addCacheEntry(key,value);
+				}
+			}
+			catch (IOException e) {
+				updateResult = "ERROR_HAPPEND";
+				//e.printStackTrace();
+			}
+		}
+		else if(!updateResult.equals("IP_ADDRESS_NOT_EXIST"))
+			updateResult = "KEY_NOT_FOUND";
+		
+		return updateResult;
+}
+	
+	
+	
+	//cache stuff
 	
 	public synchronized String checkGetHitOrMiss(String key){
 		String val = "";
