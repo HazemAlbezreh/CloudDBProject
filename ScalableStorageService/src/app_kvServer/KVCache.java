@@ -468,7 +468,7 @@ public class KVCache  {
 				br.close();
 		//		if (emptyFile)
 			}
-			catch(IOException e){
+			catch(Exception e){
 				updateResult = "ERROR_HAPPEND";
 			//	e.printStackTrace();
 				
@@ -482,7 +482,7 @@ public class KVCache  {
 						addCacheEntry(key,value);
 					}
 				}
-				catch (IOException e) {
+				catch (Exception e) {
 					updateResult = "ERROR_HAPPEND";
 					//e.printStackTrace();
 				}
@@ -531,7 +531,7 @@ public class KVCache  {
 			br.close();
 	//		if (emptyFile)
 		}
-		catch(IOException e){
+		catch(Exception e){
 			updateResult = "ERROR_HAPPEND";
 		//	e.printStackTrace();
 			
@@ -545,7 +545,7 @@ public class KVCache  {
 					addCacheEntry(key,value);
 				}
 			}
-			catch (IOException e) {
+			catch (Exception e) {
 				updateResult = "ERROR_HAPPEND";
 				//e.printStackTrace();
 			}
