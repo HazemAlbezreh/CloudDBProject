@@ -38,8 +38,8 @@ public class KVCache  {
 	 *           and "LFU".
 	 */
 	
-	public KVCache(String serverName, int cacheSize, String strategy, String datasetName, String replicaName) {
-		counter++;
+	public KVCache(String serverName, int cacheSize, String strategy, String datasetName, String replicaName,boolean clearData) {
+
 		this.cachesize = cacheSize;
 		cache = new LinkedHashMap<String,MapValue>(cachesize); 
 		this.strategy = strategy; 
@@ -48,7 +48,7 @@ public class KVCache  {
 		this.replicaName = replicaName;
 		File data = new File("./" + serverName + datasetName + ".txt"); 
 		File replica = new File("./" + serverName + replicaName + ".txt");
-		if(data.exists() && !data.isDirectory() && counter !=1 ){
+		if(data.exists() && !data.isDirectory() && clearData){
 			data.delete();
 			try{
 				data.createNewFile(); 
@@ -69,7 +69,7 @@ public class KVCache  {
 		if(replica.exists() && !replica.isDirectory()){
 			replica.delete();
 			try{
-				data.createNewFile(); 
+				replica.createNewFile(); 
 			}
 			catch(IOException e){
 				
@@ -85,7 +85,6 @@ public class KVCache  {
 			}
 	}
 	
-	static int counter = 0;
 	
 	public synchronized String getDatasetName(){
 		return datasetName;
@@ -317,6 +316,8 @@ public class KVCache  {
 				pr.close();
 				if(!cache.containsKey(key)){
 					addCacheEntry(key,newValue);
+				}else {
+					this.updateCache(key);
 				}
 			}
 			catch (IOException e) {
@@ -709,5 +710,13 @@ public class KVCache  {
 	
 	public synchronized LinkedHashMap<String, MapValue> getCache(){
 		return this.cache;
+	}
+	
+	
+	public static void main(String[] args) {
+		KVCache testCache = new KVCache("50000", 10, "FIFO", "dataset","replica",false);
+		ArrayList<ServerInfo> subscribers = new ArrayList<ServerInfo>();
+		testCache.processPutRequest("7", "newValue", subscribers,"dataset" );
+		System.out.println(subscribers);
 	}
 }
