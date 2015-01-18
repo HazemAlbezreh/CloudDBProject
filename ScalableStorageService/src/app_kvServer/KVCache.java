@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import config.ServerInfo;
 import consistent_hashing.HashFunction;
 import consistent_hashing.Range;
 
@@ -140,7 +141,7 @@ public class KVCache  {
 	}
 	
 	
-	public synchronized String processPutRequest(String key, String value, ArrayList<String> subscriptions ,String fileName){
+	public synchronized String processPutRequest(String key, String value, ArrayList<ServerInfo> subscriptions ,String fileName){
 		String updateResult = updateDatasetEntry(key, value,subscriptions,fileName);
 		PrintWriter pr = null;
 		if(updateResult.equals("UPDATE_NOT_PERFORMD")){
@@ -263,7 +264,21 @@ public class KVCache  {
 		return parsedList;
 	}
 	
-	public synchronized String updateDatasetEntry(String key,String newValue, ArrayList<String> subscriptions, String fileName){
+	public synchronized void parseClientsAdresses(String input,ArrayList<ServerInfo> list){
+		String []str = null;
+		if(!input.isEmpty()){
+			str = input.split("-");
+			for(int i =0 ;i<str.length;i++){
+				String[] str2=str[i].split(":");
+				ServerInfo si=new ServerInfo(str2[0],Integer.valueOf(str2[1]));
+				list.add(si);
+			}
+		}
+		return ;
+	}
+	
+	
+	public synchronized String updateDatasetEntry(String key,String newValue, ArrayList<ServerInfo> subscriptions, String fileName){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String updateResult = "";
@@ -279,7 +294,7 @@ public class KVCache  {
 					updateResult = "PUT_UPDATE";
 					if(str.length>2){
 						sbld.append(str[0] + "," + newValue + "," + str[2] + newline);
-						subscriptions = parseClientsAdresses(str[2]);
+						parseClientsAdresses(str[2],subscriptions);
 					}
 					else
 						sbld.append(str[0] + "," + newValue + "," + newline);
@@ -314,7 +329,7 @@ public class KVCache  {
 	}
 	
 
-	public synchronized String deleteEntry(String key, String fileName, ArrayList<String> subscriptions){
+	public synchronized String deleteEntry(String key, String fileName, ArrayList<ServerInfo> subscriptions){
 		StringBuilder sbld = new StringBuilder();
 		String newline = System.getProperty("line.separator");
 		String deleteResult = "";
@@ -330,7 +345,7 @@ public class KVCache  {
 				if(str[0].equals(key)){
 					deleteResult = "DELETE_SUCCESS";
 					if(str.length>2)
-						subscriptions = parseClientsAdresses(str[2]);
+						parseClientsAdresses(str[2],subscriptions);
 					continue;
 				}
 				else
