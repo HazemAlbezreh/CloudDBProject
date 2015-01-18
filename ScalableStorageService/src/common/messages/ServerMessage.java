@@ -1,6 +1,7 @@
 package common.messages;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -34,6 +35,8 @@ public class ServerMessage implements Message{
 	private StatusType statusType;
 	private Map<String,String> data=null;
 	private Range range=null;
+	private LinkedList<ClientMessage> updates=null;
+	
 	
 	private ECSMessage.MoveCaseType movecase=null;
 	
@@ -74,6 +77,20 @@ public class ServerMessage implements Message{
 	
 	/////////////////////////////////////////////
 	
+	public ServerMessage(LinkedList<ClientMessage> up){
+		this.updates=up;
+		this.statusType=StatusType.UPDATE_REPLICA;
+	}
+	
+	public ServerMessage(ServerMessage.StatusType type,Map<String,String> d, ECSMessage.MoveCaseType move,LinkedList<ClientMessage> li){
+		this.data=d;
+		this.statusType=type;
+		this.movecase=move;
+		this.updates=li;
+	}
+	
+	/////////////////////////////////////////////
+	
 	public Range getRange(){
 		return range;
 	}
@@ -91,6 +108,14 @@ public class ServerMessage implements Message{
 		return this.statusType;
 	}
 
+	////////////////////////////////////
+	
+	
+	public LinkedList<ClientMessage> getList(){
+		return this.updates;
+	}
+	
+	/////////////////////////////////////
 	@Override
 	public String getJson() {
 		String result;
@@ -119,6 +144,22 @@ public class ServerMessage implements Message{
 			jo.add("data", nullie);
 		}
 		
+		if(this.updates != null){
+			JsonArray ja=new JsonArray();
+			for(ClientMessage cm : this.updates){
+				JsonObject jo2=new JsonObject();
+				jo2.add("clientStatus", cm.getStatus().toString());
+				jo2.add("clientKey", cm.getKey());
+				jo2.add("clientValue",cm.getValue());
+				jo2.add("ip", cm.getIP());
+				jo2.add("port", cm.getPort());
+				ja.add(jo2);
+			}
+			jo.add("updates", ja);
+		}else{
+			jo.add("updates",nullie);
+		}
+		
 		result=jo.toString().trim();
 		return result;
 	}
@@ -128,6 +169,7 @@ public class ServerMessage implements Message{
 		ServerMessage.StatusType nStatus;
 		ECSMessage.MoveCaseType nMove=null;
 		Map<String,String> nData=null;
+		LinkedList<ClientMessage> nList=null;
 		
 		try{
 			if(source==null || source.isEmpty()){
@@ -158,7 +200,30 @@ public class ServerMessage implements Message{
 					nData.put(key,value);
 				}
 			}
-			return new ServerMessage(nStatus,nData,nMove);
+			
+			if(jo.get("updates").isNull()){
+				nList=new LinkedList<ClientMessage>();
+			}else{
+				JsonArray stuff=jo.get("updates").asArray();
+				nList=new LinkedList<ClientMessage>();
+				for(JsonValue ob: stuff){
+					JsonObject temp=ob.asObject();
+					String key=temp.get("clientKey").asString();
+					String status=temp.get("clientStatus").asString();
+					String value=null;
+					String ip=null;
+					if( !temp.get("clientValue").isNull() ){
+						value=temp.get("clientValue").asString();
+					}
+					if( !temp.get("ip").isNull() ){
+						ip=temp.get("ip").asString();
+					}
+					int port=temp.get("port").asInt();
+
+					nList.add( new ClientMessage(KVMessage.StatusType.valueOf(status),key,value,ip,port));
+				}
+			}
+			return new ServerMessage(nStatus,nData,nMove,nList);
 		}
 		catch(Exception e){
 			throw new MessageParseException("ServerMessage : " +e.getMessage());
@@ -167,9 +232,13 @@ public class ServerMessage implements Message{
 	
 	
 	public static void main(String args[]){
-		TreeMap<String,String> lol=new TreeMap<String,String>();
-		lol.put("2", null);
-		ServerMessage sm=new ServerMessage(lol);
+		LinkedList<ClientMessage> li=new LinkedList<ClientMessage>();
+		li.add(new ClientMessage("key","value",KVMessage.StatusType.SUBSCRIBE));
+		li.add(new ClientMessage("key",null,KVMessage.StatusType.PUT));
+		li.add(new ClientMessage(KVMessage.StatusType.PUT,"key",null,"192.186.344.432",50000));
+
+		ServerMessage sm=new ServerMessage(li);
+		
 		System.out.println(sm.getJson());
 		try{
 		ServerMessage sm2=(ServerMessage)MessageFactory.parse(sm.getJson());

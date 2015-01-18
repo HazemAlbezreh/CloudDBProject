@@ -1,11 +1,14 @@
 package app_kvServer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
+import common.messages.ClientMessage;
 import common.messages.ServerMessage;
 import socket.SocketWrapper;
 import config.ServerInfo;
@@ -15,12 +18,14 @@ public class UpdateTimer {
 
 	Timer timer;
 	Map<String,String> data=null;
+	LinkedList<ClientMessage> queue=null;
 	KVServer server=null;
-	//private static Logger logger = Logger.getRootLogger();
+	private static Logger logger = Logger.getRootLogger();
 
 
   public UpdateTimer(KVServer server,int seconds) {
 	  data=new HashMap<String,String>();
+	  queue=new LinkedList<ClientMessage>();
 	  this.server=server;
 	  timer = new Timer();
 	  timer.schedule(new UpdateTask(), seconds * 1000,seconds * 1000);
@@ -29,18 +34,19 @@ public class UpdateTimer {
   class UpdateTask extends TimerTask {
 	    public void run() {
 	      System.out.println("Time's up! : Sending Updates to replicas");
-	      Map<String,String> map=getMap();
+//	      Map<String,String> map=getMap();
+	      LinkedList<ClientMessage> list=getList();
 	      for(ServerInfo si : server.getReplicas() ){
 	    	  try{
 				EcsStore ecsStore = new EcsStore(si.getServerIP(), si.getPort());
 				ecsStore.connect();
 				SocketWrapper target = ecsStore.getSocketWrapper();
-				ServerMessage dataMap=new ServerMessage(ServerMessage.StatusType.UPDATE_REPLICA,map);
+				ServerMessage dataMap=new ServerMessage(list);
 				target.sendMessage(dataMap);
 				target.disconnect();
 	    	  }catch(Exception e){
-//	    		  logger.error("Exception during sending updates to replicas "+e.getMessage() );
-	    		  e.printStackTrace();
+	    		  logger.error("Exception during sending updates to replicas "+e.getMessage() );
+	    		//  e.printStackTrace();
 	    	  }
 	      }
 	    }
@@ -53,9 +59,22 @@ public class UpdateTimer {
 	  this.data.put(key, value);
   }
   
+  synchronized void addData(ClientMessage msg){
+	  if(this.queue==null){
+		  this.queue=new LinkedList<ClientMessage>();
+	  }
+	  this.queue.add(msg);
+  }
+  
   synchronized  Map<String,String> getMap(){
 	  Map<String,String> temp= this.data;
-	  this.data=new HashMap<String,String>(); ;
+	  this.data=new HashMap<String,String>(); 
+	  return temp;
+  }
+  
+  synchronized LinkedList<ClientMessage> getList(){
+	  LinkedList<ClientMessage> temp=this.queue;
+	  this.queue=new LinkedList<ClientMessage>();
 	  return temp;
   }
   

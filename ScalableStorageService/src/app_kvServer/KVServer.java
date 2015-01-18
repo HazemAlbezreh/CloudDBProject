@@ -1,6 +1,7 @@
 package app_kvServer;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -9,10 +10,12 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-//import logger.LogSetup;
+import logger.LogSetup;
 
-//import org.apache.log4j.Level;
-//import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import common.messages.ClientMessage;
 
 import config.ServerInfo;
 import consistent_hashing.CommonFunctions;
@@ -35,7 +38,7 @@ public class KVServer extends Thread  {
 	///////////////////////////////////////////////////////////////////////////////
 	
 	private KVCache kvCache=null;
-	//private static Logger logger = Logger.getRootLogger();
+	private static Logger logger = Logger.getRootLogger();
 	private ServerSocket serverSocket=null;
 	private int port;
 	
@@ -56,7 +59,7 @@ public class KVServer extends Thread  {
 	
 	public KVServer(int port, int cacheSize, String strategy, String datasetName, String replicaName) {
 		this.port= port;
-		this.kvCache = new KVCache(String.valueOf(port),cacheSize, strategy, datasetName, replicaName);
+		this.kvCache = new KVCache(String.valueOf(port),cacheSize, strategy, datasetName, replicaName,false);
 		this.activeThreads=new ArrayList<ClientConnection>();
 		this.serverStatus=ServerStatus.STOPPED;
 		this.ring=null;
@@ -80,17 +83,17 @@ public class KVServer extends Thread  {
 					ClientConnection connection = new ClientConnection(client,this);
 					this.addThread(connection);
 					new Thread(connection).start();
-					//logger.info("Connected to " + client.getInetAddress().getHostName()+ " on port " + client.getPort());
+					logger.info("Connected to " + client.getInetAddress().getHostName()+ " on port " + client.getPort());
 				} catch (IOException e) {
 					if(isRunning()){
-					//	logger.error("Error! Unable to establish connection. \n", e);
+						logger.error("Error! Unable to establish connection. \n", e);
 					}else{
-					//	logger.info("Shutdown server");
+						logger.info("Shutdown server");
 					}					
 				}
 			}
 		}
-	//	logger.info("Server stopped.");
+		logger.info("Server stopped.");
 	}
 
 	private synchronized boolean isRunning() {
@@ -102,15 +105,14 @@ public class KVServer extends Thread  {
 		System.out.println("Initialize server ...");
 		try {
 			serverSocket = new ServerSocket(port);
-		//	logger.info("Server listening on port: "
-			//		+ serverSocket.getLocalPort());
+			logger.info("Server listening on port: " + serverSocket.getLocalPort());
 			return true;
 
 		} catch (IOException e) {
-//			logger.error("Error! Cannot open server socket:");
-//			if (e instanceof BindException) {
-//				logger.error("Port " + port + " is already bound!");
-//			}
+			logger.error("Error! Cannot open server socket:");
+			if (e instanceof BindException) {
+				logger.error("Port " + port + " is already bound!");
+			}
 			return false;
 		}
 	}
@@ -123,21 +125,21 @@ public class KVServer extends Thread  {
 	 */
 	public static void main(String[] args) {
 		try {
-		//	Level loglevel = Level.ALL;
+			Level loglevel = Level.ALL;
 			switch (args.length) {
 			case 4:
-		//		loglevel = Level.toLevel(args[3]);
+				loglevel = Level.toLevel(args[3]);
 				break;
 			case 3:
 				int port = Integer.parseInt(args[0]);
 				int cacheSize= Integer.parseInt(args[1]);
 				String strategy= args[2];
-		//		new LogSetup("logs/server" + port + ".log", loglevel);
+				new LogSetup("logs/server" + port + ".log", loglevel);
 				new KVServer(port,cacheSize,strategy,"dataset","replica"); //.start();
 				break;
 			case 1:
 				int port2 = Integer.parseInt(args[0]);
-			//	new LogSetup("logs/server" + port2 + ".log", loglevel);
+				new LogSetup("logs/server" + port2 + ".log", loglevel);
 				new KVServer(port2);
 				break;
 			default:
@@ -145,10 +147,10 @@ public class KVServer extends Thread  {
 				System.out.println("Usage: Server <port>!");
 				break;
 			}
-//		} catch (IOException e) {
-//			System.out.println("Error! Unable to initialize logger!");
-//			e.printStackTrace();
-//			System.exit(1);
+		} catch (IOException e) {
+			System.out.println("Error! Unable to initialize logger!");
+			e.printStackTrace();
+			System.exit(1);
 		} catch (NumberFormatException nfe) {
 			System.out.println("Error! Invalid argument <port>! Not a number!");
 			System.out.println("Usage: Server <port>!");
@@ -182,12 +184,12 @@ public class KVServer extends Thread  {
 	}
 	
 	public synchronized boolean initKVServer(int cacheSize, String strategy,SortedMap<Integer,ServerInfo> data,Range range,Range rep){
-		this.kvCache=new KVCache(String.valueOf(port), cacheSize, strategy,"dataset","replica");
+		this.kvCache=new KVCache(String.valueOf(port), cacheSize, strategy,"dataset","replica",false);
 		this.setMetadata(data);
 		this.setRange(range);
 		this.setReplicaRange(rep);
 		this.setReplicas( this.findReplicas(data, range) );
-//		this.timer=new UpdateTimer(this,10);
+		this.timer=new UpdateTimer(this,10);
 		
 		if(this.getMetadata()==null || this.getRange()==null || 
 				this.getKVCache()==null || this.getStatus()!=ServerStatus.INIT){
@@ -324,5 +326,9 @@ public class KVServer extends Thread  {
 
 	public synchronized void addToTimer(String key,String value){
 		this.timer.addData(key, value);
+	}
+	
+	public synchronized void addToTimer(ClientMessage cm){
+		this.timer.addData(cm);
 	}
 }

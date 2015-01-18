@@ -24,6 +24,8 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 	private int port=-1;
 	private int rights=-1;
 	
+	private String ip=null;
+	
 	public ClientMessage(String key,String value,KVMessage.StatusType type) {
 		this.setKey(key);
 		this.setValue(value);
@@ -57,6 +59,14 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		this.key=key;
 		this.port=p;
 		this.value=value;
+	}
+	
+	public ClientMessage(KVMessage.StatusType type,String key,String value,String ip,int p){
+		this.statusType=type;
+		this.key=key;
+		this.port=p;
+		this.value=value;
+		this.ip=ip;
 	}
 	
 	@Override
@@ -100,6 +110,14 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		return this.port;
 	}
 	
+	public String getIP(){
+		return this.ip;
+	}
+	
+	public void setIP(String str){
+		this.ip=str;
+	}
+	
 	@Override
 	public String getJson() {
 		String result;
@@ -109,6 +127,7 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		jo.add("key", this.key);
 		jo.add("value", this.value);
 		jo.add("port", this.port);
+		jo.add("ip",this.ip);
 		if(this.metadata != null){
 			JsonArray ja= new JsonArray();
 			for(Map.Entry<Integer, ServerInfo> entry : metadata.entrySet()){
@@ -130,6 +149,7 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 		StatusType nStatus;
 		int nPort;
 		SortedMap<Integer, ServerInfo> data;
+		String nIP;
 		
 		try{
 			
@@ -153,6 +173,13 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 				nValue=jo.get("value").asString();
 			}
 			
+			if(jo.get("ip").isNull()){
+				nIP=null;
+			}
+			else{
+				nIP=jo.get("ip").asString();
+			}
+			
 			nPort=jo.get("port").asInt();
 			
 			if(nStatus == KVMessage.StatusType.SERVER_NOT_RESPONSIBLE){
@@ -167,7 +194,7 @@ public class ClientMessage implements KVMessage,Message,Serializable{
 				}
 				return new ClientMessage(data);
 			}
-			return new ClientMessage(nStatus,nKey,nValue,nPort);
+			return new ClientMessage(nStatus,nKey,nValue,nIP,nPort);
 					
 		}catch(Exception e){
 			throw new MessageParseException("ClientMessage : " +e.getMessage());

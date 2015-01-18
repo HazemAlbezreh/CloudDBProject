@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -82,6 +83,10 @@ public class ClientConnection implements Runnable {
 					String value=null,key=null;
 					KVMessage.StatusType replyStatus=null;
 					String searchSet=null;
+					ArrayList<ServerInfo> subscriptions=new ArrayList<ServerInfo>();
+					String clientIP=null;
+					int clientPort=-1;
+					SubscribeThread subThread=null;
 					
 					switch(cm.getStatus()){
 					case GET:
@@ -120,9 +125,8 @@ public class ClientConnection implements Runnable {
 							value=cm.getValue();
 							key=cm.getKey();
 							if(value==null){		//delete key
-								ArrayList<String> l=new ArrayList<String>();
-								l.add(key);
-								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().deleteDatasetEntry(l,this.server.getKVCache().getDatasetName()));
+
+								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().deleteEntry(key, this.server.getKVCache().getDatasetName(), subscriptions));
 								if(replyStatus==StatusType.DELETE_ERROR){
 								//	logger.info("Delete is not successful");
 									reply=new ClientMessage(replyStatus);
@@ -131,18 +135,28 @@ public class ClientConnection implements Runnable {
 								//	logger.info("Delete is successful");
 //									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
 									
-									reply=new ClientMessage(key,replyStatus);
+									this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
+									
+									reply=new ClientMessage(key,replyStatus);	//SEND REPLY TO CLIENT
 									clientSocket.sendMessage(reply);
+									
+									subThread=new SubscribeThread(subscriptions,key,value);	//Send Notifications to Client
+									subThread.run();
+									
 								}
 							}else{
-								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(key, value, this.server.getKVCache().getDatasetName()));
+								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(key, value, subscriptions ,this.server.getKVCache().getDatasetName()));
 								if(replyStatus==StatusType.PUT_SUCCESS){ 		//PUT SUCCESS
 								//	logger.info("Put is successful");
-									
-	//								this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
-									
+																		
+									this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
+	
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
+									
+									subThread=new SubscribeThread(subscriptions,key,value);	//Send Notifications to Client
+									subThread.run();
+									
 								}else if(replyStatus==StatusType.PUT_ERROR){	//PUT ERROR
 								//	logger.info("Put is not successful");
 									reply=new ClientMessage(key,value,replyStatus);
@@ -151,9 +165,14 @@ public class ClientConnection implements Runnable {
 								//	logger.info("Put update is successful");
 									
 //									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
+									this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
+
 									
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
+									
+									subThread=new SubscribeThread(subscriptions,key,value);	//Send Notifications to Client
+									subThread.run();
 								}
 							}
 						}
@@ -165,29 +184,61 @@ public class ClientConnection implements Runnable {
 								this.clientSocket.sendMessage(reply);
 								break;
 						}
-						String clientIP = this.clientSocket.getSocket().getInetAddress().getHostAddress();
-						int clientPort=cm.getPort();
+						clientIP = this.clientSocket.getSocket().getInetAddress().getHostAddress();
+						clientPort=cm.getPort();
 						
-						
-						//////////////
-						
-						reply=new ClientMessage(KVMessage.StatusType.SUBSCRIBE_SUCCESS);
-						clientSocket.sendMessage(reply);
-						
-						//////////////
-						List<ServerInfo> li=new ArrayList<ServerInfo>();
-						li.add(new ServerInfo(clientIP, clientPort));
-						li.add(new ServerInfo(clientIP, clientPort));
-						SubscribeThread st=new SubscribeThread(li, key, null);
-						st.run();
-						//////////////
+						String subResult=this.server.getKVCache().subscribe(key, clientIP, String.valueOf(clientPort), this.server.getKVCache().getDatasetName());
+						if(subResult.equals("IP_ADDRESS_ALREADY_EXIST")){
+							reply=new ClientMessage("ERROR : Already Subscribed",KVMessage.StatusType.SUBSCRIBE_ERROR);
+							clientSocket.sendMessage(reply);
+						}else if(subResult.equals("ERROR_HAPPEND")){
+							reply=new ClientMessage("ERROR : Unexpected Error",KVMessage.StatusType.SUBSCRIBE_ERROR);
+							clientSocket.sendMessage(reply);
+						}else if(subResult.equals("KEY_NOT_FOUND")){
+							reply=new ClientMessage("ERROR : Key not found",KVMessage.StatusType.SUBSCRIBE_ERROR);
+							clientSocket.sendMessage(reply);
+						}else if(subResult.equals("SUBSCRIPTION_SUCCESS")){
+							reply=new ClientMessage(KVMessage.StatusType.SUBSCRIBE_SUCCESS);
+							clientSocket.sendMessage(reply);
+
+							cm.setIP(clientIP);
+							this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
+
+						}					
 						
 						break;
 						
 					case UNSUBSCRIBE:
-						reply=new ClientMessage(KVMessage.StatusType.UNSUBSCRIBE_SUCCESS);
-						clientSocket.sendMessage(reply);
+						key = cm.getKey();
+						if( !this.server.inRange(this.hashFunction.hash(key)) ){		//NOT IN RANGE
+								reply= new ClientMessage(this.server.getMetadata());
+								this.clientSocket.sendMessage(reply);
+								break;
+						}
+						clientIP = this.clientSocket.getSocket().getInetAddress().getHostAddress();
+						clientPort=cm.getPort();
+						
+						String unSubResult=this.server.getKVCache().unSubscribe(key, clientIP, String.valueOf(clientPort), this.server.getKVCache().getDatasetName());
+						if(unSubResult.equals("IP_ADDRESS_NOT_EXIST")){
+							reply=new ClientMessage("ERROR : Already Subscribed",KVMessage.StatusType.UNSUBSCRIBE_ERROR);
+							clientSocket.sendMessage(reply);
+						}else if(unSubResult.equals("ERROR_HAPPEND")){
+							reply=new ClientMessage("ERROR : Unexpected Error",KVMessage.StatusType.UNSUBSCRIBE_ERROR);
+							clientSocket.sendMessage(reply);
+						}else if(unSubResult.equals("KEY_NOT_FOUND")){
+							reply=new ClientMessage("ERROR : Key not found",KVMessage.StatusType.UNSUBSCRIBE_ERROR);
+							clientSocket.sendMessage(reply);
+						}else if(unSubResult.equals("UNSUBSCRIPTION_SUCCESS")){
+							reply=new ClientMessage(KVMessage.StatusType.UNSUBSCRIBE_SUCCESS);
+							clientSocket.sendMessage(reply);
+
+							cm.setIP(clientIP);
+							this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
+
+						}					
+												
 						break;
+
 					default:
 						reply=new ClientMessage("error","Wrong KVMessage Status received",KVMessage.StatusType.FAILURE);
 						clientSocket.sendMessage(reply);
@@ -305,16 +356,30 @@ public class ClientConnection implements Runnable {
 						break;
 						
 					case UPDATE_REPLICA:	//TODO
-						Map<String,String> upData =sm.getData();
-						for(Map.Entry<String, String> entry : upData.entrySet()){
-							this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getReplicaName());
-							if((String)entry.getValue()==null){		//delete key
-								ArrayList<String> list=new ArrayList<String>();
-								list.add((String)entry.getKey());
-								this.server.getKVCache().deleteDatasetEntry(list,this.server.getKVCache().getReplicaName());
-							}else{
-								this.server.getKVCache().processPutRequest((String)entry.getKey(), (String)entry.getValue(), this.server.getKVCache().getReplicaName());
+
+						
+						LinkedList<ClientMessage> dataList=sm.getList();
+						ArrayList<ServerInfo> fakeList=new ArrayList<ServerInfo>();
+						for(ClientMessage clme: dataList){
+							switch(clme.getStatus()){
+							case PUT:
+								if(clme.getValue()==null){		//delete key
+									this.server.getKVCache().deleteEntry(clme.getKey(), this.server.getKVCache().getReplicaName(), fakeList);
+								}else{
+									this.server.getKVCache().processPutRequest(clme.getKey(), clme.getValue(), fakeList, this.server.getKVCache().getReplicaName());
+								}
+								break;
+							case SUBSCRIBE:
+								this.server.getKVCache().subscribe(clme.getKey(), clme.getIP(), String.valueOf(clme.getPort()), this.server.getKVCache().getReplicaName());
+								break;
+							case UNSUBSCRIBE:
+								this.server.getKVCache().unSubscribe(clme.getKey(), clme.getIP(), String.valueOf(clme.getPort()), this.server.getKVCache().getReplicaName());
+
+								break;
+							default:
+								break;
 							}
+
 						}
 						break;
 						
