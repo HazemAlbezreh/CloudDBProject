@@ -467,13 +467,13 @@ public class KVCache  {
 								break;
 							}
 							else{
-								updateResult = "SUBSCRIBTION_SUCCESS";
+								updateResult = "SUBSCRIPTION_SUCCESS";
 								value = str[1];
 								sbld.append(str[0] + "," + str[1] + "," + str[2] + "-" + ip + ":" + port + newline);
 							}
 						}
 						else{
-							updateResult = "SUBSCRIBTION_SUCCESS";
+							updateResult = "SUBSCRIPTION_SUCCESS";
 							value = str[1];
 							sbld.append(str[0] + "," + str[1] + "," + ip + ":"+port + newline);
 						}
@@ -489,7 +489,7 @@ public class KVCache  {
 			//	e.printStackTrace();
 				
 			}
-			if(updateResult.equals("SUBSCRIBTION_SUCCESS")){
+			if(updateResult.equals("SUBSCRIPTION_SUCCESS")){
 				try{
 					PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+fileName+".txt"));
 					pr.print(sbld);
@@ -526,7 +526,7 @@ public class KVCache  {
 					if(str.length>2){
 						ArrayList<String>temp = parseClientsAdresses(str[2]);
 						if(str[2].contains(ip+":"+port)){
-							updateResult = "UNSUBSCRIBTION_SUCCESS";
+							updateResult = "UNSUBSCRIPTION_SUCCESS";
 							temp.remove(ip+":"+port);
 							String addresses = formatArrayList(temp);
 							sbld.append(str[0] + "," + str[1] + "," + addresses + newline);
@@ -552,7 +552,7 @@ public class KVCache  {
 		//	e.printStackTrace();
 			
 		}
-		if(updateResult.equals("UNSUBSCRIBTION_SUCCESS")){
+		if(updateResult.equals("UNSUBSCRIPTION_SUCCESS")){
 			try{
 				PrintWriter pr = new PrintWriter(new FileWriter("./"+serverName+fileName+".txt"));
 				pr.print(sbld);
