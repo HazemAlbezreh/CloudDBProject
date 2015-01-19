@@ -3,6 +3,9 @@ package app_kvClient;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import org.apache.log4j.Logger;
+
 import socket.SocketWrapper;
 import common.messages.ClientMessage;
 import common.messages.Message;
@@ -12,7 +15,8 @@ public class Subscription extends Thread {
 	private SocketWrapper clientSocket;
 	private ServerSocket serverSocket;
 	private Socket socket;
-	
+	private Logger logger = Logger.getRootLogger();
+
 	public Subscription(ServerSocket serverSocket) throws IOException {
 		this.serverSocket=serverSocket;
 		this.running=true;
@@ -20,6 +24,10 @@ public class Subscription extends Thread {
 		
 	}
 
+	/**
+	 * This thread waits for a connection to be accepted with a server. Once a connection being made, 
+	 * it waits to receive a message and then analyses it. When finished, it closes the socket
+	 */
 	public void run() {
 		String key,value;
 		try{
@@ -43,10 +51,14 @@ public class Subscription extends Thread {
 					case SUBSCRIBE_UPDATE:
 						key = cm.getKey();
 						if (cm.getValue()==null){
-							System.out.println("Key= "+key+" has been deleted!!");
+							System.out.println("Key= "+key+" has been deleted!! ");
+							System.out.print("EchoClient>");
+							logger.info("Received SUBSCRIBE_UPDATE - The subscribed key "+key+"has been deleted!");
 						}else{
 							value=cm.getValue();
 							System.out.println("Key= "+key+" has been changed into new value of "+value+"!!");
+							System.out.print("EchoClient>");
+							logger.info("Received SUBSCRIBE_UPDATE - The subscribed key "+key+"has been changed to value "+value+"!");
 						}
 						socket.close();
 						break;

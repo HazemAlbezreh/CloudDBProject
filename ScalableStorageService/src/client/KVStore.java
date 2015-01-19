@@ -26,7 +26,6 @@ import consistent_hashing.CommonFunctions;
 
 public class KVStore implements KVCommInterface {
 	private Logger logger = Logger.getRootLogger();
-	//private Set<ClientSocketListener> listeners;
 	private boolean running;
 
 	private SocketWrapper clientSocket;
@@ -50,7 +49,6 @@ public class KVStore implements KVCommInterface {
 	public KVStore(String address, int port)  {
 		this.address=address;
 		this.port=port;
-		//listeners = new HashSet<ClientSocketListener>();
 		logger.info("Connection established");
 
 	}
@@ -97,9 +95,7 @@ public class KVStore implements KVCommInterface {
 	@Override
 	public synchronized SocketStatus disconnect() {
 		logger.info("try to close connection ...");
-
 		try {
-
 			tearDownConnection();
 			return SocketStatus.DISCONNECTED;
 		} catch (IOException ioe) {
@@ -109,7 +105,10 @@ public class KVStore implements KVCommInterface {
 	}
 
 
-	
+	/**
+	 * TearDownConnection disconnects client from the socket and shuts down the connection
+	 * @throws IOException when error occures during disconnection
+	 */
 
 	private void tearDownConnection() throws IOException {
 		setRunning(false);
@@ -121,9 +120,16 @@ public class KVStore implements KVCommInterface {
 		}
 	}
 
+	/**
+	 * subscribe() connects to a server according to the metadata and sends a subscribe request for the input key
+	 * @param key
+	 * @return
+	 * @throws Exception during connection phase with a server
+	 */
 	public KVMessage subscribe(String key) throws Exception {
 		ClientMessage reply;
 		ClientMessage newmsg=new ClientMessage(StatusType.SUBSCRIBE,key,KVClient.port);
+		//for the first time we do not have the ring
 		if (ring==null){
 			clientSocket.sendMessage(newmsg);
 
@@ -149,7 +155,12 @@ public class KVStore implements KVCommInterface {
 		}
 	}
 	
-	
+	/**
+	 * unsubscribe() connects to a server according to the metadata and sends an unsubscribe request for the input key
+	 * @param key
+	 * @return
+	 * @throws Exception during connection phase with a server
+	 */
 	public KVMessage unsubscribe(String key) throws Exception{
 		ClientMessage reply;
 		ClientMessage newmsg=new ClientMessage(StatusType.UNSUBSCRIBE,key,KVClient.port);
@@ -225,9 +236,16 @@ public class KVStore implements KVCommInterface {
 
 	}
 	
-	
+	/**
+	 * this function receives the reply from server and analyses the message 
+	 * @param latestMsg
+	 * @param key
+	 * @return
+	 * @throws Exception
+	 */
 	private ClientMessage handleReceivedSubMsg(Message latestMsg, String key) throws Exception{
 		ClientMessage reply=null;
+		String errorMsg;
 		switch (latestMsg.getMessageType()){
 		case KVMESSAGE:
 			reply=(ClientMessage)latestMsg;
@@ -239,16 +257,24 @@ public class KVStore implements KVCommInterface {
 				break;
 			case SUBSCRIBE_SUCCESS:
 				System.out.println("Subscription was successful!");
+				logger.info("Received message SUBSCRIBE_SUCCESS");	
 				break;
 			
 			case SUBSCRIBE_ERROR:
-				System.out.println("There was an error subscribing for this key!Try again...");
+				errorMsg= reply.getKey();
+				System.out.println("There was an error subscribing for this key!");
+				System.out.println("Server's reply: "+errorMsg);
+				logger.info("Received message SUBSCRIBE_ERROR. Server's reply: "+errorMsg);	
 				break;
 			case UNSUBSCRIBE_SUCCESS:
 				System.out.println("Unsubscription was successful!");
+				logger.info("Received message UNSUBSCRIBE_SUCCESS");	
 				break;
 			case UNSUBSCRIBE_ERROR:
+				errorMsg= reply.getKey();
 				System.out.println("Unsubscription was NOT successful!Maybe you are not subscribed to this key!");
+				System.out.println("Server's reply: "+errorMsg);
+				logger.info("Received message UNSUBSCRIBE_ERROR. Server's reply: "+errorMsg);	
 				break;
 			default:
 				logger.debug("Invalid Message Status received" + latestMsg.getJson());	
@@ -361,15 +387,19 @@ public class KVStore implements KVCommInterface {
 			case SERVER_NOT_RESPONSIBLE:
 				updateMetaData(reply.getMetadata());
 				get(key);
+				logger.info("Received message SERVER_NOT_RESPONSIBLE");	
 				break;
 			case SERVER_STOPPED:
 				System.out.println("The Server has stopped for some time!Please wait or try later!");
+				logger.info("Received message SERVER_STOPPED");	
 				break;
 			case GET_ERROR:
 				System.out.println("Tuple not found!");				
+				logger.info("Received message GET_ERROR");	
 				break;
 			case GET_SUCCESS:
 				System.out.println(reply.getStatus()+"  < "+reply.getKey()+","+reply.getValue()+" >");
+				logger.info("Received message GET_SUCCESS");	
 				break;
 			default:
 				logger.debug("Invalid Message Status received" + latestMsg.getJson());	
@@ -431,13 +461,4 @@ public class KVStore implements KVCommInterface {
 	public SortedMap<Integer, ServerInfo> getRing() {
 		return ring;
 	}
-
-
-	
-
-
-	
-
-
-
 }

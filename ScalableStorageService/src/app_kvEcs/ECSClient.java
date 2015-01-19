@@ -57,8 +57,12 @@ public class ECSClient implements ClientSocketListener{
 			System.out.println(PROMPT + "Application exit!");
 
 		}else if (tokens[0].equals("init")){
-			if(tokens.length ==4  && (tokens[3].equals("FIFO") || tokens[3].equals("LRU") ||tokens[3].equals("LFU"))){
-				init(tokens[1],tokens[2],tokens[3]);
+			if(tokens.length ==4){
+				if((tokens[3].equals("FIFO") || tokens[3].equals("LRU") ||tokens[3].equals("LFU"))){
+					printError("Invalid type of strategy!");
+				}else{
+					init(tokens[1],tokens[2],tokens[3]);
+				}
 			}
 			else{
 				printError("Invalid number of parameters!");
@@ -96,13 +100,18 @@ public class ECSClient implements ClientSocketListener{
 			}
 		} 
 		else if(tokens[0].equals("addServer")) {
-			if(tokens.length ==3 && (tokens[2].equals("FIFO") || tokens[2].equals("LRU") ||tokens[2].equals("LFU")) ){
-				try{
-					addServer(tokens[1],tokens[2]);
+			if(tokens.length ==3){
+				if( (tokens[2].equals("FIFO") || tokens[2].equals("LRU") ||tokens[2].equals("LFU"))){
+					printError("Invalid type of strategy!");
+				}else{
+					try{
+						addServer(tokens[1],tokens[2]);
+					}
+					catch(NullPointerException e){
+						printError("You must type first init command");
+					}
 				}
-				catch(NullPointerException e){
-					printError("You must type first init command");
-				}
+				
 			}
 			else{
 				printError("Invalid number of parameters!");

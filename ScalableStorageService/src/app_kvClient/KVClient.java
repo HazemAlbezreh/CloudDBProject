@@ -42,6 +42,10 @@ public class KVClient {
 		this.port= port;	
 	}
 
+	/**
+	 * initialize() starts a socket to client to listen for updates
+	 * @throws IllegalArgumentException in case this port is already used or not in range
+	 */
 	private boolean initialize() {
 		try {
 			this.serverSocket = new ServerSocket(port);
@@ -52,6 +56,10 @@ public class KVClient {
 			this.running=false;
 			return false;
 		}
+		 catch (IllegalArgumentException ill) {
+				this.running=false;
+				return false;
+			}
 	}
 
 
@@ -201,13 +209,16 @@ public class KVClient {
 		}
 	}
 
-
+	/**
+	 * unsubscribe() sends request to server to unsubscribe from a specified key
+	 * @param key 
+	 */
 	private void unsubscribe(String key) {
 		if (key.equals("null")){
 			printError("Please type another key !");
 		}
 		else{
-			logger.info("Going to subscribe to a specified key "+key);
+			logger.info("Going to unsubscribe to a specified key "+key);
 			try {
 				client.unsubscribe(key);
 			} catch (Exception e) {
@@ -219,6 +230,10 @@ public class KVClient {
 		
 	}
 
+	/**
+	 * subscribe() sends request to server to subscribe for a specified key
+	 * @param key
+	 */
 	private void subscribe(String key) {
 		if (key.equals("null")){
 			printError("Please type another key !");
@@ -294,6 +309,7 @@ public class KVClient {
 			int port = Integer.parseInt(args[0]);
 			KVClient app = new KVClient(port);
 			if(!app.initialize()){
+				logger.error("Error! Try another port!");
 				System.out.println("Error! Try another port!");
 				System.exit(1);
 			}
@@ -302,12 +318,15 @@ public class KVClient {
 			app.kvClientrun();
 
 		} catch (IOException e) {
+			logger.error("Error! Unable to initialize logger!");
 			System.out.println("Error! Unable to initialize logger!");
-			e.printStackTrace();
 			System.exit(1);
 		}
 	}
 
+	/**
+	 * listenForSubs() initiates a thread that always listens for server updates in case of subscription
+	 */
 	private void listenForSubs() {
 		if (this.serverSocket != null) {
 			
