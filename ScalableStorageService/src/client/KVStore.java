@@ -138,7 +138,7 @@ public class KVStore implements KVCommInterface {
 			return reply;
 		}
 		else{
-			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
+			ServerInfo si=CommonFunctions.getSuccessorNodeClient(key,ring);
 			if (si.getServerIP()!=this.address || si.getPort()!=this.port){
 				//disconnects from the running server
 				disconnect();
@@ -172,7 +172,7 @@ public class KVStore implements KVCommInterface {
 			return reply;
 		}
 		else{
-			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
+			ServerInfo si=CommonFunctions.getSuccessorNodeClient(key,ring);
 			if (si.getServerIP()!=this.address || si.getPort()!=this.port){
 				//disconnects from the running server
 				disconnect();
@@ -215,7 +215,7 @@ public class KVStore implements KVCommInterface {
 		else{
 			
 			
-			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
+			ServerInfo si=CommonFunctions.getSuccessorNodeClient(key,ring);
 			if (si.getServerIP()!=this.address || si.getPort()!=this.port){
 				//disconnects from the running server
 				disconnect();
@@ -356,7 +356,7 @@ public class KVStore implements KVCommInterface {
 			
 		}
 		else{
-			ServerInfo si=CommonFunctions.getSuccessorNode(key,ring);
+			ServerInfo si=CommonFunctions.getSuccessorNodeClient(key,ring);
 			if (si.getServerIP()!=this.address || si.getPort()!=this.port){
 				//disconnects from the running server
 				disconnect();

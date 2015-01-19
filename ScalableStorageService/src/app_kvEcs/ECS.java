@@ -42,8 +42,8 @@ public class ECS {
 	public ECS(String filePath) {
 		this.init(filePath);
 		this.monitoring = true;
-		//this.monitoringThread = new MonitoringThread(this);
-		//this.monitoringThread.start();
+		this.monitoringThread = new MonitoringThread(this);
+		this.monitoringThread.start();
 	}
 
 	public List<ServerInfo> getActiveServers() {
@@ -368,7 +368,13 @@ public class ECS {
 			this.consistentHash.add(addedNode);
 			// Initialize the new storage server with the updated meta-data and
 			// start it.
-			this.connectToServer(addedNode);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+			boolean check= this.connectToServer(addedNode);
 			EcsStore addedServerSocket = this.getServersConnection().get(
 					addedNode);
 			Range addedServerRange = this.getServerRange(addedNode);

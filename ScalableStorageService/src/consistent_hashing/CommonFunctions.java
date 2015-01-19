@@ -23,6 +23,24 @@ public final class CommonFunctions {
 	  }
 	
 	
+	public static ServerInfo getSuccessorNodeClient(Object key,SortedMap<Integer,ServerInfo> ring) {
+	    if (ring.isEmpty()) {
+	      return null;
+	    }
+	    int hash = Md5HashFunction.getInstance().hash(key);
+	    int nodeHash;
+	    if (!ring.containsKey(hash)) {
+	      SortedMap<Integer, ServerInfo> tailMap = ring.tailMap(hash);
+	      nodeHash = tailMap.isEmpty() ? ring.firstKey() : tailMap.firstKey();
+	    }else {
+//	    	SortedMap<Integer, ServerInfo> tailMap = ring.tailMap(hash+1);
+//	    	nodeHash = tailMap.isEmpty() ? ring.firstKey() : tailMap.firstKey();
+	    	nodeHash=hash;
+	    }
+	    return ring.get(nodeHash);
+	    
+	  }
+	
 	public static ServerInfo getPredecessorNode(Object key,SortedMap<Integer,ServerInfo> ring) {
 	    if (ring.isEmpty()) {
 	      return null;

@@ -817,7 +817,7 @@ public class ClientConnection implements Runnable {
 		}catch(Exception e){
 	//		logger.error("Received Exception at ClientConnection "+e.getMessage());
 			if(isRunning()){
-				logger.error("Received Exception at ClientConnection While running "+e.getMessage());
+				//logger.error("Received Exception at ClientConnection While running "+e.getMessage());
 				this.server.removeThread(this);
 			}else{
 				logger.info("Received Terminate Thread " + e.getMessage());

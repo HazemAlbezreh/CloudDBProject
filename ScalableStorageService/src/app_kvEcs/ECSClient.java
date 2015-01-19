@@ -47,7 +47,12 @@ public class ECSClient implements ClientSocketListener{
 		}
 	}
 
-
+	/**
+	 * handleCommand is responsible for recognizing the type of command  
+	 * 
+	 * @param cmdLine
+	 * @throws Exception when problem in connection
+	 */
 	private void handleCommand(String cmdLine) throws Exception {
 		String[] tokens = cmdLine.split("\\s+");
 
@@ -59,9 +64,9 @@ public class ECSClient implements ClientSocketListener{
 		}else if (tokens[0].equals("init")){
 			if(tokens.length ==4){
 				if((tokens[3].equals("FIFO") || tokens[3].equals("LRU") ||tokens[3].equals("LFU"))){
-					printError("Invalid type of strategy!");
-				}else{
 					init(tokens[1],tokens[2],tokens[3]);
+				}else{
+					printError("Invalid type of strategy!");
 				}
 			}
 			else{
@@ -102,14 +107,15 @@ public class ECSClient implements ClientSocketListener{
 		else if(tokens[0].equals("addServer")) {
 			if(tokens.length ==3){
 				if( (tokens[2].equals("FIFO") || tokens[2].equals("LRU") ||tokens[2].equals("LFU"))){
-					printError("Invalid type of strategy!");
-				}else{
 					try{
 						addServer(tokens[1],tokens[2]);
 					}
 					catch(NullPointerException e){
 						printError("You must type first init command");
-					}
+					}	
+				}else{
+					printError("Invalid type of strategy!");
+					
 				}
 				
 			}
@@ -134,19 +140,30 @@ public class ECSClient implements ClientSocketListener{
 		}
 	}
 
-
+	/**
+	 * removeServer() removes randomly a server from active servers list
+	 * @throws IOException
+	 */
 	private void removeServer() throws IOException {
 		success=ecs.removeNode();
 		if(success){
+			logger.info("A node has been removed!");
 			System.out.println(PROMPT+"A node has been removed!");
 		}
 		else{
+			logger.info("There was an error removing the node!");
 			System.out.println(PROMPT+"There was an error removing the node!");
 
 		}
 	}
 
 
+	/**
+	 * addServer() adds a server to the network with a random ip and port from file ecs.config
+	 * @param cacheSize - defines the cache size
+	 * @param displacementStrategy - defines the type of strategy being used to the cache
+	 * @throws IOException throws exception while connecting with the new server
+	 */
 	private void addServer(String cacheSize, String displacementStrategy) throws IOException{
 		int cache=Integer.parseInt(cacheSize);
 		
@@ -162,6 +179,10 @@ public class ECSClient implements ClientSocketListener{
 	}
 
 
+	/**
+	 * stop() function sends stop request to all servers to be set to stopped state
+	 * @throws IOException
+	 */
 	private void stop() throws IOException{
 		success=ecs.stop();
 		if(success){
@@ -175,6 +196,12 @@ public class ECSClient implements ClientSocketListener{
 		}
 	}
 
+	/**
+	 * init() initializes ecs and starts #numNodes servers in a defined cache size and strategy. All servers initially are in state STOPPED
+	 * @param numNodes - the number of nodes being initialized
+	 * @param cacheSize - the size of cache for each server
+	 * @param displacementStrategy - the strategy being applied to the cache
+	 */
 	private void init(String numNodes,String cacheSize, String displacementStrategy) {
 		ecs = new ECS(filepath);
 		if (ecs==null){
@@ -189,6 +216,10 @@ public class ECSClient implements ClientSocketListener{
 		}
 	}
 	
+	
+	/**
+	 * start() sends start requests to servers to set their state to started
+	 */
 	private void start() {
 		success=ecs.start();
 		if(success){
@@ -208,6 +239,7 @@ public class ECSClient implements ClientSocketListener{
 			try{
 				ecs.shutDown();
 			}catch(NullPointerException ne){
+				logger.info("There was an error shutting down ecs!");
 				printError("There was an error shutting down ecs!");
 			}
 			ecs = null;
@@ -287,7 +319,6 @@ public class ECSClient implements ClientSocketListener{
 			app.ECSClientrun();
 		} catch (IOException e) {
 			System.out.println("Error! Unable to initialize logger!");
-			e.printStackTrace();
 			System.exit(1);
 		}
 	}
@@ -309,9 +340,10 @@ public class ECSClient implements ClientSocketListener{
 		} else if (status == SocketStatus.DISCONNECTED) {
 			System.out.print(PROMPT);
 			System.out.println("Connection terminated: ");
-
+			logger.info("Connection terminated");
 		} else if (status == SocketStatus.CONNECTION_LOST) {
 			System.out.println("Connection lost: ");
+			logger.info("Connection lost");
 			System.out.print(PROMPT);
 		}
 		

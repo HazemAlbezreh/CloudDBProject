@@ -26,7 +26,7 @@ public class MonitoringThread extends Thread {
 		while (monitoredECS.monitoring) {
 			ArrayList<ServerInfo> activeServers = new ArrayList<ServerInfo>(
 					this.monitoredECS.getActiveServers());
-			System.out.println("monitoring");
+			//System.out.println("monitoring");
 			try {
 				Iterator<ServerInfo> it = activeServers.iterator();
 				while (it.hasNext()) {
