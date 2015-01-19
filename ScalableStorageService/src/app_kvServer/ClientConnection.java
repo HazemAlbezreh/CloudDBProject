@@ -32,7 +32,7 @@ import ecs.EcsStore;
  */
 public class ClientConnection implements Runnable {
 
-	//private static Logger logger = Logger.getRootLogger();
+	private static Logger logger = Logger.getRootLogger();
 	private KVServer server;
 	private SocketWrapper clientSocket;
 	private boolean running;
@@ -70,8 +70,8 @@ public class ClientConnection implements Runnable {
 						throw new IOException("ClientSocket closed ");
 					}
 				}
-				switch (message.getMessageType()){
-				case KVMESSAGE:
+				switch (message.getMessageType()){																//Process the type of message received
+				case KVMESSAGE:																					// Message from KVClient
 					if(server.getStatus()==ServerStatus.STOPPED || server.getStatus()==ServerStatus.INIT ){
 						ClientMessage reply=new ClientMessage(KVMessage.StatusType.SERVER_STOPPED);
 						clientSocket.sendMessage(reply);
@@ -89,11 +89,12 @@ public class ClientConnection implements Runnable {
 					SubscribeThread subThread=null;
 					
 					switch(cm.getStatus()){
-					case GET:
+					case GET:																			//Request read
 						key = cm.getKey();
 						if( !this.server.inRange(this.hashFunction.hash(key)) && !this.server.inReplicaRange(this.hashFunction.hash(key)) ){		//NOT IN RANGE
 								reply= new ClientMessage(this.server.getMetadata());
 								this.clientSocket.sendMessage(reply);
+								logger.info("Read Request not in range - replied with new metadata");
 								break;
 						}
 						
@@ -104,23 +105,25 @@ public class ClientConnection implements Runnable {
 						}
 						
 						value = this.server.getKVCache().processGetRequest(cm.getKey(),searchSet);
-						if(value == null){										
+						if(value == null){															//Key was now found on the server
 							replyStatus=KVMessage.StatusType.GET_ERROR;
 						}else{
-							replyStatus=KVMessage.StatusType.GET_SUCCESS;
-						//	logger.info("Get is successful " + cm.getKey() +" "+value);
+							replyStatus=KVMessage.StatusType.GET_SUCCESS;							//Key was found
 						}
-						reply= new ClientMessage(cm.getKey(),value,replyStatus);
+						reply= new ClientMessage(cm.getKey(),value,replyStatus);					// send reply to client
 						clientSocket.sendMessage(reply);
+						logger.info("Client request processed. Replied with " + replyStatus.toString() +" on key "+cm.getKey());
 						break;		
 					case PUT:
 						key = cm.getKey();
 						if(server.getStatus()==ServerStatus.LOCKED){					//WRITE LOCK
 							reply=new ClientMessage(StatusType.SERVER_WRITE_LOCK);
 							clientSocket.sendMessage(reply);
+							logger.info("Server Locked. Request not performed");
 						}else if(!this.server.inRange(this.hashFunction.hash(key))){	// NOT IN RANGE
 							reply= new ClientMessage(this.server.getMetadata());
 							this.clientSocket.sendMessage(reply);
+							logger.info("Read Request not in range - replied with new metadata");
 						}else{															//DOABLE
 							value=cm.getValue();
 							key=cm.getKey();
@@ -128,17 +131,16 @@ public class ClientConnection implements Runnable {
 
 								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().deleteEntry(key, this.server.getKVCache().getDatasetName(), subscriptions));
 								if(replyStatus==StatusType.DELETE_ERROR){
-								//	logger.info("Delete is not successful");
+									logger.info("Delete is not successful "+ cm.getKey() );
 									reply=new ClientMessage(replyStatus);
 									clientSocket.sendMessage(reply);
 								}else{
-								//	logger.info("Delete is successful");
-//									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
-									
 									this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
 									
 									reply=new ClientMessage(key,replyStatus);	//SEND REPLY TO CLIENT
 									clientSocket.sendMessage(reply);
+									
+									logger.info("Delete is successful " + cm.getKey());									
 									
 									subThread=new SubscribeThread(subscriptions,key,value);	//Send Notifications to Client
 									subThread.run();
@@ -147,7 +149,8 @@ public class ClientConnection implements Runnable {
 							}else{
 								replyStatus=KVMessage.StatusType.valueOf(this.server.getKVCache().processPutRequest(key, value, subscriptions ,this.server.getKVCache().getDatasetName()));
 								if(replyStatus==StatusType.PUT_SUCCESS){ 		//PUT SUCCESS
-								//	logger.info("Put is successful");
+								
+									logger.info("Put is successful " + cm.getKey());
 																		
 									this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
 	
@@ -158,15 +161,13 @@ public class ClientConnection implements Runnable {
 									subThread.run();
 									
 								}else if(replyStatus==StatusType.PUT_ERROR){	//PUT ERROR
-								//	logger.info("Put is not successful");
+									logger.info("Put is not successful " + cm.getKey());
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
 								}else{											//PUT UPDATE
-								//	logger.info("Put update is successful");
+								 	logger.info("Put update is successful "+ cm.getKey());
 									
-//									this.server.addToTimer(key, value);			//ADD TO MESSAGE QUEUE FOR REPLICAS
 									this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
-
 									
 									reply=new ClientMessage(key,value,replyStatus);
 									clientSocket.sendMessage(reply);
@@ -198,9 +199,12 @@ public class ClientConnection implements Runnable {
 							reply=new ClientMessage("ERROR : Key not found",KVMessage.StatusType.SUBSCRIBE_ERROR);
 							clientSocket.sendMessage(reply);
 						}else if(subResult.equals("SUBSCRIPTION_SUCCESS")){
+							
 							reply=new ClientMessage(KVMessage.StatusType.SUBSCRIBE_SUCCESS);
 							clientSocket.sendMessage(reply);
 
+							logger.info("Subscribe is successful " + cm.getKey());									
+							
 							cm.setIP(clientIP);
 							this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
 
@@ -229,9 +233,12 @@ public class ClientConnection implements Runnable {
 							reply=new ClientMessage("ERROR : Key not found",KVMessage.StatusType.UNSUBSCRIBE_ERROR);
 							clientSocket.sendMessage(reply);
 						}else if(unSubResult.equals("UNSUBSCRIPTION_SUCCESS")){
+							
 							reply=new ClientMessage(KVMessage.StatusType.UNSUBSCRIBE_SUCCESS);
 							clientSocket.sendMessage(reply);
 
+							logger.info("Unsubscribe is successful " + cm.getKey());									
+							
 							cm.setIP(clientIP);
 							this.server.addToTimer(cm);					//ADD TO MESSAGE QUEUE FOR REPLICASv2
 
@@ -269,18 +276,18 @@ public class ClientConnection implements Runnable {
 								if(result.equals("PUT_ERROR") || result2.equals("DELETE_ERROR")){
 									serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_FAILED);
 									this.clientSocket.sendMessage(serverReply);
-						//			logger.error("Mass put ended with PUT_ERROR");
+									logger.error("Mass put ended with PUT_ERROR");
 		
 								}else{
 									serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS);
 									this.clientSocket.sendMessage(serverReply);
-						//			logger.info("Mass Put is successful");
+									logger.info("Mass Put is successful");
 								}
 						}
 						else{
 							serverReply=new ServerMessage(ServerMessage.StatusType.DATA_TRANSFER_SUCCESS);
 							this.clientSocket.sendMessage(serverReply);
-				//			logger.info("Mass Put is successful");
+							logger.info("Mass Put is successful");
 						}
 						
 						break;
@@ -356,10 +363,10 @@ public class ClientConnection implements Runnable {
 						break;
 						
 					case UPDATE_REPLICA:	//TODO
-
 						
 						LinkedList<ClientMessage> dataList=sm.getList();
 						ArrayList<ServerInfo> fakeList=new ArrayList<ServerInfo>();
+						logger.info("Received Updates for replica");
 						for(ClientMessage clme: dataList){
 							switch(clme.getStatus()){
 							case PUT:
@@ -410,6 +417,7 @@ public class ClientConnection implements Runnable {
 						result=this.server.startServer();
 						if(result){
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.START_SUCCESS);
+							logger.info("Server started");
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.START_FAILURE);
 						}
@@ -428,6 +436,7 @@ public class ClientConnection implements Runnable {
 						result=this.server.lockWrite();
 						if(result){
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.LOCK_WRITE_SUCCESS);
+							logger.info("Server locked");
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.LOCK_WRITE_FAILURE);
 						}
@@ -437,6 +446,8 @@ public class ClientConnection implements Runnable {
 						result=this.server.unlockWrite();
 						if(result){
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE_SUCCESS);
+							logger.info("Server unlocked");
+
 						}else{
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.UN_LOCK_WRITE_FAILURE);
 						}
@@ -455,6 +466,8 @@ public class ClientConnection implements Runnable {
 						this.server.update(config.getRing(), config.getRange(),config.getReplicaRange());
 						ecsReply=new ECSMessage(ConfigMessage.StatusType.UPDATE_META_DATA_SUCCESS);
 						clientSocket.sendMessage(ecsReply);
+						
+						logger.info("Received Update metadata");
 						
 						ServerInfo currentServer = this.server.getMetadata().get(serverKey);
 						
@@ -651,6 +664,7 @@ public class ClientConnection implements Runnable {
 						ServerInfo receipient = config.getServerInfo();
 						Range dataRange=config.getRange();
 						String caseType = config.getMoveDatacase().toString();
+						logger.info("Server Requested to move data to " + receipient.getServerIP()+":"+receipient.getPort());
 						Map<String,String> dataSet=this.server.getKVCache().findValuesInRange(dataRange,this.hashFunction,this.server.getKVCache().getDatasetName()); //CALCULATE RANGE TO TRANSFER
 						ServerMessage dataMap=new ServerMessage(dataSet,config.getMoveDatacase());
 						try{
@@ -784,18 +798,18 @@ public class ClientConnection implements Runnable {
 							
 							ecsReply=new ECSMessage(ConfigMessage.StatusType.RECOVER_FAILD_NODE_SUCCESS);
 							this.clientSocket.sendMessage(ecsReply);
-				//			logger.info("Recover Put is successful");
+//							logger.info("Recover Put is successful");
 						}
 						break;
 						
 					default:
-				//		logger.debug("Let's Hope this does not get printed or I forgot a message type");
+//						logger.debug("Let's Hope this does not get printed or I forgot a message type");
 						break;
 					}
 		
 					break;
 				default : 
-			//		logger.debug("Let's Hope this does not get printed");
+//					logger.debug("Let's Hope this does not get printed");
 					break;
 				}
 			}
@@ -803,10 +817,10 @@ public class ClientConnection implements Runnable {
 		}catch(Exception e){
 	//		logger.error("Received Exception at ClientConnection "+e.getMessage());
 			if(isRunning()){
-	//			logger.error("Received Exception at ClientConnection While running "+e.getMessage());
+				logger.error("Received Exception at ClientConnection While running "+e.getMessage());
 				this.server.removeThread(this);
 			}else{
-	//			logger.info("Received Terminate Thread " + e.getMessage());
+				logger.info("Received Terminate Thread " + e.getMessage());
 			}
 			this.clientSocket.disconnect();
 		}

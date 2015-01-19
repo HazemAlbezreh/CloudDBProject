@@ -232,7 +232,7 @@ public class KVServer extends Thread  {
 	}
 	
 	public synchronized void shutDown(){
-		//logger.info("Initiating Shutdown of server");
+		logger.info("Initiating Shutdown of server");
 		this.setStatus(ServerStatus.SHUTDOWNED);
 		try {
 			serverSocket.close();		
