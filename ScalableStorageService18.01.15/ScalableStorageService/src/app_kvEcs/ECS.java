@@ -25,7 +25,7 @@ public class ECS {
 	private ConsistentHash<ServerInfo> consistentHash;
 	private HashMap<ServerInfo, EcsStore> serversConnection;
 	private static ECS instance;
-	private static Logger logger = Logger.getLogger(ECS.class);
+//	private static Logger logger = Logger.getLogger(ECS.class);
 	private static final String path = System.getProperty("user.dir");
 	private MonitoringThread monitoringThread;
 	public boolean monitoring;
@@ -53,7 +53,6 @@ public class ECS {
 	public boolean getMonitoring(){
 		return this.monitoring;
 	}
-
 
 	public List<ServerInfo> getActiveServers() {
 		return activeServers;
@@ -322,11 +321,6 @@ public class ECS {
 	}
 
 	public void shutDown() {
-		// for (ServerInfo server : this.getActiveServers())
-		// shutDownServer(server);
-
-		
-		
 		for (Iterator<ServerInfo> i = this.getActiveServers().iterator(); i
 				.hasNext();) {
 			ServerInfo server = i.next();
@@ -359,15 +353,16 @@ public class ECS {
 		// them
 		if (this.getInActiveServers().size() < 1)
 			return false;
+		// Randomly select one of the storage servers.
 		Random random = new Random();
-		int randomIndex = random.nextInt(this.getInActiveServers().size());// 0;
+		int randomIndex = random.nextInt(this.getInActiveServers().size());
 		ServerInfo addedNode = this.getInActiveServers().get(randomIndex);
-//		ServerInfo addedNode = this.getInActiveServers().get(0);
+		
 		System.out.println("added node" + addedNode);
 		// send an SSH call to invoke the KVServer process.
 
 		if (addedNode.runServerRemotly(path)) {
-			this.getInActiveServers().remove(randomIndex);
+			this.getInActiveServers().remove(addedNode);
 
 			// Determine the position of the new storage
 			// server within the ring by hashing its address
@@ -377,13 +372,7 @@ public class ECS {
 			this.consistentHash.add(addedNode);
 			// Initialize the new storage server with the updated meta-data and
 			// start it.
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-			}
-			boolean check= this.connectToServer(addedNode);
+			this.connectToServer(addedNode);
 			EcsStore addedServerSocket = this.getServersConnection().get(
 					addedNode);
 			Range addedServerRange = this.getServerRange(addedNode);
@@ -415,7 +404,7 @@ public class ECS {
 		Random random = new Random();
 		int randomIndex = random.nextInt(this.getActiveServers().size());
 		ServerInfo removedNode = this.getActiveServers().get(randomIndex);
-//		ServerInfo removedNode = this.getActiveServers().get(0);
+		
 		System.out.println("removed node" + removedNode);
 		// Recalculate and update the meta-data of the storage service
 		this.consistentHash.remove(removedNode);
@@ -511,22 +500,22 @@ public class ECS {
 		System.out.println("Sixth node is being added");
 		application.addNode(10, "FIFO");
 
-		application.removeNode();
-		application.addNode(10, "FIFO");
-
-		application.addNode(10, "FIFO");
-		application.removeNode();
-		for(int i=0;i < 100; i++){
-			System.out.println(i);
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				
-			}
-			application.addNode(10, "FIFO");
-			application.removeNode();
-		}
+//		application.removeNode();
+//		application.addNode(10, "FIFO");
+//
+//		application.addNode(10, "FIFO");
+//		application.removeNode();
+//		for(int i=0;i < 100; i++){
+//			System.out.println(i);
+//			try {
+//				Thread.sleep(3000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				
+//			}
+//			application.addNode(10, "FIFO");
+//			application.removeNode();
+//		}
 
 		for (Map.Entry<Integer, ServerInfo> entry : application.consistentHash
 				.getMetaData().entrySet()) {
