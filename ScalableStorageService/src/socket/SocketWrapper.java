@@ -16,7 +16,7 @@ public class SocketWrapper {
 
 	private Socket socket = null;
 	private static final int BUFFER_SIZE = 1024;
-	private static final int DROP_SIZE = 128 * BUFFER_SIZE;
+	private static final int DROP_SIZE = Integer.MAX_VALUE-128;//128 * BUFFER_SIZE;
 
 	public SocketWrapper() {
 

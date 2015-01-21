@@ -102,6 +102,7 @@ public class ECS {
 
 	public boolean initService(int numberOfNodes, int cacheSize, String strategy) {
 		if (numberOfNodes <= this.getInActiveServers().size()) {
+			logger.info("Init ECS Service with randomly "+ numberOfNodes + " nodes ");
 			this.defaultCacheSize = cacheSize;
 			this.defaultCacheStrategy = strategy;
 			runFirstServer();
@@ -109,7 +110,7 @@ public class ECS {
 			for (int i = 0; i < numberOfNodes - 1; i++) {
 				//int randomIndex = random.nextInt(inActiveServers.size());// arrayList[i];
 				ServerInfo server = this.getInActiveServers().get(i);
-				System.out.println("server " + i + " " + server.getPort());
+				logger.info("chosen server to be added " + i + " "+server.getServerIP()+ " " + server.getPort());
 				if (server.runServerRemotly(path)) {
 					this.getInActiveServers().remove(i);
 					this.getActiveServers().add(server);
@@ -124,8 +125,8 @@ public class ECS {
 			return result;
 
 		} else {
-//			logger.error("Number entered is too big! Maximum allowed: "
-//					+ this.activeServers.size());
+			logger.error("Number entered is too big! Maximum allowed: "
+					+ this.activeServers.size());
 			return false;
 		}
 	}
@@ -146,7 +147,7 @@ public class ECS {
 			serverSocket.connect();
 			this.getServersConnection().put(server, serverSocket);
 		} catch (Exception e) {
-//			logger.error("Couldn't connect to server: " + server);
+			logger.error("Couldn't connect to server: " + server);
 			return false;
 		}
 		return true;
@@ -322,11 +323,6 @@ public class ECS {
 	}
 
 	public void shutDown() {
-		// for (ServerInfo server : this.getActiveServers())
-		// shutDownServer(server);
-
-		
-		
 		for (Iterator<ServerInfo> i = this.getActiveServers().iterator(); i
 				.hasNext();) {
 			ServerInfo server = i.next();
@@ -363,7 +359,7 @@ public class ECS {
 		int randomIndex = random.nextInt(this.getInActiveServers().size());// 0;
 		ServerInfo addedNode = this.getInActiveServers().get(randomIndex);
 //		ServerInfo addedNode = this.getInActiveServers().get(0);
-		System.out.println("added node" + addedNode);
+		logger.info("added node" + addedNode);
 		// send an SSH call to invoke the KVServer process.
 
 		if (addedNode.runServerRemotly(path)) {
@@ -416,7 +412,7 @@ public class ECS {
 		int randomIndex = random.nextInt(this.getActiveServers().size());
 		ServerInfo removedNode = this.getActiveServers().get(randomIndex);
 //		ServerInfo removedNode = this.getActiveServers().get(0);
-		System.out.println("removed node" + removedNode);
+		logger.info("removed node" + removedNode);
 		// Recalculate and update the meta-data of the storage service
 		this.consistentHash.remove(removedNode);
 		// Set the write lock on the server that has to be deleted.
